@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fis-api-sample
+data:
+  application.yaml: |-
+    route:
+      prefix: development
+    keycloak:
+      realm: sfb-dev
+      resource: fis-api-client
+      auth-server-url: https://sso-dev.apps.banestes.b.br/auth
+      credentials:
+        secret: 6dae3b9d-45e4-470c-8a84-f1e7b647ddff

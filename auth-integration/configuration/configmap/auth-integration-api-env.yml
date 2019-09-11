@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: auth-integration-api-env
+data:
+  APP_NAME: auth-integration-api-env
+  SSO_URL: 'https://sso-dev.apps.banestes.b.br/auth'
+  API_REALM: sfb-dev
+  API_CLIENT_ID: eap-api-sample
+  API_CLIENT_SECRET: dd0a03d0-055f-494d-9388-00950a8f0ef4
+  API_GRANT_TYPE: password
