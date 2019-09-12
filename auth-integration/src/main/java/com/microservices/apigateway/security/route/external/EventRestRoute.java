@@ -3,6 +3,8 @@ package com.microservices.apigateway.security.route.external;
 import com.microservices.apigateway.security.configuration.RouteConfiguration;
 import com.microservices.apigateway.security.model.ErrorMessage;
 import com.microservices.apigateway.security.model.Event;
+import com.microservices.apigateway.security.model.Meta;
+import com.microservices.apigateway.security.model.Result;
 import org.apache.camel.Body;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -97,12 +99,4 @@ public class EventRestRoute extends RouteBuilder {
         // @formatter:on
     }
 
-    public Result wrap(@Body Object object) {
-        Meta meta = createMeta();
-        return new Result(apiVersion, object, meta);
-    }
-
-    private Meta createMeta() {
-        return new Meta(routeConfig.getPrefix(), secretConfig.getUsername(), secretConfig.getPassword());
-    }
 }

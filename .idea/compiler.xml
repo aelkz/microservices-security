@@ -7,10 +7,10 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="auth-integration" />
-        <module name="supplier" />
         <module name="stock" />
-        <module name="auth-parent" />
+        <module name="auth-sso-common" />
         <module name="product" />
+        <module name="supplier" />
       </profile>
     </annotationProcessing>
   </component>

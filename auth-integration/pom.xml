@@ -16,12 +16,43 @@
         <main.basedir>${basedir}/../..</main.basedir>
     </properties>
 
+    <!--
+    Algumas releases do Keycloak já estão na versão 3.4.17.Fina-redhat-00001
+    porém a biblioteca keycloak-spring-security-adapter ainda permanece na versão 3.4.12.Final-redhat-2 o que impede a utilização
+    da release mais recente e quebra o processo de build durante a execução do maven.
+
+    https://mvnrepository.com/artifact/org.keycloak/keycloak-spring-security-adapter?repo=redhat-ga
+    https://mvnrepository.com/artifact/org.keycloak/keycloak-spring-boot-starter/3.4.17.Final-redhat-00001
+    -->
+
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-parent</artifactId>
+                <version>${springboot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>org.jboss.redhat-fuse</groupId>
                 <artifactId>fuse-springboot-bom</artifactId>
                 <version>${fuse.bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.keycloak.bom</groupId>
+                <artifactId>keycloak-spi-bom</artifactId>
+                <version>${keycloak.bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.keycloak.bom</groupId>
+                <artifactId>keycloak-adapter-bom</artifactId>
+                <!-- utilizar a mesma versão do projeto auth-sso-common -->
+                <version>${keycloak.bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -169,11 +200,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- new dependencies -->
-        <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-spring-boot-starter</artifactId>
-        </dependency>
+        <!-- keycloak dependencies -->
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-adapter-core</artifactId>
@@ -181,6 +208,18 @@
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-adapter-spi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-spring-boot-starter</artifactId>
+        </dependency>
+
+        <!-- auth sso common dependency -->
+        <dependency>
+            <groupId>com.microservices.apigateway.security.common</groupId>
+            <artifactId>auth-sso-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
 
     </dependencies>

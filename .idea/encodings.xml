@@ -3,7 +3,7 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/auth-integration" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/auth-parent" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/auth-sso-common" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/product" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/stock" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/supplier" charset="UTF-8" />

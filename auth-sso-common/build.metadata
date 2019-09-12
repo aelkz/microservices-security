@@ -1,0 +1,12 @@
+# Created by buildmetadata-maven-plugin 1.7.0 ( SHA: 6f444cae ) 
+build.artifactId=auth-sso-common
+build.groupId=com.microservices.apigateway.security.common
+build.java.compiler=HotSpot 64-Bit Tiered Compilers
+build.java.runtime.name=Java(TM) SE Runtime Environment
+build.java.runtime.version=1.8.0_202-ea-b03
+build.java.vendor=Oracle Corporation
+build.java.vm=Java HotSpot(TM) 64-Bit Server VM
+build.maven.execution.cmdline=clean package
+build.maven.version=3.5.4
+build.version=1.0-SNAPSHOT
+build.version.full=1.0-SNAPSHOT
