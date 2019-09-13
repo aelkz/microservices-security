@@ -38,19 +38,8 @@ public class SupplierInternalRoute extends RouteBuilder {
         // | GET <?> Event                                    |
         // \--------------------------------------------------/
 
-        from("direct:supplierEvent")
+        from("direct:internal-supplier-event")
             .id("direct-supplier-event")
-            .log(LoggingLevel.WARN, logger, "internal route: preparing to call external api using http4 producer")
-            .to("log:list?showHeaders=true&level=DEBUG")
-            .removeHeader("origin")
-            .removeHeader(Exchange.HTTP_PATH)
-            .to("log:post-list?showHeaders=true&level=DEBUG")
-            .to("http4://" + supplierConfig.getHost() + ":" + supplierConfig.getPort() + supplierConfig.getContextPath() + "?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
-            .unmarshal().json(JsonLibrary.Jackson)
-            .end();
-
-        from("direct:getSupplierEvent")
-            .id("direct-get-supplier")
             .log(LoggingLevel.WARN, logger, "internal route: preparing to call external api using http4 producer")
             .to("log:list?showHeaders=true&level=DEBUG")
             .removeHeader("origin")

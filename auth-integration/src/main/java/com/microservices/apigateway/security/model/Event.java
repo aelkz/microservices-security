@@ -1,10 +1,14 @@
 package com.microservices.apigateway.security.model;
 
+import io.swagger.annotations.ApiModelProperty;
 import java.util.Objects;
 
-public class Event extends BaseModel{
+public class Event extends BaseModel {
 
+    @ApiModelProperty(readOnly=true, example="100")
     private Long id;
+
+    @ApiModelProperty(readOnly=true, example="OK")
     private String status;
 
     public Event(String status) {
