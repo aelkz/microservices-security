@@ -1,11 +1,11 @@
-package com.microservices.apigateway.security.auth.oauth2;
+package com.microservices.security.common.oauth2;
 
 import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.junit.Test;
+
 import java.io.IOException;
 import static org.junit.Assert.assertEquals;
 

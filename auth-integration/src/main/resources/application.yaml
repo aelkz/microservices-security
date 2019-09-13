@@ -8,7 +8,10 @@ spring:
     initialize: false
 
 api:
+  title: fuse-auth-integration-api
+  description: secured fuse application with keycloak adapter
   version: 1
+  hostname: api-auth-integration.apps.arekkusu.io
 
 logging:
   config: classpath:logback.xml
@@ -71,3 +74,71 @@ opentracing:
 jaeger.tracer:
   host: jaeger-agent.microservices.svc
   port: 6831
+
+keycloak:
+  ssl-required: external
+  realm: test
+  resource: fis-api-sample
+  auth-server-url: https://test.com/auth
+  credentials:
+    secret: 123
+  use-resource-role-mappings: true
+  security-constraints:
+    - authRoles:
+        - ADMIN
+        - T_INT_ADMIN
+      securityCollections:
+        - name: CREATE
+          patterns: /api/v1/agencia
+          methods: POST
+        - name: DELETE
+          patterns: /api/v1/agencia/*
+          methods: DELETE
+        - name: PUT
+          patterns: /api/v1/agencia
+          methods: PUT
+    - authRoles:
+        - BASIC
+        - T_INT_BASICO
+      securityCollections:
+        - name: LIST
+          patterns: /api/v1/agencia
+          methods: GET
+        - name: RETRIEVE
+          patterns: /api/v1/agencia/*
+          methods: GET
+
+# =============================================
+# product api parameters
+# ---------------------------------------------
+product:
+  api-key-name: product
+  auth:
+    realm: microservices-security
+    client-id: product
+    grant-type: password
+    username: user1
+    password: user1
+    secret: xxxxx
+    auth-server-uri: https://localhost:8080/auth/
+  host: localhost
+  port: 8080
+  context-path: /v1/product
+
+# =============================================
+# stock api parameters
+# ---------------------------------------------
+stock:
+  api-key-name: stock
+  host: localhost
+  port: 8080
+  context-path: /v1/stock
+
+# =============================================
+# supplier api parameters
+# ---------------------------------------------
+supplier:
+  api-key-name: supplier
+  host: localhost
+  port: 8080
+  context-path: /v1/supplier

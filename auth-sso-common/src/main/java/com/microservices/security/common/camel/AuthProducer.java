@@ -1,7 +1,7 @@
-package com.microservices.apigateway.security.auth;
+package com.microservices.security.common.camel;
 
-import com.microservices.apigateway.security.auth.oauth2.OAuth2ClientCredentials;
-import com.microservices.apigateway.security.auth.oauth2.Token;
+import com.microservices.security.common.oauth2.OAuth2ClientCredentials;
+import com.microservices.security.common.oauth2.Token;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 
@@ -13,7 +13,7 @@ public class AuthProducer extends DefaultProducer {
         super(endpoint);
         this.endpoint = endpoint;
 
-        log.info("[serverURL: {}, realm: {}, client_id: {}, client_secret: {}, grant_type: {}, username: {} caracteres, password: {} caracteres]",
+        log.info("[serverURL: {}, realm: {}, client_id: {}, client_secret: {}, grant_type: {}, username: {} characters, password: {} characters]",
                 this.endpoint.getServerUrl(),
                 this.endpoint.getRealm(),
                 this.endpoint.getClientID(),

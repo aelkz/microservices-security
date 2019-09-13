@@ -1,4 +1,4 @@
-package com.microservices.apigateway.security.auth;
+package com.microservices.security.common.camel;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
@@ -9,6 +9,7 @@ import java.util.Map;
 @SuppressWarnings("WeakerAccess")
 public class AuthComponent extends DefaultComponent {
     private Logger log = LoggerFactory.getLogger(AuthComponent.class);
+
     public static final String SERVER_URL = "serverUrl";
     public static final String REALM = "realm";
     public static final String CLIENT_ID = "clientID";

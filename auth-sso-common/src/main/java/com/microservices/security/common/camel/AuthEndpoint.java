@@ -1,4 +1,4 @@
-package com.microservices.apigateway.security.auth;
+package com.microservices.security.common.camel;
 
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -10,7 +10,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
-@SuppressWarnings("WeakerAccess")
 @UriEndpoint(scheme = "auth", title = "Auth", syntax = "auth:name", producerOnly = true, label = "custom")
 public class AuthEndpoint extends DefaultEndpoint {
     @UriPath

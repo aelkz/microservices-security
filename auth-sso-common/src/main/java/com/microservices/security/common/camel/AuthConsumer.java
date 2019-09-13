@@ -1,4 +1,4 @@
-package com.microservices.apigateway.security.auth;
+package com.microservices.security.common.camel;
 
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;

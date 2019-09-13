@@ -6,12 +6,15 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="auth-integration" />
-        <module name="stock" />
-        <module name="auth-sso-common" />
         <module name="product" />
+        <module name="auth-integration" />
+        <module name="auth-sso-common" />
+        <module name="stock" />
         <module name="supplier" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="auth-bundle" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>

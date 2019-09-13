@@ -1,4 +1,4 @@
-package com.microservices.apigateway.security.auth.oauth2;
+package com.microservices.security.common.oauth2;
 
 import java.util.Map;
 

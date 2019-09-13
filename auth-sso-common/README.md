@@ -16,6 +16,6 @@ Para utilizá-lo defina a seguinte estrutura:
 <parent>
     <groupId>com.microservices.apigateway.security.common</groupId>
     <artifactId>auth-sso-common</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
 </parent>
 ```

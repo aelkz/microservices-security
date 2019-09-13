@@ -1,4 +1,4 @@
-package com.microservices.apigateway.security.auth.oauth2;
+package com.microservices.security.common.oauth2;
 
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
