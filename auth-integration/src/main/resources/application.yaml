@@ -77,8 +77,8 @@ jaeger.tracer:
 
 keycloak:
   ssl-required: external
-  realm: test
-  resource: fis-api-sample
+  realm: microservices
+  resource: fuse-auth-integration-api
   auth-server-url: https://test.com/auth
   credentials:
     secret: 123
@@ -86,26 +86,25 @@ keycloak:
   security-constraints:
     - authRoles:
         - ADMIN
-        - T_INT_ADMIN
       securityCollections:
         - name: CREATE
-          patterns: /api/v1/agencia
+          patterns: /api/v1/product
           methods: POST
         - name: DELETE
-          patterns: /api/v1/agencia/*
+          patterns: /api/v1/product/*
           methods: DELETE
         - name: PUT
-          patterns: /api/v1/agencia
+          patterns: /api/v1/product
           methods: PUT
     - authRoles:
         - BASIC
-        - T_INT_BASICO
+        - ADMIN
       securityCollections:
         - name: LIST
-          patterns: /api/v1/agencia
+          patterns: /api/v1/product
           methods: GET
         - name: RETRIEVE
-          patterns: /api/v1/agencia/*
+          patterns: /api/v1/product/*
           methods: GET
 
 # =============================================
@@ -123,7 +122,7 @@ product:
     auth-server-uri: https://localhost:8080/auth/
   host: localhost
   port: 8080
-  context-path: /v1/product
+  context-path: /api/v1/
 
 # =============================================
 # stock api parameters
@@ -132,7 +131,7 @@ stock:
   api-key-name: stock
   host: localhost
   port: 8080
-  context-path: /v1/stock
+  context-path: /api/v1/stock
 
 # =============================================
 # supplier api parameters
@@ -141,4 +140,4 @@ supplier:
   api-key-name: supplier
   host: localhost
   port: 8080
-  context-path: /v1/supplier
+  context-path: /api/v1/supplier

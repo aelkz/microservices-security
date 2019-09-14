@@ -1,21 +1,50 @@
 package com.microservices.apigateway.security.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import io.swagger.annotations.ApiModelProperty;
+import javax.persistence.*;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Entity
+@NamedQueries({
+        @NamedQuery(name="products",
+                query="select p " +
+                        "from Product p ")
+})
 public class Product extends BaseModel {
 
+    protected Product() { }
+
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @Column(name="id")
     private Long id;
+
+    @NotNull
+    @Size(min = 3, max = 250, message = "Name must have between 3 and 250 characters.")
+    @Column(name="name", nullable = false)
     private String name;
+
+    @NotNull
+    @Size(min = 3, max = 250, message = "Description must have between 3 and 250 characters.")
+    @Column(name="description", nullable = false)
     private String description;
+
+    @NotNull
+    @Size(min = 5, max = 10, message = "Code must have between 5 and 10 characters.")
+    @Column(name="code", nullable = false)
     private String code;
+
+    @Column(name="price", nullable = false)
+    @Digits(integer=3,fraction=2)
     private Double price;
+
+    @Column(name="active", nullable = false)
     private Boolean active;
 
-    @ApiModelProperty(readOnly=true, example="2019-01-31 18:00:00")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(name="created", nullable = false)
     private LocalDateTime created;
 
     public Long getId() {

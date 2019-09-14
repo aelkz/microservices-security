@@ -6,8 +6,8 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="product" />
         <module name="auth-integration" />
+        <module name="product" />
         <module name="auth-sso-common" />
         <module name="stock" />
         <module name="supplier" />
