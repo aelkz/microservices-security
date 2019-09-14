@@ -1,8 +1,3 @@
-##### 1- Install the auth-sso-common first using:
-`mvn clean package install`
-
-OBS. Execute at the root folder (microservices-security).
-
 # MICROSERVICES SECURITY
 ###### HOW TO SECURE APIs WITH RED HAT SINGLE SIGN-ON, FUSE AND 3SCALE.
 
@@ -50,7 +45,7 @@ All data is received and/or enriched to specific 3rd party APIs.<br>All the comm
 | GET    |8081:/metrics | Default metrics export (will expose all custom metrics also) |
 | GET    |8081:/prometheus | Prometheus metrics export (will expose all custom metrics also) |
 
-### `OBSERVABILITY LAB: STEP 1 - PROJECT CREATION`
+### `SECURITY LAB: STEP 1 - PROJECT CREATION`
 
 ```sh
 export current_project=microservices
@@ -59,13 +54,19 @@ export current_project=microservices
 oc login https://master.<>.com:443 --token=<>
 
 # create a new project
-oc new-project microservices --description="microservices observability" --display-name="microservices"
+oc new-project microservices --description="microservices security" --display-name="microservices"
 ```
 
-### `OBSERVABILITY LAB: STEP 3 - SONATYPE NEXUS`
-In order to continue this lab, you must provide a Sonatype Nexus instance in the `microservices` namespace. The detailed instructions can be found in this [readme](https://github.com/aelkz/microservices-observability/blob/master/README-NEXUS.md).
+### `SECURITY LAB: STEP 2 - SONATYPE NEXUS`
+In order to continue this lab, you must provide a Sonatype Nexus instance in the `microservices` namespace. The detailed instructions can be found in this [readme](https://github.com/aelkz/microservices-security/blob/master/README-NEXUS.md).
 
-### `OBSERVABILITY LAB: STEP 6 - MAIN APPLICATION DEPLOYMENT`
+### `SECURITY LAB: STEP 3 - 3SCALE SETUP`
+
+
+### `SECURITY LAB: STEP 4 - RED HAT SINGLE SIGN-ON SETUP`
+
+
+### `SECURITY LAB: STEP 5 - MICROSERVICES DEPLOYMENT`
 
 ```sh
 export current_project=microservices
@@ -125,7 +126,10 @@ oc create configmap polar-flow-api-config --from-file=src/main/resources/applica
 oc set volume dc/polar-flow-api --add --overwrite --name=polar-flow-api-config-volume -m /deployments/config -t configmap --configmap-name=polar-flow-api-config
 ```
 
-### `OBSERVABILITY LAB: STEP 7 - INTEGRATION DEPLOYMENT`
+### `OBSERVABILITY LAB: STEP 6 - SSO-COMMON LIBRARY DEPLOYMENT ON NEXUS`
+
+
+### `OBSERVABILITY LAB: STEP 7 - INTEGRATION DEPLOYMENT (FUSE)`
 Now that the main API is deployed, let’s deploy the integration layer.
 
 ```sh
