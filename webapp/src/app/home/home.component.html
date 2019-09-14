@@ -1,0 +1,34 @@
+<div *ngIf="route.children.length === 0">
+  <div class="card-deck">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Welcome {{ fullName }}</h4>
+        <p class="card-text">
+          This application was created using the <a target="_blank" href="https://angular.io/" role="button"> Angular </a> and
+          <a target="_blank" href="https://getbootstrap.com/" role="button"> Bootstrap </a> frameworks.
+        </p>
+        <p class="card-text">
+          <a target="_blank" href="https://angular.io/" role="button"> <img src="assets/img/angular.svg" height="70" alt="angular" /> </a> &nbsp;&nbsp;
+          <a target="_blank" href="https://getbootstrap.com/" role="button"> <img src="assets/img/bootstrap.svg" height="50" alt="bootstrap" /> </a>
+        </p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Runtime frameworks</h4>
+        <p class="card-text">
+          This application runs natively on the
+          <a target="_blank" href="https://www.openshift.com/products/container-platform/" role="button"> Openshift Container Platform </a> as a
+          <a target="_blank" href="https://nodejs.org" role="button"> Node.js </a> application
+        </p>
+        <p class="card-text">
+          <a target="_blank" href="https://www.openshift.com/products/container-platform/" role="button">
+            <img src="assets/img/openshift.svg" height="50" alt="openshift" />
+          </a>
+          &nbsp;&nbsp; <a target="_blank" href="https://nodejs.org" role="button"> <img src="assets/img/nodejs.svg" height="55" alt="nodejs" /> </a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+<router-outlet></router-outlet>

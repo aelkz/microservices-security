@@ -33,7 +33,7 @@ public class ProductController extends BaseController {
     @Autowired
     ProductService productService;
 
-    @RequestMapping(path = "/v1/products", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+    @RequestMapping(path = "/v1/products", method = RequestMethod.GET, consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
     @ApiOperation(
             value = "Get all products",
             notes = "Returns first N products specified by the size parameter with page offset specified by page parameter.",

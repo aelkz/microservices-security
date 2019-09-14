@@ -1,0 +1,21 @@
+<div class="sidebar">
+  <nav class="sidebar-nav ps">
+    <ul class="nav">
+      <li class="nav-item">
+        <a class="nav-link" routerLink="home/status" routerLinkActive="nav-link-primary" (click)="closeOnMobile()">
+          <i class="nav-icon icon-info"></i>Status
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="home/table" routerLinkActive="nav-link-primary" (click)="closeOnMobile()">
+          <i class="nav-icon icon-list"></i>Products
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://github.com/aelkz" target="_blank">
+          <fa-icon [icon]="githubIcon" class="nav-icon"></fa-icon> Github
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>

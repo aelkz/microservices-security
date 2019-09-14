@@ -1,0 +1,41 @@
+<header class="app-header navbar">
+  <!-- shown in mobile view -->
+  <button class="navbar-toggler sidebar-toggler d-lg-none mr-auto" type="button" (click)="sidebarService.toggleSidebar()"><span class="navbar-toggler-icon"></span></button>
+
+  <a class="navbar-brand" routerLink="home">
+    <img class="navbar-brand-full" src="assets/img/Logo-RedHat-A-Color-RGB.svg" width="120" alt="Red Hat logo" />
+    <img class="navbar-brand-minimized" src="assets/img/Logo-RedHat-A-Color-RGB.svg" width="30" height="30" alt="Red Hat Logo" />
+  </a>
+
+  <!-- toggle sidebar -->
+  <button class="navbar-toggler sidebar-toggler d-md-down-none" type="button" (click)="sidebarService.toggleSidebar()"><span class="navbar-toggler-icon"></span></button>
+
+  <!-- top right menu -->
+  <ul class="navbar-nav ml-auto">
+    <li class="nav-item dropdown d-none d-sm-block" dropdown placement="bottom right">
+      <a class="nav-link dropdown-toggle app-no-caret" href role="button" aria-haspopup="true" aria-expanded="false" dropdownToggle (click)="(false)">
+        <i class="icon-bell"></i> <span class="badge badge-pill badge-info" *ngIf="messages.length > 0">{{ messages.length }}</span>
+      </a>
+      <div *dropdownMenu class="dropdown-menu dropdown-menu-right app-scrollable-menu">
+        <div class="dropdown-header text-center app-pointer" (click)="clear()"><strong class="app-underline">Clear Messages</strong></div>
+        <a class="dropdown-item" *ngFor="let item of messages"> <fa-icon [icon]="item.className"></fa-icon> {{ item.text }} </a>
+      </div>
+    </li>
+    <li class="nav-item dropdown" dropdown placement="bottom right">
+      <a class="nav-link dropdown-toggle mr-2" href role="button" aria-haspopup="true" aria-expanded="false" dropdownToggle (click)="(false)">
+        <i class="icon-user mr-1"></i>
+      </a>
+      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown" *dropdownMenu>
+        <div class="dropdown-header text-center">
+          <strong>{{ username }}</strong>
+        </div>
+        <a class="dropdown-item app-pointer">
+          <li (click)="doAccount()"><fa-icon [icon]="accountIcon" class="mr-2"></fa-icon> Account</li>
+        </a>
+        <a class="dropdown-item app-pointer">
+          <li (click)="doLogout()"><fa-icon [icon]="logoutIcon" class="mr-2"></fa-icon> Logout</li>
+        </a>
+      </div>
+    </li>
+  </ul>
+</header>

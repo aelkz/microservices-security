@@ -1,0 +1,54 @@
+<div class="card-deck">
+  <div class="card">
+    <div class="card-header">Auth Integration API (FUSE) Status</div>
+    <div class="card-body">
+      <div class="card-text">
+        <p>Is the auth-integration-api up?</p>
+        <button class="btn btn-lg btn-primary" (click)="getAuthIntegration()"><fa-icon [icon]="refreshIcon" class="mr-1"></fa-icon> Fuse Integration API</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card-deck mb-3">
+  <div class="card">
+    <div class="card-header">Product Status</div>
+    <div class="card-body">
+      <div class="card-text">
+        <p>Is the product-api up?</p>
+        <button class="btn btn-lg btn-primary" (click)="getProduct()"><fa-icon [icon]="refreshIcon" class="mr-1"></fa-icon> Product API</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">Stock Status</div>
+    <div class="card-body">
+      <div class="card-text">
+        <p>Is the stock-api up?</p>
+        <button class="btn btn-lg btn-primary" (click)="getStock()"><fa-icon [icon]="refreshIcon" class="mr-1"></fa-icon> Stock API</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">Supplier Status</div>
+    <div class="card-body">
+      <div class="card-text">
+        <p>Is the supplier-api up?</p>
+        <button class="btn btn-lg btn-primary" (click)="getSupplier()"><fa-icon [icon]="refreshIcon" class="mr-1"></fa-icon> Supplier API</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card-deck">
+  <div class="card">
+    <div class="card-header">Response</div>
+    <div class="card-body">
+      <div class="card-text">
+        <pre>{{ status | json }}</pre>
+      </div>
+    </div>
+  </div>
+</div>
