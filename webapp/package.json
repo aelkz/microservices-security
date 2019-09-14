@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/aelkz/microservices-security"
+    "url": "git+https://github.com/aelkz/microservices-security.git"
   },
   "ng": "node_modules/@angular/cli/bin/ng",
   "scripts": {
@@ -64,5 +64,12 @@
     "tslint": "~5.12.1",
     "typescript": "~3.1.6",
     "zone.js": "^0.8.28"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/aelkz/microservices-security/issues"
+  },
+  "homepage": "https://github.com/aelkz/microservices-security#readme",
+  "main": "envsub.js",
+  "devDependencies": {},
+  "keywords": []
 }

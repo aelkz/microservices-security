@@ -12,7 +12,6 @@ let proxy = require('http-proxy-middleware');
 let app = express();
 
 app.set('port', process.env.PORT || 8080);
-app.set('eap-service', process.env.EAP || 'http://eap-app:8080');
 app.set('springboot-service', process.env.SPRINGBOOT || 'http://springboot-app:8080');
 
 app.use(compression());
@@ -20,20 +19,6 @@ app.use(compression());
 app.use(logger('combined'));
 
 app.use(express.static(path.join(__dirname, 'dist')));
-
-// proxy for jboss backend
-app.use(
-  '/jboss-api/*',
-  proxy({
-    target: app.get('eap-service'),
-    secure: false,
-    changeOrigin: true,
-    logLevel: 'debug',
-    pathRewrite: {
-      '^/eap-service': ''
-    }
-  })
-);
 
 // proxy for springboot backend
 app.use(

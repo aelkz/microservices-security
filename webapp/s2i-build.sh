@@ -4,7 +4,7 @@
 
 source_location=.
 builder_image=rhscl/nodejs-8-rhel7
-tag=s2i-build/jboss-client
+tag=s2i-build/nodejs-web
 flags=-c
 
 s2i build ${source_location} ${builder_image} ${tag} ${flags}

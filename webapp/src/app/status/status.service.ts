@@ -12,41 +12,42 @@ export class StatusService {
 
   constructor(private messageService: MessageService, private http: HttpClient) { }
 
-  getAuthIntegration(): Observable<HttpResponse<Config>> {
-    return this.http.get<Config>(window['_env'].integration_uri + '/actuator/health', {observe: 'response'})
+  getAuthIntegrationHealth(): Observable<HttpResponse<Config>> {
+    return this.http.get<Config>(`${window['_env'].integration_uri}/actuator/health`, {observe: 'response'})
       .pipe(
         catchError(error => {
-          this.messageService.error(`getAuthIntegration() ${error.message}`);
+          console.log(error);
+          this.messageService.error(`getAuthIntegrationHealth() ${error.message}`);
           return of(error);
         })
       );
   }
 
-  getProduct(): Observable<HttpResponse<Config>> {
-    return this.http.get<Config>(window['_env'].integration_uri + '/product/health', {observe: 'response'})
+  getProductHealth(): Observable<HttpResponse<Config>> {
+    return this.http.get<Config>(`${window['_env'].integration_uri}/product/health`, {observe: 'response'})
       .pipe(
         catchError(error => {
-          this.messageService.error(`getProduct() ${error.message}`);
+          this.messageService.error(`getProductHealth() ${error.message}`);
           return of(error);
         })
       );
   }
 
-  getStock(): Observable<HttpResponse<Config>> {
-    return this.http.get<Config>(window['_env'].integration_uri + '/stock/health', {observe: 'response'})
+  getStockHealth(): Observable<HttpResponse<Config>> {
+    return this.http.get<Config>(`${window['_env'].integration_uri}/stock/health`, {observe: 'response'})
       .pipe(
         catchError(error => {
-          this.messageService.error(`getStock() ${error.message}`);
+          this.messageService.error(`getStockHealth() ${error.message}`);
             return of(error);
           })
       );
   }
 
-  getSupplier(): Observable<HttpResponse<Config>> {
-    return this.http.get<Config>(window['_env'].integration_uri + '/supplier/health', {observe: 'response'})
+  getSupplierHealth(): Observable<HttpResponse<Config>> {
+    return this.http.get<Config>(`${window['_env'].integration_uri}/supplier/health`, {observe: 'response'})
       .pipe(
         catchError(error => {
-          this.messageService.error(`getSupplier() ${error.message}`);
+          this.messageService.error(`getSupplierHealth() ${error.message}`);
             return of(error);
           })
       );

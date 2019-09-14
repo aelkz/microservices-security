@@ -15,7 +15,7 @@ export class StatusComponent implements OnInit {
   refreshIcon: IconDefinition;
 
   getAuthIntegration(): void {
-    this.statusService.getAuthIntegration().subscribe(res => {
+    this.statusService.getAuthIntegrationHealth().subscribe(res => {
       this.status = res;
 
       if (this.status.body != null) {
@@ -25,7 +25,7 @@ export class StatusComponent implements OnInit {
   }
 
   getProduct(): void {
-    this.statusService.getProduct().subscribe(res => {
+    this.statusService.getProductHealth().subscribe(res => {
       this.status = res;
 
       if (this.status.body != null) {
@@ -35,7 +35,7 @@ export class StatusComponent implements OnInit {
   }
 
   getStock(): void {
-    this.statusService.getStock().subscribe(res => {
+    this.statusService.getStockHealth().subscribe(res => {
       this.status = res;
 
       if (this.status.body != null) {
@@ -45,7 +45,7 @@ export class StatusComponent implements OnInit {
   }
 
   getSupplier(): void {
-    this.statusService.getSupplier().subscribe(res => {
+    this.statusService.getSupplierHealth().subscribe(res => {
       this.status = res;
 
       if (this.status.body != null) {

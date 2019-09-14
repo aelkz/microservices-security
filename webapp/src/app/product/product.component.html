@@ -14,11 +14,11 @@
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>Year</th>
-                  <th>Make</th>
-                  <th>Model</th>
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th>Code</th>
+                  <th>Price</th>
                   <th>Created</th>
-                  <th>Updated</th>
                 </tr>
               </thead>
               <tbody>
@@ -29,11 +29,12 @@
                     </button>
                     {{ product.id }}
                   </td>
-                  <td class="app-pointer" (click)="edit(car)">{{ car.year }}</td>
-                  <td class="app-pointer" (click)="edit(car)">{{ car.make }}</td>
-                  <td class="app-pointer" (click)="edit(car)">{{ car.model }}</td>
-                  <td class="app-pointer" (click)="edit(car)">{{ car.createDate }}</td>
-                  <td class="app-pointer" (click)="edit(car)">{{ car.lastUpdateDate }}</td>
+                  <td class="app-pointer" (click)="edit(product)">{{ product.id }}</td>
+                  <td class="app-pointer" (click)="edit(product)">{{ product.name }}</td>
+                  <td class="app-pointer" (click)="edit(product)">{{ product.description }}</td>
+                  <td class="app-pointer" (click)="edit(product)">{{ product.code }}</td>
+                  <td class="app-pointer" (click)="edit(product)">{{ product.price }}</td>
+                  <td class="app-pointer" (click)="edit(product)">{{ product.created }}</td>
                 </tr>
               </tbody>
             </table>
@@ -47,7 +48,10 @@
 <ng-template #editTemplate>
   <form (ngSubmit)="saveOrUpdate()">
     <div class="modal-header">
-      <h4 class="modal-title pull-left">Details</h4>
+
+      <h4 class="modal-title pull-left" *ngIf="selectedProduct.id != null">Product Details</h4>
+      <h4 class="modal-title pull-left" *ngIf="selectedProduct.id == null">New Product</h4>
+
       <button type="button" class="close pull-right" aria-label="Close" (click)="dismiss()"><span aria-hidden="true">&times;</span></button>
     </div>
     <div class="modal-body">
@@ -55,16 +59,21 @@
         <label>ID</label> <input type="text" class="form-control" name="id" [(ngModel)]="selectedProduct.id" readonly />
       </div>
 
-      <div class="form-group">
-        <label>Year:</label>
-        <select class="form-control" name="year" [(ngModel)]="selectedProduct.year">
-          <option *ngFor="let y of years" [ngValue]="y">{{ y }}</option>
-        </select>
-      </div>
+      <div class="form-group"><label>Name:</label> <input type="text" class="form-control" name="name" [(ngModel)]="selectedProduct.name" /></div>
 
-      <div class="form-group"><label>Make:</label> <input type="text" class="form-control" name="make" [(ngModel)]="selectedProduct.make" /></div>
+      <div class="form-group"><label>Description:</label> <input type="text" class="form-control" name="description" [(ngModel)]="selectedProduct.description" /></div>
 
-      <div class="form-group"><label>Model:</label> <input type="text" class="form-control" name="model" [(ngModel)]="selectedProduct.model" /></div>
+      <div class="form-group"><label>Code:</label> <input type="text" class="form-control" name="code" [(ngModel)]="selectedProduct.code" /></div>
+
+      <div class="form-group"><label>Price:</label> <input type="number" class="form-control" name="price" [(ngModel)]="selectedProduct.price" /></div>
+
+      <label class="btn btn-default" [ngClass]="{active:selectedProduct.active==true}">
+        <input type="radio" name="active" [value]="true" [(ngModel)]="selectedProduct.active">&nbsp;Active
+      </label>
+      <label class="btn btn-default" [ngClass]="{active:selectedProduct.active==false}">
+        <input type="radio" name="active" [value]="false" [(ngModel)]="selectedProduct.active">&nbsp;Inactive
+      </label>
+
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" (click)="dismiss()">Cancel</button> <button type="submit" class="btn btn-primary">Save</button>

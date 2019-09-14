@@ -24,7 +24,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping(path = "/api", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
 @Validated //required for @Valid on method parameters such as @RequesParam, @PathVariable, @RequestHeader
-@CrossOrigin(origins = "http://localhost:4000")
+@CrossOrigin(origins = {"https://localhost:4200", "http://localhost:4200"})
 public class ProductController extends BaseController {
 
     private static final int DEFAULT_PAGE_SIZE = 10;

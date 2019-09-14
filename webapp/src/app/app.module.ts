@@ -16,7 +16,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CommonModule } from '@angular/common';
 import { ChartsModule } from 'ng2-charts';
 import { DataTablesModule } from 'angular-datatables';
-import { FormComponent } from './form/form.component';
 import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { StatusComponent } from './status/status.component';
@@ -34,7 +33,6 @@ export function init(appInitService: AppInitService) {
     HomeComponent,
     HeaderComponent,
     BreadcrumbComponent,
-    FormComponent,
     SidebarComponent,
     StatusComponent
   ],

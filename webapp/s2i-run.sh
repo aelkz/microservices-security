@@ -1,6 +1,6 @@
 #!/bin/bash
 
-tag=s2i-build/jboss-client
+tag=s2i-build/nodejs-web
 
 if [[ "$1" = "local" ]] ; then
   port=4200
