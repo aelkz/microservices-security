@@ -60,7 +60,7 @@ export class ProductService {
   }
 
   deleteProduct(id: number): Observable<any> {
-    return this.http.delete<Product>(`${this.productAPI}/${id}`, this.headers()).pipe(
+    return this.http.delete<Product>(`${this.productAPI}/product/${id}`, this.headers()).pipe(
       retry(1),
       catchError(res => {
         return this.handleError('deleteProduct()', res);

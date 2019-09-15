@@ -19,22 +19,22 @@
                   <th>Code</th>
                   <th>Price</th>
                   <th>Created</th>
+                  <th>Remove?</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let product of products">
-                  <td class="app-pointer">
-                    <button class="btn btn-warning btn-sm mr-2" (click)="warning(product)">
-                      <fa-icon [icon]="deleteIcon"></fa-icon>
-                    </button>
-                    {{ product.id }}
-                  </td>
                   <td class="app-pointer" (click)="edit(product)">{{ product.id }}</td>
                   <td class="app-pointer" (click)="edit(product)">{{ product.name }}</td>
                   <td class="app-pointer" (click)="edit(product)">{{ product.description }}</td>
                   <td class="app-pointer" (click)="edit(product)">{{ product.code }}</td>
                   <td class="app-pointer" (click)="edit(product)">{{ product.price }}</td>
-                  <td class="app-pointer" (click)="edit(product)">{{ product.created }}</td>
+                  <td class="app-pointer" (click)="edit(product)">{{ product.created | jsonDate }}</td>
+                  <td class="app-pointer">
+                    <button class="btn btn-warning btn-sm mr-2" (click)="warning(product)">
+                      <fa-icon [icon]="deleteIcon"></fa-icon>
+                    </button>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -67,12 +67,14 @@
 
       <div class="form-group"><label>Price:</label> <input type="number" class="form-control" name="price" [(ngModel)]="selectedProduct.price" /></div>
 
-      <label class="btn btn-default" [ngClass]="{active:selectedProduct.active==true}">
-        <input type="radio" name="active" [value]="true" [(ngModel)]="selectedProduct.active">&nbsp;Active
-      </label>
-      <label class="btn btn-default" [ngClass]="{active:selectedProduct.active==false}">
-        <input type="radio" name="active" [value]="false" [(ngModel)]="selectedProduct.active">&nbsp;Inactive
-      </label>
+      <div class="form-group" *ngIf="selectedProduct.id != null">
+        <label class="btn btn-default" [ngClass]="{active:selectedProduct.active==true}">
+          <input type="radio" name="active" [value]="true" [(ngModel)]="selectedProduct.active">&nbsp;Active
+        </label>
+        <label class="btn btn-default" [ngClass]="{active:selectedProduct.active==false}">
+          <input type="radio" name="active" [value]="false" [(ngModel)]="selectedProduct.active">&nbsp;Inactive
+        </label>
+      </div>
 
     </div>
     <div class="modal-footer">
@@ -84,12 +86,12 @@
 <ng-template #deleteTemplate>
   <form class="form-horizontal" (ngSubmit)="delete(selectedProduct.id)">
     <div class="modal-header">
-      <h4 class="modal-title pull-left">Delete</h4>
+      <h4 class="modal-title pull-left">Remove?</h4>
       <button type="button" class="close pull-right" aria-label="Close" (click)="dismiss()"><span aria-hidden="true">&times;</span></button>
     </div>
-    <div class="modal-body">Are you sure you want to delete this Product?</div>
+    <div class="modal-body">Are you sure you want to remove {{this.selectedProduct.name}} ?</div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" (click)="dismiss()">Cancel</button> <button type="submit" class="btn btn-warning">Delete</button>
+      <button type="button" class="btn btn-secondary" (click)="dismiss()">Cancel</button> <button type="submit" class="btn btn-warning">Remove</button>
     </div>
   </form>
 </ng-template>

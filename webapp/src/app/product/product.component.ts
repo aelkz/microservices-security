@@ -35,8 +35,7 @@ export class ProductComponent implements OnDestroy, OnInit, AfterViewInit {
   constructor(
       private messageService: MessageService,
       private productService: ProductService,
-      private modalService: BsModalService)
-  { }
+      private modalService: BsModalService) { }
 
   load(): void {
     this.productService.getProducts().subscribe(res => {
@@ -74,13 +73,13 @@ export class ProductComponent implements OnDestroy, OnInit, AfterViewInit {
     this.modalRef = this.modalService.show(this.editTemplate);
   }
 
-  edit(car: Product): void {
-    this.selectedProduct = car;
+  edit(product: Product): void {
+    this.selectedProduct = product;
     this.modalRef = this.modalService.show(this.editTemplate);
   }
 
-  warning(car: Product) {
-    this.selectedProduct = car;
+  warning(product: Product) {
+    this.selectedProduct = product;
     this.modalRef = this.modalService.show(this.deleteTemplate);
   }
 
@@ -88,14 +87,14 @@ export class ProductComponent implements OnDestroy, OnInit, AfterViewInit {
     if (this.selectedProduct.id != null) {
       this.productService.updateProduct(this.selectedProduct).subscribe(res => {
         if (res != null) {
-          this.messageService.success(`Successfully updated Car with ID ${res.id}`);
+          this.messageService.success(`Successfully updated Product with ID ${res.id}`);
           this.load();
         }
       });
     } else {
       this.productService.saveProduct(this.selectedProduct).subscribe(res => {
         if (res != null) {
-          this.messageService.success(`Successfully added new Car with ID ${res.id}`);
+          this.messageService.success(`Successfully added new Product with ID ${res.id}`);
           this.load();
         }
       });
@@ -105,7 +104,7 @@ export class ProductComponent implements OnDestroy, OnInit, AfterViewInit {
 
   delete(id: number): void {
     this.productService.deleteProduct(id).subscribe(_ => {
-      this.messageService.success(`Successfully deleted Car`);
+      this.messageService.success(`Successfully deleted product`);
       this.load();
     });
     this.dismiss();

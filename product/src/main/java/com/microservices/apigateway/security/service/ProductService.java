@@ -33,6 +33,8 @@ public class ProductService {
 
     public Product save(Product product) {
         product.setCreated(LocalDateTime.now());
+        product.setActive(true);
+
         return repository.save(product);
     }
 

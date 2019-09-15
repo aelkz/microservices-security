@@ -21,6 +21,11 @@ import { SidebarComponent } from './sidebar/sidebar.component';
 import { StatusComponent } from './status/status.component';
 import { KeycloakAngularModule } from 'keycloak-angular';
 import { AppInitService } from './app-init.service';
+import { JsonDatePipe } from './product/json-date.pipe';
+
+const pipes = [
+  JsonDatePipe
+];
 
 export function init(appInitService: AppInitService) {
   return () => appInitService.init();
@@ -34,7 +39,8 @@ export function init(appInitService: AppInitService) {
     HeaderComponent,
     BreadcrumbComponent,
     SidebarComponent,
-    StatusComponent
+    StatusComponent,
+    pipes
   ],
   imports: [
     BrowserModule,
@@ -55,6 +61,7 @@ export function init(appInitService: AppInitService) {
     }),
     KeycloakAngularModule
   ],
+  exports: pipes,
   providers: [
     {
       provide: APP_INITIALIZER,
