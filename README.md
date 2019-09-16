@@ -1,7 +1,7 @@
 # MICROSERVICES SECURITY
 ###### HOW TO SECURE APIs WITH RED HAT SINGLE SIGN-ON (KEYCLOAK), FUSE (CAMEL) AND 3SCALE.
 
-![security](https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/xx.png "Microservices Security")
+![security](https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/03.png "Microservices Security")
 
 <p align="center">
 
@@ -17,7 +17,7 @@
 <b>TL;DR</b> This is a demonstration on how to protect APIs managed by Keycloak and 3Scale.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/xx.png" title="Microservices Security" width="60%" height="60%" />
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/04.png" title="Microservices Security" width="60%" height="60%" />
 </p>
 
 <b>WARNING</b>: This is a proof of concept. In production environments, there will be needed adittional configurations regarding scalability and security.
