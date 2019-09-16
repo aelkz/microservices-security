@@ -10,6 +10,7 @@ public class StockConfiguration {
     private String host;
     private String port;
     private String contextPath;
+    private String statusPath;
     private String apiKeyName;
 
     public String getHost() {
@@ -42,5 +43,13 @@ public class StockConfiguration {
 
     public void setApiKeyName(String apiKeyName) {
         this.apiKeyName = apiKeyName;
+    }
+
+    public String getStatusPath() {
+        return statusPath;
+    }
+
+    public void setStatusPath(String statusPath) {
+        this.statusPath = statusPath;
     }
 }

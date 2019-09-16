@@ -45,6 +45,7 @@ public class IntegrationRestRoute extends RouteBuilder {
         // /--------------------------------------------------\
         // | Configure REST endpoint                          |
         // \--------------------------------------------------/
+
         restConfiguration()
                 .contextPath("/api/v" + apiVersion)
                 .apiContextPath("/api-docs")

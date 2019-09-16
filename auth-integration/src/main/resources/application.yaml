@@ -85,7 +85,7 @@ keycloak:
   use-resource-role-mappings: true
   security-constraints:
     - authRoles:
-        - ADMIN
+        - PRODUCT_ADMIN
       securityCollections:
         - name: CREATE
           patterns: /api/v1/product
@@ -94,17 +94,46 @@ keycloak:
           patterns: /api/v1/product/*
           methods: DELETE
         - name: PUT
-          patterns: /api/v1/product
+          patterns: /api/v1/product/*
           methods: PUT
     - authRoles:
-        - BASIC
-        - ADMIN
+        - PRODUCT_BASIC
       securityCollections:
+        - name: GET
+          patterns: /api/v1/product/*
+          methods: GET
         - name: LIST
           patterns: /api/v1/product
           methods: GET
-        - name: RETRIEVE
-          patterns: /api/v1/product/*
+    - authRoles:
+        - CHECK_PRODUCT_STATUS
+      securityCollections:
+        - name: PRODUCT_STATUS
+          patterns: /api/v1/product/status
+          methods: GET
+    - authRoles:
+        - CHECK_SUPPLIER_STATUS
+      securityCollections:
+        - name: SUPPLIER_STATUS
+          patterns: /api/v1/supplier/status
+          methods: GET
+    - authRoles:
+        - CHECK_STOCK_STATUS
+      securityCollections:
+        - name: STOCK_STATUS
+          patterns: /api/v1/stock/status
+          methods: GET
+    - authRoles:
+        - SUPPLIER_MAINTAINER
+      securityCollections:
+        - name: SUPPLIER_MAINTAINER
+          patterns: /api/v1/supplier/sync
+          methods: GET
+    - authRoles:
+        - STOCK_MAINTAINER
+      securityCollections:
+        - name: STOCK_MAINTAINER
+          patterns: /api/v1/stock/sync
           methods: GET
 
 # =============================================
@@ -122,7 +151,8 @@ product:
     auth-server-uri: https://localhost:8080/auth/
   host: localhost
   port: 8080
-  context-path: /api/v1/
+  context-path: /api/v1/product
+  status-path: /actuator/health
 
 # =============================================
 # stock api parameters
@@ -132,6 +162,7 @@ stock:
   host: localhost
   port: 8080
   context-path: /api/v1/stock
+  status-path: /actuator/health
 
 # =============================================
 # supplier api parameters
@@ -141,3 +172,4 @@ supplier:
   host: localhost
   port: 8080
   context-path: /api/v1/supplier
+  status-path: /actuator/health

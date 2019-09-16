@@ -8,7 +8,7 @@ import { IconDefinition, faSync, faEraser, faPlusCircle, faTrash } from '@fortaw
 import { BsModalService, BsModalRef } from 'ngx-bootstrap';
 
 @Component({
-  selector: 'app-table',
+  selector: 'app-product',
   templateUrl: './product.component.html',
   styleUrls: ['./product.component.css']
 })

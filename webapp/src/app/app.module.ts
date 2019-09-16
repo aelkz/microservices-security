@@ -22,6 +22,7 @@ import { StatusComponent } from './status/status.component';
 import { KeycloakAngularModule } from 'keycloak-angular';
 import { AppInitService } from './app-init.service';
 import { JsonDatePipe } from './product/json-date.pipe';
+import { MaintenanceComponent } from './maintenance/maintenance.component';
 
 const pipes = [
   JsonDatePipe
@@ -40,6 +41,7 @@ export function init(appInitService: AppInitService) {
     BreadcrumbComponent,
     SidebarComponent,
     StatusComponent,
+    MaintenanceComponent,
     pipes
   ],
   imports: [

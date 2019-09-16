@@ -1,0 +1,54 @@
+<div class="card-deck mb-3">
+  <div class="card">
+    <div class="card-header">Stock Maintenance</div>
+    <div class="card-body">
+      <div class="card-text">
+        <p>Call stock-api maintenance</p>
+        <p>ROLE: <b>STOCK_MAINTAINER</b></p>
+        <p>
+          Secured by Auth Integration API? <b>true</b><br>
+          Has it's own 3scale service? (needs additional 3scale authentication) <b>false</b><br>
+          Is managed by Keycloak? <b>false</b><br>
+        </p>
+        <button class="btn btn-lg btn-success" (click)="getStockMaintenance()" *ngIf="loadingStockMaintenanceAPI" [@fadeInOut]>
+          <fa-icon [icon]="circleIcon" class="mr-1" [spin]="true"></fa-icon>Stock Maintenance
+        </button>
+        <button class="btn btn-lg btn-success" (click)="getStockMaintenance()" *ngIf="!loadingStockMaintenanceAPI">
+          <fa-icon [icon]="cogIcon" class="mr-1"></fa-icon>Stock Maintenance
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">Supplier Maintenance</div>
+    <div class="card-body">
+      <div class="card-text">
+        <p>Call supplier-api maintenance</p>
+        <p>ROLE: <b>SUPPLIER_MAINTAINER</b></p>
+        <p>
+          Secured by Auth Integration API? <b>true</b><br>
+          Has it's own 3scale service? (needs additional 3scale authentication) <b>true</b><br>
+          Is managed by Keycloak? <b>true</b><br>
+        </p>
+        <button class="btn btn-lg btn-success" (click)="getSupplierMaintenance()" *ngIf="loadingSupplierMaintenanceAPI" [@fadeInOut]>
+          <fa-icon [icon]="circleIcon" class="mr-1" [spin]="true"></fa-icon>Supplier Maintenance
+        </button>
+        <button class="btn btn-lg btn-success" (click)="getSupplierMaintenance()" *ngIf="!loadingSupplierMaintenanceAPI">
+          <fa-icon [icon]="cogIcon" class="mr-1"></fa-icon>Supplier Maintenance
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card-deck">
+  <div class="card">
+    <div class="card-header">HTTP Response</div>
+    <div class="card-body">
+      <div class="card-text">
+        <pre>{{ status | json }}</pre>
+      </div>
+    </div>
+  </div>
+</div>

@@ -16,7 +16,7 @@
       <a class="nav-link dropdown-toggle app-no-caret" href role="button" aria-haspopup="true" aria-expanded="false" dropdownToggle (click)="(false)">
         <i class="icon-bell"></i> <span class="badge badge-pill badge-info" *ngIf="messages.length > 0">{{ messages.length }}</span>
       </a>
-      <div *dropdownMenu class="dropdown-menu dropdown-menu-right app-scrollable-menu">
+      <div *dropdownMenu class="dropdown-menu dropdown-menu-right app-scrollable-menu" [@animate]="{ value: '*', params: { opacity: '0', y: '50px', delay: '500ms' } }">
         <div class="dropdown-header text-center app-pointer" (click)="clear()"><strong class="app-underline">Clear Messages</strong></div>
         <a class="dropdown-item" *ngFor="let item of messages"> <fa-icon [icon]="item.className"></fa-icon> {{ item.text }} </a>
       </div>

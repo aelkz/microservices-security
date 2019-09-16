@@ -24,7 +24,7 @@ export class StatusService {
   }
 
   getProductHealth(): Observable<HttpResponse<Config>> {
-    return this.http.get<Config>(`${window['_env'].integration_uri}/product/health`, {observe: 'response'})
+    return this.http.get<Config>(`${window['_env'].integration_uri}${window['_env'].product_path}/status`, {observe: 'response'})
       .pipe(
         catchError(error => {
           this.messageService.error(`getProductHealth() ${error.message}`);
@@ -34,23 +34,23 @@ export class StatusService {
   }
 
   getStockHealth(): Observable<HttpResponse<Config>> {
-    return this.http.get<Config>(`${window['_env'].integration_uri}/stock/health`, {observe: 'response'})
+    return this.http.get<Config>(`${window['_env'].integration_uri}${window['_env'].stock_path}/status`, {observe: 'response'})
       .pipe(
         catchError(error => {
           this.messageService.error(`getStockHealth() ${error.message}`);
             return of(error);
-          })
+        })
       );
   }
 
   getSupplierHealth(): Observable<HttpResponse<Config>> {
-    return this.http.get<Config>(`${window['_env'].integration_uri}/supplier/health`, {observe: 'response'})
+    return this.http.get<Config>(`${window['_env'].integration_uri}${window['_env'].supplier_path}/status`, {observe: 'response'})
       .pipe(
         catchError(error => {
           this.messageService.error(`getSupplierHealth() ${error.message}`);
             return of(error);
           })
       );
-    }
+  }
 
 }

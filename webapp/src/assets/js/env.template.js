@@ -8,8 +8,8 @@
   window._env.enabled = '${KEYCLOAK}';
 
   window._env.integration_uri = '${AUTH_INTEGRATION_URI}';
-  window._env.stock_context_path = '${STOCK_CONTEXT_PATH}';
-  window._env.supplier_context_path = '${SUPPLIER_CONTEXT_PATH}';
-  window._env.product_context_path = '${PRODUCT_CONTEXT_PATH}';
+  window._env.stock_path = '${STOCK_PATH}';
+  window._env.supplier_path = '${SUPPLIER_PATH}';
+  window._env.product_path = '${PRODUCT_PATH}';
 
 })(this);
