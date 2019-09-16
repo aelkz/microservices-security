@@ -1,49 +1,57 @@
 # MICROSERVICES SECURITY
-###### HOW TO SECURE APIs WITH RED HAT SINGLE SIGN-ON, FUSE AND 3SCALE.
+###### HOW TO SECURE APIs WITH RED HAT SINGLE SIGN-ON (KEYCLOAK), FUSE (CAMEL) AND 3SCALE.
 
-![observability](https://raw.githubusercontent.com/aelkz/microservices-observability/master/_images/intro.png "Microservices Observability demo")
+![security](https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/xx.png "Microservices Security")
 
 <p align="center">
 
-| Framework       | Version              | Prometheus Metrics | Jaeger Tracing |
-| --------------- | -------------------- | ------------------ | -------------- |
-| [spring boot](https://spring.io/projects/spring-boot)     | 2.1.4.RELEASE        | enabled            | enabled        |
-| [apache camel](https://camel.apache.org/)    | [7.3.0.fuse-730058-redhat-00001](https://www.redhat.com/en/technologies/jboss-middleware/fuse)<br>(w/ spring boot 1.5.17.RELEASE) | enabled | enabled |
-| [3Scale](https://camel.apache.org/)    | [7.3.0.fuse-730058-redhat-00001](https://www.redhat.com/en/technologies/jboss-middleware/fuse)<br>(w/ spring boot 1.5.17.RELEASE) | enabled | enabled |
-| [RHSSO](https://camel.apache.org/)    | [7.3.0.fuse-730058-redhat-00001](https://www.redhat.com/en/technologies/jboss-middleware/fuse)<br>(w/ spring boot 1.5.17.RELEASE) | enabled | enabled |
+| Technology       | Version             |
+| --------------- | -------------------- |
+| [spring boot](https://spring.io/projects/spring-boot)     | 2.1.4.RELEASE        |
+| [apache camel](https://camel.apache.org/)    | [7.3.0.fuse-730058-redhat-00001](https://www.redhat.com/en/technologies/jboss-middleware/fuse)<br>(w/ spring boot 1.5.17.RELEASE) |
+| [3Scale](https://camel.apache.org/)    |  |
+| [RHSSO](https://camel.apache.org/)    | [7.3.0.fuse-730058-redhat-00001](https://www.redhat.com/en/technologies/jboss-middleware/fuse)<br>(w/ spring boot 1.5.17.RELEASE) |
 
 </p>
 
-<b>TL;DR</b> This is a demonstration on how to observe, trace and monitor microservices.
-
-According to microservices architecture and modern systems design, there are [5 observability patterns](https://microservices.io/i/PatternsRelatedToMicroservices.jpg) that help us to achieve the best in terms of monitoring distributed systems. They are the foundation to all who want to build reliable cloud applications. This tutorial will dive into domain-oriented observability, monitoring, instrumentation and tracing in a business centered approach with a practical view using open-source projects sustained by the cloud native computing foundation ([CNCF](https://www.cncf.io)).
+<b>TL;DR</b> This is a demonstration on how to protect APIs managed by Keycloak and 3Scale.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-observability/master/_images/patterns.png" title="Observability Patterns" width="60%" height="60%" />
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/xx.png" title="Microservices Security" width="60%" height="60%" />
 </p>
 
-<b>WARNING</b>: This is not an production application! It will not integrate with any polar API or device. This project was built in order to demonstrate concepts regarding observability patterns for microservices architecture.  The main goal is to demonstrate how to monitor, instrument and trace microservices accross the network with different technologies.
+<b>WARNING</b>: This is a proof of concept. In production environments, there will be needed adittional configurations regarding scalability and security.
 
-<b>The use-case scenario:</b><br>
-Almost everyone has a [sports watch](https://www.bestproducts.com/fitness/equipment/g318/sports-watches-for-workouts) or a smart watch. The user synchronize an activity log after a training session. It could be a ordinary training session or a running session (w/ specific running data added).
-The API collects the training session data and propagates through the wire to different 3rd party "example" applications like strava and google calendar.
-All data is received and/or enriched to specific 3rd party APIs.<br>All the communication is traced using [OpenTracing API](https://opentracing.io) and we can also collect custom metrics in the `polar-flow-api` like:
+<b>The use-case scenario:</b>
+The main proposal is achieve some concepts regarding security and microservices using a simple use-case scenario. A webapp is offered to promote easier understanding showing all use-case scenarios:
 
-### `polar-flow-api` primary endpoints
+
+All APIs catalog is showed bellow:
+
+### `auth-integration-api` endpoints
 
 | method | URI | description |
 | ------ | --- | ---------- |
-| POST   |/v1/sync         | sync polar application data across 3rd party software |
 | GET    |/actuator/prometheus | Prometheus metrics export (will expose all custom metrics also) |
-| GET    |/actuator/metrics/activity.count | total activities |
-| GET    |/actuator/metrics/running.count | total running activities |
+| POST   |/api/v1/product      | sync polar application data across 3rd party software |
 
-### `*-integration-api` (FUSE) endpoints
+### `stock-api` endpoints
 
 | method | URI | description |
 | ------ | --- | ---------- |
-| GET    |8081:/metrics | Default metrics export (will expose all custom metrics also) |
-| GET    |8081:/prometheus | Prometheus metrics export (will expose all custom metrics also) |
+| GET    |/actuator/prometheus | Prometheus metrics export (will expose all custom metrics 
+
+### `supplier-api` endpoints
+
+| method | URI | description |
+| ------ | --- | ---------- |
+| GET    |/actuator/prometheus | Prometheus metrics export (will expose all custom metrics 
+
+### `product-api` endpoints
+
+| method | URI | description |
+| ------ | --- | ---------- |
+| GET    |/actuator/prometheus | Prometheus metrics export (will expose all custom metrics 
 
 ### `SECURITY LAB: STEP 1 - PROJECT CREATION`
 
@@ -108,11 +116,6 @@ oc patch svc polar-flow-api -p '{"spec":{"ports":[{"name":"http","port":8080,"pr
 oc label svc polar-flow-api monitor=springboot2-api
 ```
 
-The API can now be discoverable throught Prometheus scrape process, showing it’s state as `UP`:<br>
-<p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-observability/master/_images/prometheus/15.png" title="Prometheus - step 13" width="60%" height="60%" />
-</p>
-
 ```sh
 oc expose svc/polar-flow-api -n ${current_project}
 
@@ -176,8 +179,6 @@ rm -fr application.yaml
 # repeat the initial steps of this tutorial on how to create a prometheus service monitor. Use the following definition to scrape FUSE based application metrics:
 ```
 
-<img src="https://raw.githubusercontent.com/aelkz/microservices-observability/master/\_images/prometheus/16.png" title="Prometheus - step 13" width="40%" height="40%" /><img src="https://raw.githubusercontent.com/aelkz/microservices-observability/master/_images/prometheus/06.png" title="Prometheus - step 09.1" width="10%" height="10%" /><br>
-
 ```sh
 # now, we change the medical-integration-api svc to enable prometheus scraping.
 
@@ -190,14 +191,6 @@ oc label svc medical-integration-api-metrics monitor=fuse73-api
 
 # if you quick navigate to prometheus console, you'll see the FUSE target being loaded state=UNKNOWN and then becoming with state=UP:
 ```
-
-<p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-observability/master/\_images/prometheus/17.png" title="Prometheus - step 13" width="60%" height="60%" />
-</p>
-<br>
-<p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-observability/master/\_images/prometheus/18.png" title="Prometheus - step 13" width="60%" height="60%" />
-</p>
 
 ```sh
 # If you want to validate pod communication, go to polar-flow-api terminal and issue:
@@ -218,3 +211,4 @@ http://jwt.io
 Thanks for reading and taking the time to comment!<br>
 Feel free to create a <b>PR</b><br>
 [raphael abreu](rabreu@redhat.com)
+
