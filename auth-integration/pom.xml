@@ -17,7 +17,7 @@
     <description>auth integration api</description>
 
     <properties>
-        <springboot.version>1.5.17.RELEASE</springboot.version>
+        <springboot.version>1.5.22.RELEASE</springboot.version>
         <main.basedir>${basedir}/../..</main.basedir>
     </properties>
 

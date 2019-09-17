@@ -7,17 +7,17 @@
 
 | Technology       | Version             |
 | --------------- | -------------------- |
-| [spring boot](https://spring.io/projects/spring-boot)     | 2.1.4.RELEASE        |
-| [apache camel](https://camel.apache.org/)    | [7.3.0.fuse-730058-redhat-00001](https://www.redhat.com/en/technologies/jboss-middleware/fuse)<br>(w/ spring boot 1.5.17.RELEASE) |
-| [3Scale](https://camel.apache.org/)    |  |
-| [RHSSO](https://camel.apache.org/)    | [7.3.0.fuse-730058-redhat-00001](https://www.redhat.com/en/technologies/jboss-middleware/fuse)<br>(w/ spring boot 1.5.17.RELEASE) |
+| [spring boot](https://spring.io/projects/spring-boot)     | 2.1.8.RELEASE        |
+| [apache camel](https://camel.apache.org/)    | [7.4.0.fuse-740036-redhat-00002](https://www.redhat.com/en/technologies/jboss-middleware/fuse)<br>(w/ spring boot 1.5.22.RELEASE) |
+| [3Scale](https://www.3scale.net)    |  [2.6](https://access.redhat.com/containers/#/product/RedHat3scaleApiManagement) |
+| [Red Hat Single Sign-On](https://access.redhat.com/products/red-hat-single-sign-on)    | [7.3.3](https://access.redhat.com/containers/#/product/RedHatSingleSign-on)<br>(based on [keycloak 4.8](https://access.redhat.com/articles/2342881)) |
 
 </p>
 
 <b>TL;DR</b> This is a demonstration on how to protect APIs managed by Keycloak and 3Scale.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/04.png" title="Microservices Security" width="40%" height="40%" />
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/04.png" title="Microservices Security" width="60%" height="60%" />
 </p>
 
 <b>WARNING</b>: This is a proof of concept. In production environments, there will be needed adittional configurations regarding scalability and security.
@@ -52,6 +52,20 @@ All APIs catalog is showed bellow:
 | method | URI | description |
 | ------ | --- | ---------- |
 | GET    |/actuator/prometheus | Prometheus metrics export (will expose all custom metrics 
+
+Each endpoint has it's own specifity, so in order to drive our test scenarios, I've ended up with 3 simple questions:
+
+1. This API will be protected by an Integration Layer (FUSE)?
+2. This API will be exposed as a unique service on 3Scale AMP?
+3. This API will be managed by Keycloak having it's own client-id, groups and roles?
+
+This lead me to draw this requirements matrix:
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/05.png" title="APIs Requirements" width="85%" height="85%" />
+</p>
+
+As we can see, each API has some differences, and we will strive to demonstrate each one in this tutorial.
 
 ### `SECURITY LAB: STEP 1 - PROJECT CREATION`
 
@@ -211,4 +225,3 @@ http://jwt.io
 Thanks for reading and taking the time to comment!<br>
 Feel free to create a <b>PR</b><br>
 [raphael abreu](rabreu@redhat.com)
-
