@@ -15,7 +15,6 @@
         <module>stock</module>
         <module>auth-integration</module>
         <module>auth-sso-common</module>
-        <module>auth-bundle</module>
     </modules>
 
     <distributionManagement>
@@ -34,10 +33,10 @@
         <thorntail.version>2.4.0.Final</thorntail.version>
         <spring.cloud.version>Greenwich.SR1</spring.cloud.version>
         <vertx.version>3.6.3.redhat-00009</vertx.version>
-        <fuse.bom.version>7.3.0.fuse-730058-redhat-00001</fuse.bom.version>
         <!--
-        <fuse.bom.version>7.4.0.fuse-740036-redhat-00002</fuse.bom.version>
+        <fuse.bom.version>7.3.0.fuse-730058-redhat-00001</fuse.bom.version>
         -->
+        <fuse.bom.version>7.4.0.fuse-740036-redhat-00002</fuse.bom.version>
         <keycloak.bom.version>3.4.12.Final-redhat-2</keycloak.bom.version>
         <!-- -->
         <httpclient.version>4.5.2.redhat-2</httpclient.version>

@@ -12,7 +12,7 @@
     <artifactId>stock</artifactId>
 
     <properties>
-        <springboot.version>2.1.4.RELEASE</springboot.version>
+        <springboot.version>2.1.8.RELEASE</springboot.version>
         <main.basedir>${basedir}/../..</main.basedir>
     </properties>
 
