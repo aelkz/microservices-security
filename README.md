@@ -17,7 +17,7 @@
 <b>TL;DR</b> This is a demonstration on how to protect APIs managed by Keycloak and 3Scale.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/04.png" title="Microservices Security" width="60%" height="60%" />
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/04.png" title="Microservices Security" width="40%" height="40%" />
 </p>
 
 <b>WARNING</b>: This is a proof of concept. In production environments, there will be needed adittional configurations regarding scalability and security.
@@ -30,28 +30,41 @@ All APIs catalog is showed bellow:
 
 ### `auth-integration-api` endpoints
 
-| method | URI | description |
-| ------ | --- | ---------- |
-| GET    |/actuator/prometheus | Prometheus metrics export (will expose all custom metrics also) |
-| POST   |/api/v1/product      | sync polar application data across 3rd party software |
+| Method | URI | Description | Secured? |
+| ------ | --- | ----------- | -------- | 
+| GET    |/actuator/health | API actuator embedded health | false |
+| POST   |/api/v1/product  | Create new product | true |
+| DELETE |/api/v1/product/{id}  | Delete product by Id | true |
+| PUT   |/api/v1/product/{id}  | Update product by Id | true |
+| GET   |/api/v1/product/{id}  | Retrieve product by Id | true |
+| GET   |/api/v1/product  | Retrieve all products | true |
+| GET   |/api/v1/product/status  | Check Product API health | true |
+| GET   |/api/v1/supplier/status  | Check Supplier API health | true |
+| GET   |/api/v1/stock/status  | Check Stock API health | true |
+| GET   |/api/v1/supplier/sync  | Call the Supplier Maintenance API | true |
+| GET   |/api/v1/stock/sync  | Call the Stock Maintenance API | true |
 
 ### `stock-api` endpoints
 
-| method | URI | description |
-| ------ | --- | ---------- |
-| GET    |/actuator/prometheus | Prometheus metrics export (will expose all custom metrics 
+| Method | URI | Description | Secured? |
+| ------ | --- | ----------- | -------- |
+| GET    |/api/v1/sync | Stock Maintenance | false |
 
 ### `supplier-api` endpoints
 
-| method | URI | description |
-| ------ | --- | ---------- |
-| GET    |/actuator/prometheus | Prometheus metrics export (will expose all custom metrics 
+| Method | URI | Description | Secured? |
+| ------ | --- | ----------- | -------- |
+| GET    |/api/v1/sync | Supplier Maintenance | true | 
 
 ### `product-api` endpoints
 
-| method | URI | description |
-| ------ | --- | ---------- |
-| GET    |/actuator/prometheus | Prometheus metrics export (will expose all custom metrics 
+| Method | URI | Description | Secured? |
+| ------ | --- | ----------- | -------- |
+| GET    |/api/v1/products | Retrieve all products | true |
+| GET    |/api/v1/product/{id} | Retrieve product by Id | true |
+| POST   |/api/v1/product | Create new product | true |
+| PUT    |/api/v1/product/{id} | Update product by Id | true |
+| DELETE |/api/v1/product/{id} | Delete product by Id | true |
 
 Each endpoint has it's own specifity, so in order to drive our test scenarios, I've ended up with 3 simple questions:
 
@@ -62,7 +75,7 @@ Each endpoint has it's own specifity, so in order to drive our test scenarios, I
 This lead me to draw this requirements matrix:
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/05.png" title="APIs Requirements" width="85%" height="85%" />
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/05.png" title="APIs Requirements" width="100%" height="100%" />
 </p>
 
 As we can see, each API has some differences, and we will strive to demonstrate each one in this tutorial.
