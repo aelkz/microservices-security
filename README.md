@@ -26,7 +26,7 @@
 The main proposal is achieve some concepts regarding security and microservices using a simple use-case scenario. A webapp is offered to promote easier understanding showing all use-case scenarios:
 
 
-All APIs catalog is showed bellow:
+All APIs catalog is exposed bellow:
 
 ### `auth-integration-api` endpoints
 
