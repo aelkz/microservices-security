@@ -409,7 +409,7 @@ Navigate through the `Audience` menu and under `Accounts/Listing` <img src="http
 Create a new account with your credentials for this demo:
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/26.png" title="3Scale admin portal - New Account" width="60%" height="60%" />
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/26.png" title="3Scale admin portal - New Account" width="40%" height="40%" />
 </p>
 
 This action will create for you a new 3Scale `application` for some APIs. If the application couldn't be created, just hit the <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/27.png" title="3Scale admin portal - New Application" width="20%" height="20%" /> link.
