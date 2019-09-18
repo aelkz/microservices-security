@@ -280,7 +280,7 @@ Also, set a new password for this user on `Credentials` tab with `temporary=fals
 To <b>fix</b> this, you can proceed with the self-signed certificate configuration:
 ```sh
 export THREESCALE_NAMESPACE=3scale26
-export THREESCALE_ZYNC_QUE_POD=zync-que-2-mlrh2
+export THREESCALE_ZYNC_QUE_POD=$(oc get pods --selector deploymentconfig=zync-que -n 3scale26 | { read line1 ; read line2 ; echo "$line2" ; } | awk '{print $1;}')
 export RHSSO_URI=sso73.apps.<YOUR-DOMAIN>.com
 
 echo | openssl s_client -showcerts -servername ${RHSSO_URI} -connect ${RHSSO_URI}:443 2>/dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > self-signed-cert.pem
@@ -384,10 +384,9 @@ Let's the define the APIs `Application Plans`. These plans will be used upon cli
 <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/21.png" title="3Scale admin portal - Application Plans" width="60%" height="60%" />
 </p>
 
-Click on `Create Application Plan` link under `Applications/Application Plans` menu.
+Click on <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/23.png" title="3Scale admin portal - New Application Plan" width="20%" height="20%" /> link under `Applications/Application Plans` menu.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/23.png" title="3Scale admin portal - New Application Plan" width="25%" height="25%" /><br>
 Set the following configuration:<br>
 <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/22.png" title="3Scale admin portal - New Application Plan" width="40%" height="40%" />
 </p>
@@ -404,7 +403,7 @@ After you have done all previous steps, you'll get something like this:
 
 ### `SECURITY LAB: STEP 13 - 3SCALE MICROSERVICES APPLICATION`
 
-Navigate through the `Audience` menu and under `Accounts/Listing` <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/25.png" title="3Scale admin portal - New Account" width="10%" height="10%" /> a new account.
+Navigate through the `Audience` menu and under `Accounts/Listing` <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/25.png" title="3Scale admin portal - New Account" width="7%" height="7%" /> a new account.
 
 Create a new account with your credentials for this demo:
 
@@ -424,6 +423,47 @@ The `Application` will be created for use with the `auth-integration-api`. A cli
 <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/29.png" title="RHSSO - New Application" width="70%" height="70%" />
 </p>
 
+### `SECURITY LAB: STEP 14 - NODEJS WEB APPLICATION DEPLOYMENT`
+
+In this step, we will be testing all scenarious with a suited NodeJS webapp based on Angular and Bootstrap. This application was designed to test all authorization scenarios and to easy the understandind process showing the concepts for this tutorial.
+
+```sh
+# Deploy nodejs-web application
+# https://access.redhat.com/containers/#/registry.access.redhat.com/rhscl/nodejs-8-rhel7
+
+oc import-image rhscl/nodejs-8-rhel7 --from=registry.redhat.io/rhscl/nodejs-8-rhel7 -n openshift --confirm
+
+export APIS_NAMESPACE=microservices-security
+export THREESCALE_NAMESPACE=3scale26
+export RHSSO_NAMESPACE=sso73
+export RHSSO_URL=https://$(oc get route -n ${RHSSO_NAMESPACE} | grep secured | awk '{print $2;}')/auth
+export THREESCALE_APP_DOMAIN=arekkusu.io
+export THREESCALE_API_URL=https://$(oc get routes -n ${THREESCALE_NAMESPACE} | grep auth-integration | grep production | awk '{print $2;}')
+export INTEGRATION_HEALTH_URL=https://$(oc get routes -n ${APIS_NAMESPACE} | grep auth-integration | grep metrics | awk '{print $2;}')
+
+echo -e \
+" PORT=4200\n" \
+"AUTH_URL=${RHSSO_URL}\n" \
+"AUTH_REALM=3scale-api\n" \
+"AUTH_CLIENT_ID=nodejs-web\n" \
+"KEYCLOAK=true\n" \
+"INTEGRATION_URI=${THREESCALE_API_URL}\n" \
+"INTEGRATION_HEALTH_URI=${INTEGRATION_HEALTH_URL}\n" \
+"PRODUCT_PATH=/product\n" \
+"STOCK_PATH=/stock\n" \
+"SUPPLIER_PATH=/supplier\n" \
+> temp
+
+sed "s/^.//g" temp >> nodejs-config.properties
+
+# oc delete all -lapp=nodejs-web
+oc new-app nodejs-8-rhel7:latest~https://github.com/aelkz/microservices-security.git --name=nodejs-web --context-dir=/webapp
+
+oc create configmap nodejs-config --from-file=nodejs-config.properties
+oc set env --from=configmap/nodejs-config dc/nodejs-web
+oc create route edge --service=nodejs-app --cert=server.cert --key=server.key
+```
+
 ### `EXTERNAL REFERENCES`
 
 API Key Generator
@@ -437,5 +477,3 @@ https://openidconnect.net
 Thanks for reading and taking the time to comment!<br>
 Feel free to create a <b>PR</b><br>
 [raphael abreu](rabreu@redhat.com)
-
-

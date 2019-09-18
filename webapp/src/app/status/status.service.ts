@@ -9,11 +9,15 @@ import {Config} from 'codelyzer';
   providedIn: 'root'
 })
 export class StatusService {
+    private integrationAPI = window['_env'].integration_uri + '/api/v1';
+    private healthAPI = window['_env'].integration_health_uri;
+
+    jsonType = 'application/json';
 
   constructor(private messageService: MessageService, private http: HttpClient) { }
 
   getAuthIntegrationHealth(): Observable<HttpResponse<Config>> {
-    return this.http.get<Config>(`${window['_env'].integration_uri}/actuator/health`, {observe: 'response'})
+    return this.http.get<Config>(`${this.healthAPI}/health`, {observe: 'response'})
       .pipe(
         catchError(error => {
           console.log(error);
@@ -24,7 +28,7 @@ export class StatusService {
   }
 
   getProductHealth(): Observable<HttpResponse<Config>> {
-    return this.http.get<Config>(`${window['_env'].integration_uri}${window['_env'].product_path}/status`, {observe: 'response'})
+    return this.http.get<Config>(`${this.integrationAPI}${window['_env'].product_path}/status`, {observe: 'response'})
       .pipe(
         catchError(error => {
           this.messageService.error(`getProductHealth() ${error.message}`);
@@ -34,7 +38,7 @@ export class StatusService {
   }
 
   getStockHealth(): Observable<HttpResponse<Config>> {
-    return this.http.get<Config>(`${window['_env'].integration_uri}${window['_env'].stock_path}/status`, {observe: 'response'})
+    return this.http.get<Config>(`${this.integrationAPI}${window['_env'].stock_path}/status`, {observe: 'response'})
       .pipe(
         catchError(error => {
           this.messageService.error(`getStockHealth() ${error.message}`);
@@ -44,7 +48,7 @@ export class StatusService {
   }
 
   getSupplierHealth(): Observable<HttpResponse<Config>> {
-    return this.http.get<Config>(`${window['_env'].integration_uri}${window['_env'].supplier_path}/status`, {observe: 'response'})
+    return this.http.get<Config>(`${this.integrationAPI}${window['_env'].supplier_path}/status`, {observe: 'response'})
       .pipe(
         catchError(error => {
           this.messageService.error(`getSupplierHealth() ${error.message}`);
