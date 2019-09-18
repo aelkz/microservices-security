@@ -317,19 +317,19 @@ Let's setup the `auth-integration-api` and the `supplier-api`.
 Create a new API on 3Scale admin portal. You can hit the `NEW API` link on the main dashboard.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/12.png" title="3Scale admin portal - New API" width="15%" height="15%" />
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/12.png" title="3Scale admin portal - New API" width="10%" height="10%" />
 </p>
 
 This new API will represent the `auth-integration-api`, previously deployed.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/11.png" title="3Scale admin portal - auth-integration-api" width="50%" height="50%" />
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/11.png" title="3Scale admin portal - auth-integration-api" width="70%" height="70%" />
 </p>
 
 Then, navigate through the `Configuration` menu under `Integration`, to setup the API mappings and security.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/13.png" title="3Scale admin portal - auth-integration-api configuration" width="70%" height="70%" />
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/13.png" title="3Scale admin portal - auth-integration-api configuration" width="85%" height="85%" />
 </p>
 
 Choose `APICast` for the gateway and `OpenID Connect` in Integration Settings,
@@ -345,10 +345,10 @@ Then click on <img src="https://raw.githubusercontent.com/aelkz/microservices-se
 Next, define the `Private Base URL` that is, your auth-integration-api URL and the `staging` and `production` URLs:
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/17.png" title="3Scale admin portal - auth-integration-api configuration" width="50%" height="50%" />
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/17.png" title="3Scale admin portal - auth-integration-api configuration" width="70%" height="70%" />
 </p>
 
-<b>NOTE</b>. Set your correct domain under each URL that will be your public address for Openshift.
+<b>NOTE</b>. Set your correct domain under each URL (that will be your public address for Openshift).
 
 ### `EXTERNAL REFERENCES`
 
@@ -363,4 +363,3 @@ https://openidconnect.net
 Thanks for reading and taking the time to comment!<br>
 Feel free to create a <b>PR</b><br>
 [raphael abreu](rabreu@redhat.com)
-
