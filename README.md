@@ -311,33 +311,36 @@ oc set env dc/zync-que SSL_CERT_FILE=/etc/pki/tls/zync-que/zync-que.pem -n ${THR
 ```
 
 ### `SECURITY LAB: STEP 11 - 3SCALE MICROSERVICES CONFIGURATION`
-Now that all 4 APIs are alive and kicking, let's setup the auth-integration-api and the supplier-api.
+In this step we will register the APIs and configure them to enable 3Scale automatic synchronization with RHSSO.
+Let's setup the `auth-integration-api` and the `supplier-api`.
 
 Create a new API on 3Scale admin portal. You can hit the `NEW API` link on the main dashboard.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/12.png" title="3Scale admin portal - New API" width="20%" height="20%" />
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/12.png" title="3Scale admin portal - New API" width="15%" height="15%" />
 </p>
 
-This new API will represent the auth-integration-api, previously deployed.
+This new API will represent the `auth-integration-api`, previously deployed.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/11.png" title="3Scale admin portal - auth-integration-api" width="35%" height="35%" />
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/11.png" title="3Scale admin portal - auth-integration-api" width="50%" height="50%" />
 </p>
 
 Then, navigate through the `Configuration` menu under `Integration`, to setup the API mappings and security.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/13.png" title="3Scale admin portal - auth-integration-api configuration" width="50%" height="50%" />
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/13.png" title="3Scale admin portal - auth-integration-api configuration" width="70%" height="70%" />
 </p>
 
-Choose `APICast` for the gateway and `OpenID Connect` for Integration Settings,
+Choose `APICast` for the gateway and `OpenID Connect` in Integration Settings,
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/14.png" title="APICast Gateway" width="20%" height="20%" />&nbsp;&nbsp;&nbsp;<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/15.png" title="OpenID Connect" width="20%" height="20%" />
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/14.png" title="APICast Gateway" width="30%" height="30%" />&nbsp;&nbsp;&nbsp;<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/15.png" title="OpenID Connect" width="30%" height="30%" />
 </p>
 
-Then click on <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/16.png" title="button: add the base URL of your API and save the configuration" width="30%" height="30%" />
+<b>NOTE</b>. The OpenID Connection is used because we will protect our API with OAuth2 capabilities provided by RHSSO.
+
+Then click on <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/16.png" title="button: add the base URL of your API and save the configuration" width="35%" height="35%" />
 
 Next, define the `Private Base URL` that is, your auth-integration-api URL and the `staging` and `production` URLs:
 
@@ -346,8 +349,6 @@ Next, define the `Private Base URL` that is, your auth-integration-api URL and t
 </p>
 
 <b>NOTE</b>. Set your correct domain under each URL that will be your public address for Openshift.
-
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/16.png" title="button: add the base URL of your API and save the configuration" width="30%" height="30%" />
 
 ### `EXTERNAL REFERENCES`
 
