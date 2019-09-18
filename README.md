@@ -189,7 +189,7 @@ mvn clean package deploy -DnexusReleaseRepoUrl=$MAVEN_URL_RELEASES -DnexusSnapsh
 
 This will create the following artifact on Nexus:
 <p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/06.png" title="auth-sso-common artifact on nexus" width="60%" height="60%" />
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/06.png" title="auth-sso-common artifact on nexus" width="35%" height="35%" />
 </p>
 
 ### `SECURITY LAB: STEP 9 - INTEGRATION DEPLOYMENT (FUSE)`
@@ -240,7 +240,7 @@ Now that all APIs are alive and kicking, let's define some configurations on RHS
 
 ```sh
 1. Login into RHSSO
-2. Create 3 realms:
+2. Create 3 realms with default settings:
   - 3scale-api
   - 3scale-admin
   - 3scale-devportal
@@ -248,20 +248,21 @@ Now that all APIs are alive and kicking, let's define some configurations on RHS
 
 After creating the realms, you'll have this:
 <p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/07.png" title="RHSSO realms" width="60%" height="60%" />
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/07.png" title="RHSSO realms" width="30%" height="30%" />
 </p>
 
-On 3scale-api realm, create a client `3scale` with the following definition:
+On `3scale-api` realm, create a client `3scale` with the following definition:
 <p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/08.png" title="realm:3scale-api client:3scale" width="60%" height="60%" />
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/08.png" title="realm:3scale-api client:3scale" width="40%" height="40%" />
 </p>
+
 Leave blank the fields: `root URL` , `base URL` and `admin URL`.
 
-On `Service Account Roles` tab, assign the role `manage-clients` from `realm-management`.
-Copy the client-secret that was genereated for this client.
+On `Service Account Roles` tab, assign the role `manage-clients` from `realm-management`.<br>
+Copy the `client-secret` that was genereated for this client.
 
 It will be something like:<br>
-823b6ek5-1936-42e6-1135-d48rt3a1f632
+`823b6ek5-1936-42e6-1135-d48rt3a1f632`
 
 Under the realm `3scale-api` create a new user with the following definition:
 <p align="center">
