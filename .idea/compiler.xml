@@ -7,10 +7,10 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="auth-integration" />
+        <module name="supplier" />
         <module name="product" />
         <module name="auth-sso-common" />
         <module name="stock" />
-        <module name="supplier" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

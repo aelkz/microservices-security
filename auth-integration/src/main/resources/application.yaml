@@ -79,9 +79,9 @@ keycloak:
   ssl-required: external
   realm: microservices
   resource: fuse-auth-integration-api
-  auth-server-url: https://test.com/auth
+  auth-server-url: https://secure-sso.apps.arekkusu.io/auth
   credentials:
-    secret: 123
+    secret: 'xxxxx'
   use-resource-role-mappings: true
   security-constraints:
     - authRoles:
@@ -150,7 +150,7 @@ product:
     secret: xxxxx
     auth-server-uri: https://localhost:8080/auth/
   host: localhost
-  port: 8080
+  port: 8070
   context-path: /api/v1/product
   status-path: /actuator/health
 
