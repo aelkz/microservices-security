@@ -11,7 +11,7 @@ logging:
 # contextPath: /api/v${api.version}/*
 server:
   address: 0.0.0.0
-  port: 8080
+  port: 8070
 
 # =============================================
 # spring configurations
@@ -82,16 +82,3 @@ opentracing:
 jaeger.tracer:
   host: jaeger-agent.microservices.svc
   port: 6831
-
-# =============================================
-# google api parameters
-# ---------------------------------------------
-# http://localhost:8070/api/v1/event
-integration:
-  social:
-    app1:
-      host: social-integration-api.microservices.svc.cluster.local
-      port: 8080
-      path: /api/v1/social/strava
-      apiKey: Strava-API-User-Key
-
