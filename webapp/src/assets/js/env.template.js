@@ -3,11 +3,12 @@
   window._env = window._env || {};
 
   window._env.url = '${AUTH_URL}';
-  window._env.realm = 'microservices';
-  window._env.clientId = 'nodejs-web';
+  window._env.realm = '${AUTH_REALM}';
+  window._env.clientId = '${AUTH_CLIENT_ID}';
   window._env.enabled = '${KEYCLOAK}';
 
-  window._env.integration_uri = '${AUTH_INTEGRATION_URI}';
+  window._env.integration_uri = '${INTEGRATION_URI}';
+  window._env.integration_health_uri = '${INTEGRATION_HEALTH_URI}';
   window._env.stock_path = '${STOCK_PATH}';
   window._env.supplier_path = '${SUPPLIER_PATH}';
   window._env.product_path = '${PRODUCT_PATH}';
