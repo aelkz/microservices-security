@@ -49,8 +49,8 @@ All APIs catalog is exposed bellow:
 | GET   |/api/v1/product/status  | Check Product API health | true |
 | GET   |/api/v1/supplier/status  | Check Supplier API health | true |
 | GET   |/api/v1/stock/status  | Check Stock API health | true |
-| GET   |/api/v1/supplier/sync  | Call the Supplier Maintenance API | true |
-| GET   |/api/v1/stock/sync  | Call the Stock Maintenance API | true |
+| GET   |/api/v1/supplier/update  | Call the Supplier Maintenance API | true |
+| GET   |/api/v1/stock/update  | Call the Stock Maintenance API | true |
 
 ### `stock-api` endpoints
 
@@ -248,7 +248,7 @@ Now that all APIs are alive and kicking, let's define some configurations on RHS
 
 After creating the realms, you'll have this:
 <p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/07.png" title="RHSSO realms" width="30%" height="30%" />
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/07.png" title="RHSSO realms" width="20%" height="20%" />
 </p>
 
 On `3scale-api` realm, create a client `3scale` with the following definition:
@@ -258,10 +258,10 @@ On `3scale-api` realm, create a client `3scale` with the following definition:
 
 Leave blank the fields: `root URL` , `base URL` and `admin URL`.
 
-On `Service Account Roles` tab, assign the role `manage-clients` from `realm-management`.<br>
-Copy the `client-secret` that was genereated for this client.
+On `Service Account Roles` tab, assign the role `manage-clients` from `realm-management`.
 
-It will be something like:<br>
+Copy the `client-secret` that was genereated for this client.
+It will be something like:
 `823b6ek5-1936-42e6-1135-d48rt3a1f632`
 
 Under the realm `3scale-api` create a new user with the following definition:
@@ -269,11 +269,11 @@ Under the realm `3scale-api` create a new user with the following definition:
 <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/09.png" title="realm:3scale-api user:john" width="60%" height="60%" />
 </p>
 
+Also, set a new password for this user on `Credentials` tab with `temporary=false` and set to `true` the `Email Verified` on `Details` tab.
+
 <p align="center">
 <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/10.png" title="realm:3scale-api user:john" width="40%" height="40%" />
 </p>
-
-Also, set a new password for this user on `Credentials` tab with `temporary=false` and set to `true` the `Email Verified` on `Details` tab.
 
 <b>Troublehsooting</b>: After creating the API definition on 3Scale, check if the generated client was created into 3scale-api realm on RHSSO. If you're using a self-signed certificate, you'll need to make additional configurations in order to enable the zync-que 3Scale application synchronizes correctly. Please refer to the [Documentation: Troubleshooting SSL issues](https://access.redhat.com/documentation/en-us/red_hat_3scale_api_management/2.6/html-single/operating_3scale/index#troubleshooting_ssl_issues) and [Configure Zync to use custom CA certificates](https://access.redhat.com/documentation/en-us/red_hat_3scale_api_management/2.4/html-single/api_authentication/index#zync-oidc-integration)
 
@@ -310,12 +310,44 @@ oc set env dc/zync-que SSL_CERT_FILE=/etc/pki/tls/zync-que/zync-que.pem -n ${THR
 # Voila! You have the 3Scale in sync with RHSSO.
 ```
 
+### `SECURITY LAB: STEP 11 - 3SCALE MICROSERVICES CONFIGURATION`
+Now that all 4 APIs are alive and kicking, let's setup the auth-integration-api and the supplier-api.
 
+Create a new API on 3Scale admin portal. You can hit the `NEW API` link on the main dashboard.
 
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/12.png" title="3Scale admin portal - New API" width="20%" height="20%" />
+</p>
 
-### `SECURITY LAB: STEP 11 - 3SCALE MICROSERVICES CONFIGURAITON`
-Now that all APIs are alive and kicking, let's define some configuration on RHSSO to enable 3Scale automatic synchronization.
+This new API will represent the auth-integration-api, previously deployed.
 
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/11.png" title="3Scale admin portal - auth-integration-api" width="35%" height="35%" />
+</p>
+
+Then, navigate through the `Configuration` menu under `Integration`, to setup the API mappings and security.
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/13.png" title="3Scale admin portal - auth-integration-api configuration" width="50%" height="50%" />
+</p>
+
+Choose `APICast` for the gateway and `OpenID Connect` for Integration Settings,
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/14.png" title="APICast Gateway" width="20%" height="20%" />&nbsp;&nbsp;&nbsp;<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/15.png" title="OpenID Connect" width="20%" height="20%" />
+</p>
+
+Then click on <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/16.png" title="button: add the base URL of your API and save the configuration" width="30%" height="30%" />
+
+Next, define the `Private Base URL` that is, your auth-integration-api URL and the `staging` and `production` URLs:
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/17.png" title="3Scale admin portal - auth-integration-api configuration" width="50%" height="50%" />
+</p>
+
+<b>NOTE</b>. Set your correct domain under each URL that will be your public address for Openshift.
+
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/16.png" title="button: add the base URL of your API and save the configuration" width="30%" height="30%" />
 
 ### `EXTERNAL REFERENCES`
 
@@ -330,3 +362,4 @@ https://openidconnect.net
 Thanks for reading and taking the time to comment!<br>
 Feel free to create a <b>PR</b><br>
 [raphael abreu](rabreu@redhat.com)
+
