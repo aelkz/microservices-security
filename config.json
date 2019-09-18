@@ -1,7 +1,0 @@
-{
-        "auths": {
-                "registry.redhat.io": {
-                        "auth": "cmFicmV1LXJlZGhhdC1rY3MuY29tOitSMWRIdHomYTMybHghbw=="
-                }
-        }
-}
