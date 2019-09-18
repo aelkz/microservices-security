@@ -77,11 +77,11 @@ jaeger.tracer:
 
 keycloak:
   ssl-required: external
-  realm: microservices
-  resource: fuse-auth-integration-api
-  auth-server-url: https://secure-sso.apps.arekkusu.io/auth
+  realm: 3scale-api
+  resource: auth-integration-api
+  auth-server-url: https://sso73.apps.arekkusu.io/auth
   credentials:
-    secret: 'xxxxx'
+    secret: '6234cb7f-36b5-4c9e-a9e5-a1ccf26ed25a'
   use-resource-role-mappings: true
   security-constraints:
     - authRoles:
