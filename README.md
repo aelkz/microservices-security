@@ -14,7 +14,7 @@
 
 </p>
 
-<b>TL;DR</b> This is a demonstration on how to protect APIs managed by Keycloak and 3Scale.
+<b>TL;DR</b> This is a demonstration on how to protect APIs with Keycloak and 3Scale.
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/04.png" title="Microservices Security" width="40%" height="40%" />
@@ -30,9 +30,15 @@ All APIs catalog is exposed bellow:
 
 ### `auth-integration-api` endpoints
 
+:8081
 | Method | URI | Description | Secured? |
 | ------ | --- | ----------- | -------- | 
-| GET    |/actuator/health | API actuator embedded health | false |
+| GET    |/health | API actuator embedded health | false |
+| GET    |/metrics | API actuator embedded metrics | false |
+
+:8080
+| Method | URI | Description | Secured? |
+| ------ | --- | ----------- | -------- | 
 | POST   |/api/v1/product  | Create new product | true |
 | DELETE |/api/v1/product/{id}  | Delete product by Id | true |
 | PUT   |/api/v1/product/{id}  | Update product by Id | true |
@@ -83,149 +89,230 @@ As we can see, each API has some differences, and we will strive to demonstrate 
 ### `SECURITY LAB: STEP 1 - PROJECT CREATION`
 
 ```sh
-export current_project=microservices
+export PROJECT_NAMESPACE=microservices
 
 # login into openshift platform
 oc login https://master.<>.com:443 --token=<>
 
 # create a new project
-oc new-project microservices --description="microservices security" --display-name="microservices"
+oc new-project microservices-security --description="microservices security" --display-name="microservices-security"
 ```
 
-### `SECURITY LAB: STEP 2 - SONATYPE NEXUS`
+### `SECURITY LAB: STEP 2 - NEXUS SONATYPE DEPLOY`
 In order to continue this lab, you must provide a Sonatype Nexus instance in the `microservices` namespace. The detailed instructions can be found in this [readme](https://github.com/aelkz/microservices-security/blob/master/README-NEXUS.md).
 
-### `SECURITY LAB: STEP 3 - 3SCALE SETUP`
+### `SECURITY LAB: STEP 3 - 3SCALE AMP DEPLOY`
+In order to continue this lab, you must provision a 3Scale AMP into your Openshift Container Platform. Refer to the [documentation](https://access.redhat.com/documentation/en-us/red_hat_3scale_api_management/2.6) on how to install the 3Scale application.
 
+### `SECURITY LAB: STEP 4 - RED HAT SINGLE SIGN-ON DEPLOY`
+In order to continue this lab, you must provision RHSSO into your Openshift Container Platform. Refer to the [documentation](https://access.redhat.com/products/red-hat-single-sign-on) on how to install the RHSSO application.
 
-### `SECURITY LAB: STEP 4 - RED HAT SINGLE SIGN-ON SETUP`
-
-
-### `SECURITY LAB: STEP 5 - MICROSERVICES DEPLOYMENT`
+### `SECURITY LAB: STEP 5 - NEXUS ENVIRONMENT SETUP`
 
 ```sh
-export current_project=microservices
+export PROJECT_NAMESPACE=microservices-security
 
-git clone https://github.com/aelkz/microservices-observability.git
+git clone https://github.com/aelkz/microservices-security.git
 
-cd microservices-observability/
+cd microservices-security/
 
 # download maven settings.xml file
-curl -o maven-settings-template.xml -s https://raw.githubusercontent.com/aelkz/microservices-observability/master/_configuration/nexus/maven-settings-template.xml
+curl -o maven-settings-template.xml -s https://raw.githubusercontent.com/aelkz/microservices-security/master/_configuration/nexus/maven-settings-template.xml
 
 # change mirror url using your nexus openshift route
-export MAVEN_URL=http://$(oc get route nexus3 --template='{{ .spec.host }}')/repository/maven-group/
-export MAVEN_URL_RELEASES=http://$(oc get route nexus3 --template='{{ .spec.host }}')/repository/maven-releases/
-export MAVEN_URL_SNAPSHOTS=http://$(oc get route nexus3 --template='{{ .spec.host }}')/repository/maven-snapshots/
+export NEXUS_NAMESPACE=cicd-devtools
+export MAVEN_URL=http://$(oc get route nexus3 -n ${NEXUS_NAMESPACE} --template='{{ .spec.host }}')/repository/maven-group/
+export MAVEN_URL_RELEASES=http://$(oc get route nexus3 -n ${NEXUS_NAMESPACE} --template='{{ .spec.host }}')/repository/maven-releases/
+export MAVEN_URL_SNAPSHOTS=http://$(oc get route nexus3 -n ${NEXUS_NAMESPACE} --template='{{ .spec.host }}')/repository/maven-snapshots/
 
 awk -v path="$MAVEN_URL" '/<url>/{sub(/>.*</,">"path"<")}1' maven-settings-template.xml > maven-settings.xml
 
 rm -fr maven-settings-template.xml
+```
 
-# deploy parent project on nexus
-mvn clean package deploy -DnexusReleaseRepoUrl=$MAVEN_URL_RELEASES -DnexusSnapshotRepoUrl=$MAVEN_URL_SNAPSHOTS -s ./maven-settings.xml -e -X -N
+### `SECURITY LAB: STEP 6 - RED HAT CONTAINER CATALOG SECRET FOR PULLING IMAGES`
 
-# deploy polar-flow-api (spring boot 2 API)
+```sh
 # NOTE. In order to import Red Hat container images, you must setup your credentials on openshift. See: https://access.redhat.com/articles/3399531
 # The config.json can be found at: /var/lib/origin/.docker/ on openshift master node.
 # create a secret with your container credentials
-oc delete secret redhat.io -n openshift
-oc create secret generic "redhat.io" --from-file=.dockerconfigjson=config.json --type=kubernetes.io/dockerconfigjson -n openshift
-oc create secret generic "redhat.io" --from-file=.dockerconfigjson=config.json --type=kubernetes.io/dockerconfigjson -n microservices
 
-oc import-image openjdk/openjdk-8-rhel8 --from=registry.redhat.io/openjdk/openjdk-8-rhel8 --confirm -n openshift
+oc delete secret redhat.io -n $PROJECT_NAMESPACE
+oc create secret generic "redhat.io" --from-file=.dockerconfigjson=config.json --type=kubernetes.io/dockerconfigjson -n microservices-security
 
-# oc delete all -lapp=polar-flow-api
-oc new-app openjdk-8-rhel8:latest~https://github.com/aelkz/microservices-observability.git --name=polar-flow-api --context-dir=/polar-flow-api --build-env='MAVEN_MIRROR_URL='${MAVEN_URL} -e MAVEN_MIRROR_URL=${MAVEN_URL}
-
-oc patch svc polar-flow-api -p '{"spec":{"ports":[{"name":"http","port":8080,"protocol":"TCP","targetPort":8080}]}}'
-
-oc label svc polar-flow-api monitor=springboot2-api
+oc create secret generic registry.redhat.io --from-file=.dockerconfigjson=config.json --type=kubernetes.io/dockerconfigjson -n $PROJECT_NAMESPACE
+oc secrets link default registry.redhat.io --for=pull -n $PROJECT_NAMESPACE
+oc secrets link builder registry.redhat.io -n $PROJECT_NAMESPACE
 ```
+
+### `SECURITY LAB: STEP 7 - MICROSERVICES DEPLOYMENT`
 
 ```sh
-oc expose svc/polar-flow-api -n ${current_project}
+# Deploy parent project on nexus
+mvn clean package deploy -DnexusReleaseRepoUrl=$MAVEN_URL_RELEASES -DnexusSnapshotRepoUrl=$MAVEN_URL_SNAPSHOTS -s ./maven-settings.xml -e -X -N
 
-# NOTE: if you need to change jaeger host and port, or any other settings, just create a new application.yaml file and mount as a new volume on polar-flow-api container.
-vim src/main/resources/application.yaml
+# Deploy stock-api
+# oc delete all -lapp=stock-api
+oc new-app openjdk-8-rhel8:latest~https://github.com/aelkz/microservices-security.git --name=stock-api --context-dir=/stock --build-env='MAVEN_MIRROR_URL='${MAVEN_URL} -e MAVEN_MIRROR_URL=${MAVEN_URL}
 
-oc delete configmap polar-flow-api-config
+oc patch svc stock-api -p '{"spec":{"ports":[{"name":"http","port":8080,"protocol":"TCP","targetPort":8080}]}}'
 
-oc create configmap polar-flow-api-config --from-file=src/main/resources/application.yaml
+oc label svc stock-api monitor=springboot2-api
 
-oc set volume dc/polar-flow-api --add --overwrite --name=polar-flow-api-config-volume -m /deployments/config -t configmap --configmap-name=polar-flow-api-config
+# Deploy supplier-api
+# oc delete all -lapp=supplier-api
+oc new-app openjdk-8-rhel8:latest~https://github.com/aelkz/microservices-security.git --name=supplier-api --context-dir=/supplier --build-env='MAVEN_MIRROR_URL='${MAVEN_URL} -e MAVEN_MIRROR_URL=${MAVEN_URL}
+
+oc patch svc supplier-api -p '{"spec":{"ports":[{"name":"http","port":8080,"protocol":"TCP","targetPort":8080}]}}'
+
+oc label svc supplier-api monitor=springboot2-api
+
+# Deploy product-api
+# oc delete all -lapp=product-api
+oc new-app openjdk-8-rhel8:latest~https://github.com/aelkz/microservices-security.git --name=product-api --context-dir=/product --build-env='MAVEN_MIRROR_URL='${MAVEN_URL} -e MAVEN_MIRROR_URL=${MAVEN_URL}
+
+oc patch svc product-api -p '{"spec":{"ports":[{"name":"http","port":8080,"protocol":"TCP","targetPort":8080}]}}'
+
+oc label svc product-api monitor=springboot2-api
 ```
 
-### `OBSERVABILITY LAB: STEP 6 - SSO-COMMON LIBRARY DEPLOYMENT ON NEXUS`
+### `SECURITY LAB: STEP 8 - ARCHIVE SSO-COMMON LIBRARY JAR ON NEXUS`
 
+```sh
+# NOTE: To make sure the auth-integration-api (FUSE) works correctly, we need to archive a library that will be used to provide authentication and authorizations capabilities on top of Red Hat Single Sing-On (Keycloak).Then, this library will be used on auth-integration-api to enable such capabilities.
 
-### `OBSERVABILITY LAB: STEP 7 - INTEGRATION DEPLOYMENT (FUSE)`
-Now that the main API is deployed, let’s deploy the integration layer.
+# Deploy auth-sso-common library on nexus
+mvn clean package deploy -DnexusReleaseRepoUrl=$MAVEN_URL_RELEASES -DnexusSnapshotRepoUrl=$MAVEN_URL_SNAPSHOTS -s ./maven-settings.xml -e -X -pl auth-sso-common
+```
+
+This will create the following artifact on Nexus:
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/06.png" title="auth-sso-common artifact on nexus" width="60%" height="60%" />
+</p>
+
+### `SECURITY LAB: STEP 9 - INTEGRATION DEPLOYMENT (FUSE)`
+Now that the microservices APIs are deployed, let’s deploy the integration layer.
 
 ```sh
 # import a new spring-boot camel template
-curl -o s2i-microservices-fuse73-spring-boot-camel.yaml -s https://raw.githubusercontent.com/aelkz/microservices-observability/master/_configuration/openshift/s2i-microservices-fuse73-spring-boot-camel.yaml
+curl -o s2i-microservices-fuse74-spring-boot-camel.yaml -s https://raw.githubusercontent.com/aelkz/microservices-security/master/_configuration/openshift/s2i-microservices-fuse74-spring-boot-camel.yaml
 
-oc delete template s2i-microservices-fuse73-spring-boot-camel -n microservices
+oc delete template s2i-microservices-fuse74-spring-boot-camel -n ${PROJECT_NAMESPACE}
+oc create -n ${PROJECT_NAMESPACE} -f s2i-microservices-fuse74-spring-boot-camel.yaml
 
-oc create -n microservices -f s2i-microservices-fuse73-spring-boot-camel.yaml
+export NEXUS_NAMESPACE=cicd-devtools
+export PROJECT_NAMESPACE=microservices-security
+export APP=auth-integration-api
+export APP_NAME=auth-integration
+export APP_GROUP=com.redhat.microservices
+export APP_GIT=https://github.com/aelkz/microservices-security.git
+export APP_GIT_BRANCH=master
+export MAVEN_URL=http://$(oc get route nexus3 -n ${NEXUS_NAMESPACE} --template='{{ .spec.host }}')/repository/maven-group/
 
-export current_project=microservices
-export app_name=medical-integration
-export app_group=com.redhat.microservices
-export app_git=https://github.com/aelkz/microservices-observability.git
-export app_git_branch=master
-export maven_url=http://$(oc get route nexus3 --template='{{ .spec.host }}' -n ${current_project})/repository/maven-group/
-
-oc delete all -lapp=${app_name}-api
-
-# the custom template has some modifications regarding services,route and group definitions.
-oc new-app --template=s2i-microservices-fuse73-spring-boot-camel --name=${app_name}-api --build-env='MAVEN_MIRROR_URL='${maven_url} -e MAVEN_MIRROR_URL=${maven_url} --param GIT_REPO=${app_git} --param APP_NAME=${app_name}-api --param ARTIFACT_DIR=${app_name}/target --param GIT_REF=${app_git_branch} --param MAVEN_ARGS_APPEND='-pl '${app_name}' --also-make'
+# the previous template have some modifications regarding services,route and group definitions.
+# oc delete all -lapp=${APP}
+oc new-app --template=s2i-microservices-fuse74-spring-boot-camel --name=${APP} --build-env='MAVEN_MIRROR_URL='${MAVEN_URL} -e MAVEN_MIRROR_URL=${MAVEN_URL} --param GIT_REPO=${APP_GIT} --param APP_NAME=${APP} --param ARTIFACT_DIR=${APP_NAME}/target --param GIT_REF=${APP_GIT_BRANCH} --param MAVEN_ARGS_APPEND='-pl '${APP_NAME}' --also-make'
 
 # check the created services:
 # 1 for default app-context and 1 for /metrics endpoint.
-oc get svc -n microservices | grep medical
+oc get svc -n ${PROJECT_NAMESPACE} | grep ${APP_NAME}
 
-# in order to polar-flow-api call the medical-integration-api, we need to change it's configuration
-curl -o application.yaml -s https://raw.githubusercontent.com/aelkz/microservices-observability/master/_configuration/openshift/polar-flow/application.yaml
+# in order to auth-integration-api call the others APIs, we need to change it's configuration:
+curl -o application.yaml -s https://raw.githubusercontent.com/aelkz/microservices-security/master/_configuration/openshift/auth-integration/application.yaml
 
 # NOTE. If you have changed the service or application's name, you need to edit and change the downloaded application.yaml file with your definitions.
 
-# create a configmap and mount a volume for polar-flow-api
+# create a configmap and mount a volume for auth-integration-api
 
-oc delete configmap polar-flow-api-config
+oc delete configmap ${APP}
 
-oc create configmap polar-flow-api-config --from-file=application.yaml
+oc create configmap ${APP}-config --from-file=application.yaml
 
-oc set volume dc/polar-flow-api --add --overwrite --name=polar-flow-api-config-volume -m /deployments/config -t configmap --configmap-name=polar-flow-api-config
+oc set volume dc/${APP} --add --overwrite --name=${APP}-config-volume -m /deployments/config -t configmap --configmap-name=${APP}-config
 
 rm -fr application.yaml
-
-# now let's create a new service monitor under prometheus operator, to scrape medical-integration-api metrics
-
-# repeat the initial steps of this tutorial on how to create a prometheus service monitor. Use the following definition to scrape FUSE based application metrics:
 ```
+
+### `SECURITY LAB: STEP 10 - RHSSO REALMS CONFIGURATION`
+Now that all APIs are alive and kicking, let's define some configurations on RHSSO to prepare some ground for 3Scale automatic app synchronization.
 
 ```sh
-# now, we change the medical-integration-api svc to enable prometheus scraping.
-
-# not needed actually
-oc patch svc medical-integration-api-metrics -p '{"spec":{"ports":[{"name":"http","port":8081,"protocol":"TCP","targetPort":8081}]}}'
-
-# NOTE: The metrics of FUSE applications will be exposed on port 8081 by default as defined on our custom template (s2i-microservices-fuse73-spring-boot-camel)
-
-oc label svc medical-integration-api-metrics monitor=fuse73-api
-
-# if you quick navigate to prometheus console, you'll see the FUSE target being loaded state=UNKNOWN and then becoming with state=UP:
+1. Login into RHSSO
+2. Create 3 realms:
+  - 3scale-api
+  - 3scale-admin
+  - 3scale-devportal
 ```
 
+After creating the realms, you'll have this:
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/07.png" title="RHSSO realms" width="60%" height="60%" />
+</p>
+
+On 3scale-api realm, create a client `3scale` with the following definition:
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/08.png" title="realm:3scale-api client:3scale" width="60%" height="60%" />
+</p>
+Leave blank the fields: `root URL` , `base URL` and `admin URL`.
+
+On `Service Account Roles` tab, assign the role `manage-clients` from `realm-management`.
+Copy the client-secret that was genereated for this client.
+
+It will be something like:<br>
+823b6ek5-1936-42e6-1135-d48rt3a1f632
+
+Under the realm `3scale-api` create a new user with the following definition:
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/09.png" title="realm:3scale-api user:john" width="60%" height="60%" />
+</p>
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/10.png" title="realm:3scale-api user:john" width="40%" height="40%" />
+</p>
+
+Also, set a new password for this user on `Credentials` tab with `temporary=false` and set to `true` the `Email Verified` on `Details` tab.
+
+<b>Troublehsooting</b>: After creating the API definition on 3Scale, check if the generated client was created into 3scale-api realm on RHSSO. If you're using a self-signed certificate, you'll need to make additional configurations in order to enable the zync-que 3Scale application synchronizes correctly. Please refer to the [Documentation: Troubleshooting SSL issues](https://access.redhat.com/documentation/en-us/red_hat_3scale_api_management/2.6/html-single/operating_3scale/index#troubleshooting_ssl_issues) and [Configure Zync to use custom CA certificates](https://access.redhat.com/documentation/en-us/red_hat_3scale_api_management/2.4/html-single/api_authentication/index#zync-oidc-integration)
+
+To <b>fix</b> this, you can proceed with the self-signed certificate configuration:
 ```sh
-# If you want to validate pod communication, go to polar-flow-api terminal and issue:
+export THREESCALE_NAMESPACE=3scale26
+export THREESCALE_ZYNC_QUE_POD=zync-que-2-mlrh2
+export RHSSO_URI=sso73.apps.<YOUR-DOMAIN>.com
 
-curl -X GET http://medical-integration-api-metrics.microservices.svc.cluster.local:8081/metrics
+echo | openssl s_client -showcerts -servername ${RHSSO_URI} -connect ${RHSSO_URI}:443 2>/dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > self-signed-cert.pem
+# Validate the connection first! must return HTTP/1.1 200 OK
+curl -v https://${RHSSO_URI}/auth/realms/master --cacert self-signed-cert.pem
 
-curl telnet://medical-integration-api-metrics.microservices.svc.cluster.local:8081
+oc exec ${THREESCALE_ZYNC_QUE_POD} cat /etc/pki/tls/cert.pem > zync-que.pem -n ${THREESCALE_NAMESPACE}
+
+cp zync-que.pem zync-que-original.pem
+
+echo '\n# Red Hat Single Sign-On CA '${RHSSO_URI} >> zync-que.pem
+cat self-signed-cert.pem >> zync-que.pem
+
+# oc delete configmap zync-que-ca-bundle
+oc create configmap zync-que-ca-bundle --from-file=./zync-que.pem -n ${THREESCALE_NAMESPACE}
+oc label configmap zync-que-ca-bundle app=3scale-api-management -n ${THREESCALE_NAMESPACE}
+
+oc set volume dc/zync-que --overwrite --add --name=zync-que-ca-bundle --mount-path /etc/pki/tls/zync-que/zync-que.pem --sub-path zync-que.pem --source='{"configMap":{"name":"zync-que-ca-bundle","items":[{"key":"zync-que.pem","path":"zync-que.pem"}]}}' -n ${THREESCALE_NAMESPACE}
+
+oc patch dc/zync-que --type=json -p '[{"op": "add", "path": "/spec/template/spec/containers/0/volumeMounts/0/subPath", "value":"zync-que.pem"}]' -n ${THREESCALE_NAMESPACE}
+
+oc exec ${THREESCALE_ZYNC_QUE_POD} cat /etc/pki/tls/zync-que/zync-que.pem -n ${THREESCALE_NAMESPACE}
+
+oc set env dc/zync-que SSL_CERT_FILE=/etc/pki/tls/zync-que/zync-que.pem -n ${THREESCALE_NAMESPACE}
+
+# wait for the container restart.
+# Voila! You have the 3Scale in sync with RHSSO.
 ```
+
+
+
+
+### `SECURITY LAB: STEP 11 - 3SCALE MICROSERVICES CONFIGURAITON`
+Now that all APIs are alive and kicking, let's define some configuration on RHSSO to enable 3Scale automatic synchronization.
+
 
 ### `EXTERNAL REFERENCES`
 
@@ -233,6 +320,8 @@ API Key Generator
 https://codepen.io/corenominal/pen/rxOmMJ<br>
 JWT Key Generator
 http://jwt.io
+OpenID Connect Debugger
+https://openidconnect.net
 
 - - - - - - - - - -
 Thanks for reading and taking the time to comment!<br>
