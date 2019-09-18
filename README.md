@@ -353,7 +353,7 @@ Next, define the `Private Base URL` that is, your auth-integration-api URL and t
 Next, define all mapping rules for this API, accordingly to the following image:
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/18.png" title="3Scale admin portal - auth-integration-api configuration" width="70%" height="70%" />
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/18.png" title="3Scale admin portal - auth-integration-api configuration" width="95%" height="95%" />
 </p>
 
 Next, define the authentication mechanism for this API:
@@ -369,7 +369,7 @@ Leave the rest as default, and save the configuration.
 <b>NOTE</b>. After every changes, remember to promote the staging configuration to production.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/20.png" title="3Scale admin portal - auth-integration-api configuration promotion" width="15%" height="15%" />
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/20.png" title="3Scale admin portal - auth-integration-api configuration promotion" width="25%" height="25%" />
 </p>
 
 You `auth-integration-api` is ready to be used!
@@ -381,8 +381,24 @@ Define the same steps for the `Supplier API`. This API will have only one mappin
 Let's the define the APIs `Application Plans`. These plans will be used upon client registration for creating a new `Application`.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/21.png" title="3Scale admin portal - Application Plans" width="50%" height="50%" />
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/21.png" title="3Scale admin portal - Application Plans" width="70%" height="70%" />
 </p>
+
+Click on `Create Application Plan` link under `Applications/Application Plans` menu.
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/23.png" title="3Scale admin portal - New Application Plan" width="25%" height="25%" /><br>
+Set the following configuration:<br>
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/22.png" title="3Scale admin portal - New Application Plan" width="70%" height="70%" />
+</p>
+
+After this, click the `Publish` link to publish the application plan.
+
+Define the same steps for the `Supplier API`. Remember to publish the application plan also.
+
+### `SECURITY LAB: STEP 13 - 3SCALE MICROSERVICES APPLICATION`
+
+
 
 ### `EXTERNAL REFERENCES`
 
