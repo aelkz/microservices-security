@@ -139,7 +139,7 @@ public class IntegrationRestRoute extends RouteBuilder {
         // just a simple call to stock API.
 
         rest("/stock").id("stock-endpoint")
-            .get().description("Call stock API").produces(MediaType.APPLICATION_JSON)
+            .get("/update").description("Call stock API").produces(MediaType.APPLICATION_JSON)
                 .param().name("Authorization").type(RestParamType.header).description("Bearer Token").endParam()
                 .route().routeId("stock-event")
                     .to("direct:internal-stock-event")
@@ -151,7 +151,7 @@ public class IntegrationRestRoute extends RouteBuilder {
         // just a simple call to supplier API.
 
         rest("/supplier").id("supplier-endpoint")
-            .get().description("Call supplier API").produces(MediaType.APPLICATION_JSON)
+            .get("/update").description("Call supplier API").produces(MediaType.APPLICATION_JSON)
                 .param().name("Authorization").type(RestParamType.header).description("Bearer Token").endParam()
                 .route().routeId("supplier-event")
                     .to("direct:internal-supplier-event")

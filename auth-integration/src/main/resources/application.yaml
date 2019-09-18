@@ -127,13 +127,13 @@ keycloak:
         - SUPPLIER_MAINTAINER
       securityCollections:
         - name: SUPPLIER_MAINTAINER
-          patterns: /api/v1/supplier/sync
+          patterns: /api/v1/supplier/update
           methods: GET
     - authRoles:
         - STOCK_MAINTAINER
       securityCollections:
         - name: STOCK_MAINTAINER
-          patterns: /api/v1/stock/sync
+          patterns: /api/v1/stock/update
           methods: GET
 
 # =============================================
