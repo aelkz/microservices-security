@@ -31,12 +31,14 @@ All APIs catalog is exposed bellow:
 ### `auth-integration-api` endpoints
 
 :8081
+
 | Method | URI | Description | Secured? |
 | ------ | --- | ----------- | -------- | 
 | GET    |/health | API actuator embedded health | false |
 | GET    |/metrics | API actuator embedded metrics | false |
 
 :8080
+
 | Method | URI | Description | Secured? |
 | ------ | --- | ----------- | -------- | 
 | POST   |/api/v1/product  | Create new product | true |
