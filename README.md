@@ -350,6 +350,40 @@ Next, define the `Private Base URL` that is, your auth-integration-api URL and t
 
 <b>NOTE</b>. Set your correct domain under each URL (that will be your public address for Openshift).
 
+Next, define all mapping rules for this API, accordingly to the following image:
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/18.png" title="3Scale admin portal - auth-integration-api configuration" width="70%" height="70%" />
+</p>
+
+Next, define the authentication mechanism for this API:
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/19.png" title="3Scale admin portal - auth-integration-api configuration" width="70%" height="70%" />
+</p>
+
+Select `Authorization Code Flow` , `Service Accounts Flow` and `Direct Access Grant Flow` under `OIDC AUTHORIZATION FLOW` section.
+
+Leave the rest as default, and save the configuration.
+
+<b>NOTE</b>. After every changes, remember to promote the staging configuration to production.
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/19.png" title="3Scale admin portal - auth-integration-api configuration promotion" width="15%" height="15%" />
+</p>
+
+You auth-integration-api is ready to be used.
+
+Define the same steps for creating the `Supplier API`. This API will have only one mapping rule: `GET /api/v1/sync` and `Authorization Code Flow` and `Direct Access Grant Flow` under `OIDC AUTHORIZATION FLOW` section.
+
+### `SECURITY LAB: STEP 12 - 3SCALE MICROSERVICES APPLICATION PLANS`
+
+Let's the define the APIs `Application Plans`. These plans will be used upon client registration for creating a new `Application`.
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/21.png" title="3Scale admin portal - Application Plans" width="50%" height="50%" />
+</p>
+
 ### `EXTERNAL REFERENCES`
 
 API Key Generator
@@ -363,3 +397,5 @@ https://openidconnect.net
 Thanks for reading and taking the time to comment!<br>
 Feel free to create a <b>PR</b><br>
 [raphael abreu](rabreu@redhat.com)
+
+
