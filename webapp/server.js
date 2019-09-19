@@ -8,30 +8,45 @@ let http = require('http');
 let fs = require('fs');
 let path = require('path');
 let proxy = require('http-proxy-middleware');
+let cors = require('cors');
 
 let app = express();
 
+//app.use(cors());
 app.set('port', process.env.PORT || 8080);
-app.set('springboot-service', process.env.SPRINGBOOT || 'http://springboot-app:8080');
+app.set('microservices-apis', process.env.integration_uri || 'http://auth-integration-api/v1/:8080');
+app.set('microservices-health-api', process.env.integration_health_uri || 'http://auth-integration-api/v1/:8081');
 
 app.use(compression());
-
 app.use(logger('combined'));
-
 app.use(express.static(path.join(__dirname, 'dist')));
 
-// proxy for springboot backend
+// proxy for auth-integration-api backend
 app.use(
-  '/springboot-api/*',
+  '/api/v1/*',
   proxy({
-    target: app.get('springboot-service'),
+    target: app.get('microservices-apis'),
     secure: false,
     changeOrigin: true,
     logLevel: 'debug',
     pathRewrite: {
-      '^/springboot-service': ''
+      '^/microservices-apis': ''
     }
   })
+);
+
+// proxy for auth-integration-health-api backend
+app.use(
+    '/health',
+    proxy({
+        target: app.get('microservices-health-api'),
+        secure: false,
+        changeOrigin: true,
+        logLevel: 'debug',
+        pathRewrite: {
+            '^/microservices-health-api': ''
+        }
+    })
 );
 
 app.use((req, res) => {

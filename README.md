@@ -457,7 +457,7 @@ echo -e \
 sed "s/^.//g" temp >> nodejs-config.properties
 
 # oc delete all -lapp=nodejs-web
-oc new-app nodejs-8-rhel7:latest~https://github.com/aelkz/microservices-security.git --name=nodejs-web --context-dir=/webapp
+oc new-app nodejs-8-rhel7:latest~https://github.com/aelkz/microservices-security.git --name=nodejs-web --context-dir=/webapp -n ${APIS_NAMESPACE}  
 
 oc create configmap nodejs-config --from-file=nodejs-config.properties
 oc set env --from=configmap/nodejs-config dc/nodejs-web

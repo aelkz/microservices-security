@@ -43,6 +43,7 @@
     "codelyzer": "^4.5.0",
     "compression": "^1.7.3",
     "core-js": "^2.5.7",
+    "cors": "^2.8.5",
     "datatables.net": "^1.10.19",
     "datatables.net-bs4": "^1.10.19",
     "datatables.net-responsive": "^2.2.3",
