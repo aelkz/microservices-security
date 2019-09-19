@@ -46,6 +46,7 @@ public class IntegrationRestRoute extends RouteBuilder {
         // | Configure REST endpoint                          |
         // \--------------------------------------------------/
 
+        // Access-Control-Allow-Origin
         restConfiguration()
                 .contextPath("/api/v" + apiVersion)
                 .apiContextPath("/api-docs")
@@ -59,7 +60,8 @@ public class IntegrationRestRoute extends RouteBuilder {
                 .bindingMode(RestBindingMode.json)
                 .enableCORS(true)
                 .corsAllowCredentials(true)
-                .corsHeaderProperty("Access-Control-Allow-Headers", "Authorization, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+                .corsHeaderProperty("Access-Control-Allow-Origin","*")
+                .corsHeaderProperty("Access-Control-Allow-Headers", "Authorization, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, app_id, app_key");
 
         // /--------------------------------------------------\
         // | Expose route w/ REST Product endpoint            |
@@ -69,6 +71,14 @@ public class IntegrationRestRoute extends RouteBuilder {
             .produces(MediaType.APPLICATION_JSON)
             .consumes(MediaType.APPLICATION_JSON)
             .skipBindingOnErrorCode(false) // enable json marshalling for body in case of errors
+
+            .get("/status").description("Health")
+                .param().name("Authorization").type(RestParamType.header).description("Bearer Token").endParam()
+                .responseMessage().code(200).responseModel(Product.class).endResponseMessage()
+                .responseMessage().code(500).responseModel(ApiResponse.class).endResponseMessage()
+                .route().routeId("status-product")
+                    .to("direct:internal-status-product")
+                .endRest()
 
             .get().description("List Product")
                 .param().name("Authorization").type(RestParamType.header).description("Bearer Token").endParam()
@@ -140,6 +150,15 @@ public class IntegrationRestRoute extends RouteBuilder {
         // just a simple call to stock API.
 
         rest("/stock").id("stock-endpoint")
+
+            .get("/status").description("Health")
+                .param().name("Authorization").type(RestParamType.header).description("Bearer Token").endParam()
+                .responseMessage().code(200).responseModel(Product.class).endResponseMessage()
+                .responseMessage().code(500).responseModel(ApiResponse.class).endResponseMessage()
+                .route().routeId("status-stock")
+                    .to("direct:internal-status-stock")
+                .endRest()
+
             .get("/update").description("Call stock API").produces(MediaType.APPLICATION_JSON)
                 .param().name("Authorization").type(RestParamType.header).description("Bearer Token").endParam()
                 .route().routeId("stock-event")
@@ -152,6 +171,15 @@ public class IntegrationRestRoute extends RouteBuilder {
         // just a simple call to supplier API.
 
         rest("/supplier").id("supplier-endpoint")
+
+            .get("/status").description("Health")
+                .param().name("Authorization").type(RestParamType.header).description("Bearer Token").endParam()
+                .responseMessage().code(200).responseModel(Product.class).endResponseMessage()
+                .responseMessage().code(500).responseModel(ApiResponse.class).endResponseMessage()
+                .route().routeId("status-supplier")
+                    .to("direct:internal-status-supplier")
+                .endRest()
+
             .get("/update").description("Call supplier API").produces(MediaType.APPLICATION_JSON)
                 .param().name("Authorization").type(RestParamType.header).description("Bearer Token").endParam()
                 .route().routeId("supplier-event")

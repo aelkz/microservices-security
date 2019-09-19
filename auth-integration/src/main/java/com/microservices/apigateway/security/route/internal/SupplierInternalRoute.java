@@ -37,6 +37,16 @@ public class SupplierInternalRoute extends RouteBuilder {
         // | Internal route definition                        |
         // | GET <?> Event                                    |
         // \--------------------------------------------------/
+        from("direct:internal-status-supplier")
+            .id("direct-status-supplier")
+            .to("log:list?showHeaders=true&level=DEBUG")
+            .removeHeader("origin")
+            .removeHeader(Exchange.HTTP_PATH)
+            .to("log:post-list?showHeaders=true&level=DEBUG")
+            .to("http4://" + supplierConfig.getHost() + ":" + supplierConfig.getPort() + "/actuator/health?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
+            //.unmarshal(new ListJacksonDataFormat(Event.class));
+            .unmarshal().json(JsonLibrary.Jackson)
+            .end();
 
         from("direct:internal-supplier-event")
             .id("direct-supplier-event")
