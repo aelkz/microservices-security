@@ -12,26 +12,25 @@ let cors = require('cors');
 
 let app = express();
 
-app.use(cors());
+//app.use(cors());
 app.set('port', process.env.PORT || 8080);
-app.set('microservices-apis', process.env.integration_uri || 'http://auth-integration-api/v1/:8080');
-app.set('microservices-health-api', process.env.integration_health_uri || 'http://auth-integration-api/v1/:8081');
+app.set('integration-service', process.env.INTEGRATION_URI || 'http://auth-integration-api/v1/:8080');
+app.set('integration-health-service', process.env.INTEGRATION_HEALTH_URI || 'http://auth-integration-api/v1/:8081');
 
 app.use(compression());
 app.use(logger('combined'));
 app.use(express.static(path.join(__dirname, 'dist')));
 
 // proxy for auth-integration-api backend
-/*
 app.use(
-  '/api/v1/*',
+  '/api/*',
   proxy({
-    target: app.get('microservices-apis'),
+    target: app.get('integration-service'),
     secure: false,
     changeOrigin: true,
     logLevel: 'debug',
     pathRewrite: {
-      '^/microservices-apis': ''
+      '^/integration-service': ''
     }
   })
 );
@@ -40,16 +39,15 @@ app.use(
 app.use(
     '/health',
     proxy({
-        target: app.get('microservices-health-api'),
+        target: app.get('integration-health-service'),
         secure: false,
         changeOrigin: true,
         logLevel: 'debug',
         pathRewrite: {
-            '^/microservices-health-api': ''
+            '^/integration-health-service': ''
         }
     })
 );
-*/
 
 app.use((req, res) => {
 
