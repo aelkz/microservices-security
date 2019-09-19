@@ -663,8 +663,9 @@ bh_unicode_properties.cache
 # https://packagecontrol.io/packages/sublime-github
 GitHub.sublime-settings
 
-auth-integration/target
-auth-sso-common/target
-product/target
-stock/target
-supplier/target
+target/*
+auth-integration/target/*
+auth-sso-common/target/*
+product/target/*
+stock/target/*
+supplier/target/*
