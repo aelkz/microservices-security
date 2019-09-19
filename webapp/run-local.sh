@@ -7,7 +7,7 @@ export AUTH_CLIENT_ID="nodejs-web"
 export KEYCLOAK="false"
 
 export INTEGRATION_URI="http://localhost:8080"
-export INTEGRATION_HEALTH_URI="http://localhost:8080"
+export INTEGRATION_HEALTH_URI="http://localhost:8081"
 export PRODUCT_PATH="/product"
 export STOCK_PATH="/stock"
 export SUPPLIER_PATH="/supplier"
