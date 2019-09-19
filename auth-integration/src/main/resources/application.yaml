@@ -15,6 +15,7 @@ api:
 
 logging:
   config: classpath:logback.xml
+  level: debug
 
 # options from org.apache.camel.spring.boot.CamelConfigurationProperties can be configured here
 camel:
@@ -48,10 +49,6 @@ management:
 # ---------------------------------------------
 # disable all management endpoints except health
 endpoints:
-  cors:
-    allowed-headers: *
-    allowed-origins: *
-    allowed-methods: *
   enabled: false
   health:
     enabled: true
@@ -79,13 +76,79 @@ jaeger.tracer:
   host: jaeger-agent.microservices.svc
   port: 6831
 
+# =============================================
+# auth-integration health parameters
+# ---------------------------------------------
+health:
+  host: auth-integration-api-metrics.microservices-security.svc.cluster.local
+  port: 8081
+  contextPath: /health
+
+# =============================================
+# product api parameters
+# ---------------------------------------------
+product:
+  api-key-name: product
+  host: localhost
+  port: 8070
+  context-path: /api/v1/product
+  status-path: /actuator/health
+
+# =============================================
+# stock api parameters
+# ---------------------------------------------
+stock:
+  api-key-name: stock
+  host: stock-api.microservices-security.svc.cluster.local
+  port: 8080
+  context-path: /api/v1/stock
+  status-path: /actuator/health
+
+# =============================================
+# supplier api parameters
+# ---------------------------------------------
+supplier:
+  api-key-name: supplier
+  host: localhost
+  port: 8080
+  context-path: /api/v1/supplier
+  status-path: /actuator/health
+  auth:
+    realm: 3scale-api
+    client-id: a35f742a
+    grant-type: password
+    username: supplier-svcacc
+    password: 12345
+    secret: 7108964da928a5e508bd4f201d972704
+    auth-server-uri: http://authorization-server.apps.arekkusu.io/auth/
+
+# =============================================
+# Authorization Settings (Keycloak)
+# ---------------------------------------------
+# NOTE. If using a self-signed certificate on RHSSO (Keycloak) a HTTPS endpoint will not work.
+#
+# Details:
+# [ERROR] o.k.a.rotation.JWKPublicKeyLocator - Error when sending request to retrieve realm keys
+# org.keycloak.adapters.HttpClientAdapterException: IO error
+#
+# So, in order to work properly, you must change to a unsecured protocol, using HTTP.
+# Create a route on Openshift with the following:
+#
+# Hostname: authorization-server.apps.<YOUR-DOMAIN>
+# Path: /
+# Service: sso
+# Secure Route: unchecked
+#
+# Also, in RHSSO realm settings, set 'Require SSL' to none on 'Login' tab.
+# ---------------------------------------------
+
 keycloak:
   ssl-required: external
   realm: 3scale-api
-  resource: auth-integration-api
-  auth-server-url: https://sso73.apps.arekkusu.io/auth
+  resource: 8f314bfa
+  auth-server-url: http://authorization-server.apps.arekkusu.io/auth/
   credentials:
-    secret: '6234cb7f-36b5-4c9e-a9e5-a1ccf26ed25a'
+    secret: 2d1beebcf1c9d00dd51be7a344abd87f
   use-resource-role-mappings: true
   security-constraints:
     - authRoles:
@@ -139,41 +202,3 @@ keycloak:
         - name: STOCK_MAINTAINER
           patterns: /api/v1/stock/update
           methods: GET
-
-# =============================================
-# product api parameters
-# ---------------------------------------------
-product:
-  api-key-name: product
-  auth:
-    realm: microservices-security
-    client-id: product
-    grant-type: password
-    username: user1
-    password: user1
-    secret: xxxxx
-    auth-server-uri: https://localhost:8080/auth/
-  host: localhost
-  port: 8070
-  context-path: /api/v1/product
-  status-path: /actuator/health
-
-# =============================================
-# stock api parameters
-# ---------------------------------------------
-stock:
-  api-key-name: stock
-  host: localhost
-  port: 8080
-  context-path: /api/v1/stock
-  status-path: /actuator/health
-
-# =============================================
-# supplier api parameters
-# ---------------------------------------------
-supplier:
-  api-key-name: supplier
-  host: localhost
-  port: 8080
-  context-path: /api/v1/supplier
-  status-path: /actuator/health

@@ -45,7 +45,6 @@ public class StockInternalRoute extends RouteBuilder {
             .removeHeader(Exchange.HTTP_PATH)
             .to("log:post-list?showHeaders=true&level=DEBUG")
             .to("http4://" + stockConfig.getHost() + ":" + stockConfig.getPort() + "/actuator/health?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
-            //.unmarshal(new ListJacksonDataFormat(Event.class));
             .unmarshal().json(JsonLibrary.Jackson)
             .end();
 

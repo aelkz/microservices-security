@@ -1,6 +1,7 @@
 package com.microservices.apigateway.security.route.internal;
 
 import com.microservices.apigateway.security.configuration.SupplierConfiguration;
+import com.microservices.apigateway.security.configuration.SupplierServiceAccountConfiguration;
 import com.microservices.apigateway.security.processor.ExceptionProcessor;
 import io.opentracing.Span;
 import org.apache.camel.Exchange;
@@ -24,6 +25,9 @@ public class SupplierInternalRoute extends RouteBuilder {
     @Autowired
     private ExceptionProcessor exceptionProcessor;
 
+    @Autowired
+    private SupplierServiceAccountConfiguration supplierServiceAccountConfig;
+
     @Override
     public void configure() throws Exception {
         onException(Exception.class)
@@ -42,6 +46,7 @@ public class SupplierInternalRoute extends RouteBuilder {
             .to("log:list?showHeaders=true&level=DEBUG")
             .removeHeader("origin")
             .removeHeader(Exchange.HTTP_PATH)
+            .to(authCredentials())
             .to("log:post-list?showHeaders=true&level=DEBUG")
             .to("http4://" + supplierConfig.getHost() + ":" + supplierConfig.getPort() + "/actuator/health?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
             //.unmarshal(new ListJacksonDataFormat(Event.class));
@@ -54,11 +59,29 @@ public class SupplierInternalRoute extends RouteBuilder {
             .to("log:list?showHeaders=true&level=DEBUG")
             .removeHeader("origin")
             .removeHeader(Exchange.HTTP_PATH)
+            .to(authCredentials())
             .to("log:post-list?showHeaders=true&level=DEBUG")
             .to("http4://" + supplierConfig.getHost() + ":" + supplierConfig.getPort() + supplierConfig.getContextPath() + "?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
             .unmarshal().json(JsonLibrary.Jackson)
             .end();
 
+    }
+
+    private String authCredentials() {
+        return String.format("auth:api?serverUrl=%s&" +
+                        "realm=%s&" +
+                        "clientID=%s&" +
+                        "clientSecret=%s&" +
+                        "grantType=%s&" +
+                        "username=%s&" +
+                        "password=%s",
+                supplierServiceAccountConfig.getAuthServerUri(),
+                supplierServiceAccountConfig.getRealm(),
+                supplierServiceAccountConfig.getClientId(),
+                supplierServiceAccountConfig.getSecret(),
+                supplierServiceAccountConfig.getGrantType(),
+                supplierServiceAccountConfig.getUsername(),
+                supplierServiceAccountConfig.getPassword());
     }
 
     public void addTracer(Exchange exchange){

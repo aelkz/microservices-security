@@ -41,15 +41,8 @@
             </dependency>
             <dependency>
                 <groupId>org.keycloak.bom</groupId>
-                <artifactId>keycloak-spi-bom</artifactId>
-                <version>${keycloak.bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.keycloak.bom</groupId>
                 <artifactId>keycloak-adapter-bom</artifactId>
-                <!-- utilizar a mesma versão do projeto auth-sso-common -->
+                <!-- use the same dependency version from auth-sso-common -->
                 <version>${keycloak.bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>

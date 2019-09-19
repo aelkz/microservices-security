@@ -7,7 +7,6 @@ export AUTH_CLIENT_ID="8f314bfa"
 export KEYCLOAK="true"
 
 export INTEGRATION_URI="https://auth-integration-api-production.apps.arekkusu.io"
-export INTEGRATION_HEALTH_URI="https://auth-integration-metrics-api-microservices-security.apps.arekkusu.io"
 export PRODUCT_PATH="/product"
 export STOCK_PATH="/stock"
 export SUPPLIER_PATH="/supplier"

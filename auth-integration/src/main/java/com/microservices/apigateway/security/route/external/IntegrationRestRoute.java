@@ -1,10 +1,12 @@
 package com.microservices.apigateway.security.route.external;
 
+import com.microservices.apigateway.security.configuration.IntegrationHealthConfiguration;
 import com.microservices.apigateway.security.model.ErrorMessage;
 import com.microservices.apigateway.security.model.Event;
 import com.microservices.apigateway.security.model.Product;
 import com.microservices.apigateway.security.model.ApiResponse;
 import org.apache.camel.Exchange;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.camel.model.dataformat.JsonLibrary;
@@ -38,6 +40,9 @@ public class IntegrationRestRoute extends RouteBuilder {
     @Autowired
     private Environment env;
 
+    @Autowired
+    private IntegrationHealthConfiguration healthConfig;
+
     @Override
     public void configure() throws Exception {
         // @formatter:off
@@ -67,6 +72,27 @@ public class IntegrationRestRoute extends RouteBuilder {
         // | Expose route w/ REST Product endpoint            |
         // \--------------------------------------------------/
 
+        rest("/status").id("status-endpoint")
+            .produces(MediaType.APPLICATION_JSON)
+            .consumes(MediaType.APPLICATION_JSON)
+            .skipBindingOnErrorCode(false) // enable json marshalling for body in case of errors
+
+            .get().description("Health")
+                .param().name("Authorization").type(RestParamType.header).description("Bearer Token").endParam()
+                .responseMessage().code(200).responseModel(Product.class).endResponseMessage()
+                .responseMessage().code(500).responseModel(ApiResponse.class).endResponseMessage()
+                .route().routeId("status")
+                .removeHeader("origin")
+                .removeHeader(Exchange.HTTP_PATH)
+                .to("log:post-list?showHeaders=true&level=DEBUG")
+                .to("http4://" + healthConfig.getHost() + ":" + healthConfig.getPort() + healthConfig.getContextPath() + "?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
+                .unmarshal().json(JsonLibrary.Jackson)
+                .endRest();
+
+        // /--------------------------------------------------\
+        // | Expose route w/ REST Product endpoint            |
+        // \--------------------------------------------------/
+
         rest("/product").id("product-endpoint")
             .produces(MediaType.APPLICATION_JSON)
             .consumes(MediaType.APPLICATION_JSON)
@@ -90,7 +116,7 @@ public class IntegrationRestRoute extends RouteBuilder {
 
             .get("/{productId}").description("Get Product")
                 .param().name("Authorization").type(RestParamType.header).description("Bearer Token").endParam()
-                .param().name("productId").type(RestParamType.path).description("Id of the Product. Must be a valid number.").required(true).dataType("string").endParam()
+                .param().name("productId").type(RestParamType.path).description("Id of the Product. Must be a valid number.").required(true).endParam()
                 .responseMessage().code(200).responseModel(Product.class).endResponseMessage()
                 .responseMessage().code(500).responseModel(ApiResponse.class).endResponseMessage()
                 .outType(Product.class)
@@ -106,6 +132,7 @@ public class IntegrationRestRoute extends RouteBuilder {
                 .endRest()
 
             .post().description("Create Product")
+                .param().name("Authorization").type(RestParamType.header).description("Bearer Token").endParam()
                 .param().name("body").type(body).description("The Product to be created").endParam()
                 .responseMessage().code(200).responseModel(Product.class).endResponseMessage()
                 .responseMessage().code(400).responseModel(ApiResponse.class).message("Unexpected body").endResponseMessage()
@@ -117,6 +144,7 @@ public class IntegrationRestRoute extends RouteBuilder {
                 .endRest()
 
             .put().description("Update Product")
+                .param().name("Authorization").type(RestParamType.header).description("Bearer Token").endParam()
                 .param().name("body").type(body).description("The Product to be updated").endParam()
                 .responseMessage().code(200).responseModel(Product.class).endResponseMessage()
                 .responseMessage().code(400).responseModel(ApiResponse.class).message("Unexpected body").endResponseMessage()
@@ -124,10 +152,17 @@ public class IntegrationRestRoute extends RouteBuilder {
                 .type(Product.class).outType(Product.class)
                 .route().routeId("update-product")
                     .streamCaching()
+                    .onException(HttpOperationFailedException.class)
+                        .handled(true).setHeader(Exchange.CONTENT_TYPE, constant(MediaType.APPLICATION_JSON))
+                        .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(404))
+                        .transform().constant(new ErrorMessage("Product not found!"))
+                        .marshal().json(JsonLibrary.Jackson)
+                    .end()
                     .to("direct:internal-update-product")
                 .endRest()
 
             .delete("/{productId}").description("Delete Product")
+                .param().name("Authorization").type(RestParamType.header).description("Bearer Token").endParam()
                 .param().name("productId").type(RestParamType.path).description("Id of the Product. Must be a valid number.").required(true).dataType("string").endParam()
                 .responseMessage().code(200).responseModel(Product.class).endResponseMessage()
                 .responseMessage().code(500).responseModel(ApiResponse.class).endResponseMessage()
