@@ -15,11 +15,17 @@ public class FilterRegistrationBean {
         return new WebMvcConfigurerAdapter() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/api/**")
-                        .allowedMethods(HttpMethod.GET.toString(), HttpMethod.POST.toString(),
-                                HttpMethod.PUT.toString(), HttpMethod.DELETE.toString(), HttpMethod.OPTIONS.toString())
+                registry.addMapping("/")
+                        .allowedMethods(
+                                HttpMethod.GET.toString(),
+                                HttpMethod.POST.toString(),
+                                HttpMethod.PUT.toString(),
+                                HttpMethod.DELETE.toString(),
+                                HttpMethod.OPTIONS.toString()
+                        )
                         .allowedOrigins("*")
-                        .allowedHeaders("*");
+                        .allowedHeaders("*")
+                        .allowCredentials(true);
             }
         };
     }
