@@ -11,7 +11,7 @@ let proxy = require('http-proxy-middleware');
 let cors = require('cors');
 
 let app = express();
-//app.use(cors());
+app.use(cors());
 
 app.set('port', process.env.PORT || 8080);
 app.set('integration-service', process.env.INTEGRATION_URI || 'http://auth-integration-api/v1/:8080');
@@ -22,6 +22,7 @@ app.use(logger('combined'));
 app.use(express.static(path.join(__dirname, 'dist')));
 
 // proxy for auth-integration-api backend
+/*
 app.use(
   '/api/*',
   proxy({
@@ -48,6 +49,7 @@ app.use(
         }
     })
 );
+*/
 
 app.use((req, res) => {
   // respond with index to process links
