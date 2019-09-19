@@ -11,8 +11,8 @@ let proxy = require('http-proxy-middleware');
 let cors = require('cors');
 
 let app = express();
+app.use(cors());
 
-//app.use(cors());
 app.set('port', process.env.PORT || 8080);
 app.set('integration-service', process.env.INTEGRATION_URI || 'http://auth-integration-api/v1/:8080');
 app.set('integration-health-service', process.env.INTEGRATION_HEALTH_URI || 'http://auth-integration-api/v1/:8081');
