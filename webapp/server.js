@@ -22,7 +22,6 @@ app.use(logger('combined'));
 app.use(express.static(path.join(__dirname, 'dist')));
 
 // proxy for auth-integration-api backend
-/*
 app.use(
   '/api/*',
   proxy({
@@ -49,7 +48,6 @@ app.use(
         }
     })
 );
- */
 
 app.use((req, res) => {
   // respond with index to process links

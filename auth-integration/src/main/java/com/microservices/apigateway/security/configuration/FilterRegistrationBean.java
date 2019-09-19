@@ -1,13 +1,17 @@
 package com.microservices.apigateway.security.configuration;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import javax.ws.rs.HttpMethod;
 
 @Configuration
+@EnableWebMvc
+@ComponentScan
 public class FilterRegistrationBean {
 
     @Bean
@@ -15,7 +19,7 @@ public class FilterRegistrationBean {
         return new WebMvcConfigurerAdapter() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/")
+                registry.addMapping("/**")
                         .allowedMethods(
                                 HttpMethod.GET.toString(),
                                 HttpMethod.POST.toString(),

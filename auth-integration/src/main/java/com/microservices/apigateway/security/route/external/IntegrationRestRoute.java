@@ -58,7 +58,7 @@ public class IntegrationRestRoute extends RouteBuilder {
                 .dataFormatProperty("prettyPrint", "true")
                 .bindingMode(RestBindingMode.json)
                 .enableCORS(true)
-                .corsHeaderProperty("Access-Control-Allow-Headers", "Authorization, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+                .corsHeaderProperty("Access-Control-Allow-Headers", "Authorization, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Access-Control-Allow-Origin");
 
         // /--------------------------------------------------\
         // | Expose route w/ REST Product endpoint            |
