@@ -49,16 +49,17 @@ public class IntegrationRestRoute extends RouteBuilder {
         restConfiguration()
                 .contextPath("/api/v" + apiVersion)
                 .apiContextPath("/api-docs")
-                .apiProperty("api.title", apiTitle)
-                .apiProperty("api.description", apiDescription)
-                .apiProperty("api.version", apiVersion)
-                .apiProperty("schemes", "https")
+                    .apiProperty("api.title", apiTitle)
+                    .apiProperty("api.description", apiDescription)
+                    .apiProperty("api.version", apiVersion)
+                    .apiProperty("schemes", "https")
                 .host(apiHostname)
                 .apiProperty("api.version", apiVersion)
                 .dataFormatProperty("prettyPrint", "true")
                 .bindingMode(RestBindingMode.json)
                 .enableCORS(true)
-                .corsHeaderProperty("Access-Control-Allow-Headers", "Authorization, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Access-Control-Allow-Origin");
+                .corsAllowCredentials(true)
+                .corsHeaderProperty("Access-Control-Allow-Headers", "Authorization, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
 
         // /--------------------------------------------------\
         // | Expose route w/ REST Product endpoint            |
