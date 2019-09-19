@@ -38,6 +38,17 @@ public class StockInternalRoute extends RouteBuilder {
         // | GET <?> Event                                    |
         // \--------------------------------------------------/
 
+        from("direct:internal-status-stock")
+            .id("direct-status-stock")
+            .to("log:list?showHeaders=true&level=DEBUG")
+            .removeHeader("origin")
+            .removeHeader(Exchange.HTTP_PATH)
+            .to("log:post-list?showHeaders=true&level=DEBUG")
+            .to("http4://" + stockConfig.getHost() + ":" + stockConfig.getPort() + "/actuator/health?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
+            //.unmarshal(new ListJacksonDataFormat(Event.class));
+            .unmarshal().json(JsonLibrary.Jackson)
+            .end();
+
         from("direct:internal-stock-event")
             .id("direct-stock-event")
             .log(LoggingLevel.WARN, logger, "internal route: preparing to call external api using http4 producer")

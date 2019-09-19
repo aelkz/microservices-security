@@ -41,6 +41,16 @@ public class ProductInternalRoute extends RouteBuilder {
         // | Internal route definition:                       |
         // | Product CRUD Operations                          |
         // \--------------------------------------------------/
+        from("direct:internal-status-product")
+            .id("direct-status-product")
+            .to("log:list?showHeaders=true&level=DEBUG")
+            .removeHeader("origin")
+            .removeHeader(Exchange.HTTP_PATH)
+            .to("log:post-list?showHeaders=true&level=DEBUG")
+            .to("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + "/actuator/health?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
+            //.unmarshal(new ListJacksonDataFormat(Event.class));
+            .unmarshal().json(JsonLibrary.Jackson)
+            .end();
 
         from("direct:internal-list-products")
             .id("direct-list-products")
