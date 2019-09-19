@@ -3,6 +3,8 @@ package com.microservices.apigateway.security;
 import io.micrometer.core.instrument.config.MeterFilter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -13,7 +15,7 @@ import org.springframework.web.filter.CorsFilter;
 import java.util.Collections;
 
 @EnableAsync
-@SpringBootApplication
+@SpringBootApplication(exclude = {SecurityAutoConfiguration.class, UserDetailsServiceAutoConfiguration.class})
 public class ProductApplication {
 
     /**

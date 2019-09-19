@@ -15,7 +15,6 @@ app.use(cors());
 
 app.set('port', process.env.PORT || 8080);
 app.set('integration-service', process.env.INTEGRATION_URI || 'http://auth-integration-api/v1/:8080');
-app.set('integration-health-service', process.env.INTEGRATION_HEALTH_URI || 'http://auth-integration-api/v1/:8081');
 
 app.use(compression());
 app.use(logger('combined'));
@@ -34,20 +33,6 @@ app.use(
       '^/integration-service': ''
     }
   })
-);
-
-// proxy for auth-integration-health-api backend
-app.use(
-    '/health',
-    proxy({
-        target: app.get('integration-health-service'),
-        secure: false,
-        changeOrigin: true,
-        logLevel: 'debug',
-        pathRewrite: {
-            '^/integration-health-service': ''
-        }
-    })
 );
 */
 

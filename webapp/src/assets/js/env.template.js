@@ -8,7 +8,6 @@
   window._env.enabled = '${KEYCLOAK}';
 
   window._env.integration_uri = '${INTEGRATION_URI}';
-  window._env.integration_health_uri = '${INTEGRATION_HEALTH_URI}';
   window._env.stock_path = '${STOCK_PATH}';
   window._env.supplier_path = '${SUPPLIER_PATH}';
   window._env.product_path = '${PRODUCT_PATH}';

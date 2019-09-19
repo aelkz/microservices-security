@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -33,11 +34,12 @@ public class ProductController extends BaseController {
     @Autowired
     ProductService productService;
 
-    @RequestMapping(path = "/v1/products", method = RequestMethod.GET, consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+    @RequestMapping(path = "/v1/products", method = RequestMethod.GET)
     @ApiOperation(
             value = "Get all products",
             notes = "Returns first N products specified by the size parameter with page offset specified by page parameter.",
             response = Page.class)
+    @PreAuthorize("hasAnyAuthority('PRODUCT_BASIC','PRODUCT_ADMIN','CHECK_PRODUCT_STATUS')")
     public Page<Product> getAll(
             @ApiParam("The size of the page to be returned") @RequestParam(required = false) Integer size,
             @ApiParam("Zero-based page index") @RequestParam(required = false) Integer page) {
@@ -56,12 +58,13 @@ public class ProductController extends BaseController {
         return products;
     }
 
-    @RequestMapping(path = "/v1/product/{id}", method = RequestMethod.GET, consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+    @RequestMapping(path = "/v1/product/{id}", method = RequestMethod.GET)
     @ApiOperation(
             value = "Get product by id",
             notes = "Returns product for id specified.",
             response = Product.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Product not found") })
+    @PreAuthorize("hasAnyAuthority('PRODUCT_BASIC','PRODUCT_ADMIN','CHECK_PRODUCT_STATUS')")
     public ResponseEntity<Product> get(@ApiParam("Product id") @PathVariable("id") Long id) {
 
         Product product = productService.findOne(id);
@@ -73,6 +76,7 @@ public class ProductController extends BaseController {
             value = "Create new product",
             notes = "Creates new product. Returns created product with id.",
             response = Product.class)
+    @PreAuthorize("hasAnyAuthority('PRODUCT_ADMIN')")
     public ResponseEntity<Product> add(
             @Valid @RequestBody Product product) {
 
@@ -85,6 +89,7 @@ public class ProductController extends BaseController {
             value = "Update product",
             notes = "Update product. Returns updated product.",
             response = Product.class)
+    @PreAuthorize("hasAnyAuthority('PRODUCT_ADMIN')")
     public ResponseEntity<Product> update(
             @Valid @RequestBody Product product) {
 
@@ -97,6 +102,7 @@ public class ProductController extends BaseController {
             value = "Delete product",
             notes = "Delete product. Returns 204 no content.",
             response = Product.class)
+    @PreAuthorize("hasAnyAuthority('PRODUCT_ADMIN')")
     public ResponseEntity<Product> delete(@ApiParam("Product id") @PathVariable("id") Long id) {
 
         productService.delete(id);

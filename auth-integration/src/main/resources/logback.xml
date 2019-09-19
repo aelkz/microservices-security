@@ -13,8 +13,6 @@
         <appender-ref ref="STDOUT" />
     </root>
 
-    <!--
-    <logger name="com.microservices.calendar.integration" level="debug"/>
-    -->
+    <logger name="com.microservices.apigateway.security" level="debug"/>
 
 </configuration>

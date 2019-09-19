@@ -4,8 +4,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix = "product.auth")
-public class ProductServiceAccountConfiguration {
+@ConfigurationProperties(prefix = "supplier.auth")
+public class SupplierServiceAccountConfiguration {
 
     private String authServerUri;
     private String realm;

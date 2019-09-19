@@ -9,15 +9,12 @@ import {Config} from 'codelyzer';
   providedIn: 'root'
 })
 export class StatusService {
-    private integrationAPI = window['_env'].integration_uri + '/api/v1';
-    private healthAPI = window['_env'].integration_health_uri;
-
-    jsonType = 'application/json';
+  private integrationAPI = window['_env'].integration_uri + '/api/v1';
 
   constructor(private messageService: MessageService, private http: HttpClient) { }
 
   getAuthIntegrationHealth(): Observable<HttpResponse<Config>> {
-    return this.http.get<Config>(`${this.healthAPI}/health`, {observe: 'response'})
+    return this.http.get<Config>(`${this.integrationAPI}/status`, {observe: 'response'})
       .pipe(
         catchError(error => {
           console.log(error);

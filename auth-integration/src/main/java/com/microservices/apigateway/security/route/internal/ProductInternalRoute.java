@@ -1,7 +1,6 @@
 package com.microservices.apigateway.security.route.internal;
 
 import com.microservices.apigateway.security.configuration.ProductConfiguration;
-import com.microservices.apigateway.security.configuration.ProductServiceAccountConfiguration;
 import com.microservices.apigateway.security.processor.ExceptionProcessor;
 import io.opentracing.Span;
 import org.apache.camel.Exchange;
@@ -21,9 +20,6 @@ public class ProductInternalRoute extends RouteBuilder {
 
     @Autowired
     private ProductConfiguration productConfig;
-
-    @Autowired
-    private ProductServiceAccountConfiguration productServiceAccountConfig;
 
     @Autowired
     private ExceptionProcessor exceptionProcessor;
@@ -48,7 +44,6 @@ public class ProductInternalRoute extends RouteBuilder {
             .removeHeader(Exchange.HTTP_PATH)
             .to("log:post-list?showHeaders=true&level=DEBUG")
             .to("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + "/actuator/health?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
-            //.unmarshal(new ListJacksonDataFormat(Event.class));
             .unmarshal().json(JsonLibrary.Jackson)
             .end();
 
@@ -58,23 +53,28 @@ public class ProductInternalRoute extends RouteBuilder {
             .to("log:list?showHeaders=true&level=DEBUG")
             .removeHeader("origin")
             .removeHeader(Exchange.HTTP_PATH)
-            .to(authCredentials())
             .to("log:post-list?showHeaders=true&level=DEBUG")
-            .to("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + productConfig.getContextPath() + "products?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
-            //.unmarshal(new ListJacksonDataFormat(Event.class));
+            .to("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + productConfig.getContextPath() + "s?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
             .unmarshal().json(JsonLibrary.Jackson)
             .end();
 
+        // ${header.productId}
         from("direct:internal-get-product")
             .id("direct-get-product")
+            .log("HELLO 3")
             .log(LoggingLevel.WARN, logger, "internal route: preparing to call external api using http4 producer")
             .to("log:list?showHeaders=true&level=DEBUG")
-            .removeHeader("origin")
-            .removeHeader(Exchange.HTTP_PATH)
-            .to(authCredentials())
-            .to("log:post-list?showHeaders=true&level=DEBUG")
-            .to("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + productConfig.getContextPath() + "product?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
-            //.unmarshal(new ListJacksonDataFormat(Event.class));
+            .pipeline()
+                .removeHeader("origin")
+                .removeHeader(Exchange.HTTP_PATH)
+                .to("log:post-list?showHeaders=true&level=DEBUG")
+                .process((exchange) -> {
+                    exchange.getIn().getHeaders().forEach((k,v) -> {
+                        System.out.println("["+k+"]="+v);
+                    });
+                })
+                .toD("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + productConfig.getContextPath() + "/${header.productId}?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
+            .end()
             .unmarshal().json(JsonLibrary.Jackson)
             .end();
 
@@ -84,11 +84,9 @@ public class ProductInternalRoute extends RouteBuilder {
             .to("log:list?showHeaders=true&level=DEBUG")
             .removeHeader("origin")
             .removeHeader(Exchange.HTTP_PATH)
-            .to(authCredentials())
             .to("log:post-list?showHeaders=true&level=DEBUG")
             .marshal().json(JsonLibrary.Jackson)
-            .to("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + productConfig.getContextPath() + "product?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
-            //.unmarshal(new ListJacksonDataFormat(Event.class));
+            .to("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + productConfig.getContextPath() + "?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
             .unmarshal().json(JsonLibrary.Jackson)
             .end();
 
@@ -98,11 +96,9 @@ public class ProductInternalRoute extends RouteBuilder {
             .to("log:list?showHeaders=true&level=DEBUG")
             .removeHeader("origin")
             .removeHeader(Exchange.HTTP_PATH)
-            .to(authCredentials())
             .to("log:post-list?showHeaders=true&level=DEBUG")
             .marshal().json(JsonLibrary.Jackson)
-            .to("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + productConfig.getContextPath() + "product?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
-            //.unmarshal(new ListJacksonDataFormat(Event.class));
+            .to("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + productConfig.getContextPath() + "/${header.productId}?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
             .unmarshal().json(JsonLibrary.Jackson)
             .end();
 
@@ -112,29 +108,10 @@ public class ProductInternalRoute extends RouteBuilder {
             .to("log:list?showHeaders=true&level=DEBUG")
             .removeHeader("origin")
             .removeHeader(Exchange.HTTP_PATH)
-            .to(authCredentials())
             .to("log:post-list?showHeaders=true&level=DEBUG")
-            .to("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + productConfig.getContextPath() + "product?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
-            //.unmarshal(new ListJacksonDataFormat(Event.class));
+            .to("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + productConfig.getContextPath() + "/${header.productId}?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
             .unmarshal().json(JsonLibrary.Jackson)
             .end();
-    }
-
-    private String authCredentials() {
-        return String.format("auth:api?serverUrl=%s&" +
-            "realm=%s&" +
-            "clientID=%s&" +
-            "clientSecret=%s&" +
-            "grantType=%s&" +
-            "username=%s&" +
-            "password=%s",
-            productServiceAccountConfig.getAuthServerUri(),
-            productServiceAccountConfig.getRealm(),
-            productServiceAccountConfig.getClientId(),
-            productServiceAccountConfig.getSecret(),
-            productServiceAccountConfig.getGrantType(),
-            productServiceAccountConfig.getUsername(),
-            productServiceAccountConfig.getPassword());
     }
 
     public void addTracer(Exchange exchange){
