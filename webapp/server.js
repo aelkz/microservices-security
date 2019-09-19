@@ -12,7 +12,7 @@ let cors = require('cors');
 
 let app = express();
 
-//app.use(cors());
+app.use(cors());
 app.set('port', process.env.PORT || 8080);
 app.set('microservices-apis', process.env.integration_uri || 'http://auth-integration-api/v1/:8080');
 app.set('microservices-health-api', process.env.integration_health_uri || 'http://auth-integration-api/v1/:8081');
@@ -22,6 +22,7 @@ app.use(logger('combined'));
 app.use(express.static(path.join(__dirname, 'dist')));
 
 // proxy for auth-integration-api backend
+/*
 app.use(
   '/api/v1/*',
   proxy({
@@ -48,6 +49,7 @@ app.use(
         }
     })
 );
+*/
 
 app.use((req, res) => {
 
