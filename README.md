@@ -20,11 +20,16 @@
 <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/04.png" title="Microservices Security" width="40%" height="40%" />
 </p>
 
-<b>WARNING</b>: This is a proof of concept. In production environments, there will be needed adittional configurations regarding scalability and security.
+<b>WARNING</b>: This is a proof of concept. In production environments, there will be needed adittional configurations regarding scalability and security like CORS and Using a proper CA trusted certificate.
+
+<p align="left">
+<div>
+<img style="float: left; margin: 0px 15px 15px 0px;" src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/icon01.png" title="Microservices Security" width="20%" height="20%" /> This is a lengthy article with step by step instructions, screenshots of products and architecture concepts. All source-code is hosted on the <a href="https://github.com/aelkz/microservices-security" target="_blank">github</a>.
+</div>
+</p>
 
 <b>The use-case scenario:</b>
-The main proposal is achieve some concepts regarding security and microservices using a simple use-case scenario. A webapp is offered to promote easier understanding showing all use-case scenarios:
-
+The main proposal is achieve some concepts regarding security of microservices using a wide use-case scenario. A webapp is offered to promote easier understanding of all API calls and authorizations used.
 
 All APIs catalog is exposed bellow:
 
@@ -139,12 +144,14 @@ rm -fr maven-settings-template.xml
 # The config.json can be found at: /var/lib/origin/.docker/ on openshift master node.
 # create a secret with your container credentials
 
-oc delete secret redhat.io -n $PROJECT_NAMESPACE
-oc create secret generic "redhat.io" --from-file=.dockerconfigjson=config.json --type=kubernetes.io/dockerconfigjson -n microservices-security
+export $PROJECT_NAMESPACE=microservices-security
 
-oc create secret generic registry.redhat.io --from-file=.dockerconfigjson=config.json --type=kubernetes.io/dockerconfigjson -n $PROJECT_NAMESPACE
-oc secrets link default registry.redhat.io --for=pull -n $PROJECT_NAMESPACE
-oc secrets link builder registry.redhat.io -n $PROJECT_NAMESPACE
+oc delete secret redhat.io -n $PROJECT_NAMESPACE
+oc create secret generic "redhat.io" --from-file=.dockerconfigjson=config.json --type=kubernetes.io/dockerconfigjson -n $PROJECT_NAMESPACE
+
+oc create secret generic redhat.io --from-file=.dockerconfigjson=config.json --type=kubernetes.io/dockerconfigjson -n $PROJECT_NAMESPACE
+oc secrets link default redhat.io --for=pull -n $PROJECT_NAMESPACE
+oc secrets link builder redhat.io -n $PROJECT_NAMESPACE
 ```
 
 ### `SECURITY LAB: STEP 7 - MICROSERVICES DEPLOYMENT`
@@ -356,6 +363,12 @@ Next, define all mapping rules for this API, accordingly to the following image:
 <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/18.png" title="3Scale admin portal - auth-integration-api configuration" width="95%" height="95%" />
 </p>
 
+Next, configuire the API policies that will be required to enable communication between resources inside the Openshift Container Platform:
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/30.png" title="3Scale admin portal - auth-integration-api policies" width="70%" height="70%" />
+</p>
+
 Next, define the authentication mechanism for this API:
 
 <p align="center">
@@ -425,7 +438,7 @@ The `Application` will be created for use with the `auth-integration-api`. A cli
 
 ### `SECURITY LAB: STEP 14 - NODEJS WEB APPLICATION DEPLOYMENT`
 
-In this step, we will be testing all scenarious with a suited NodeJS webapp based on Angular and Bootstrap. This application was designed to test all authorization scenarios and to easy the understandind process showing the concepts for this tutorial.
+In this step, we will be testing all scenarios with a suited NodeJS webapp based on Angular and Bootstrap. This application was designed to easy the understandind process showing the concepts for used in this tutorial.
 
 ```sh
 # Deploy nodejs-web application
@@ -434,12 +447,19 @@ In this step, we will be testing all scenarious with a suited NodeJS webapp base
 oc import-image rhscl/nodejs-8-rhel7 --from=registry.redhat.io/rhscl/nodejs-8-rhel7 -n openshift --confirm
 
 export APIS_NAMESPACE=microservices-security
+
+oc delete secret redhat.io -n $PROJECT_NAMESPACE
+oc create secret generic "redhat.io" --from-file=.dockerconfigjson=config.json --type=kubernetes.io/dockerconfigjson -n $PROJECT_NAMESPACE
+
+oc secrets link default redhat.io --for=pull -n $PROJECT_NAMESPACE
+oc secrets link builder redhat.io -n $PROJECT_NAMESPACE
+
 export THREESCALE_NAMESPACE=3scale26
 export RHSSO_NAMESPACE=sso73
 export RHSSO_URL=https://$(oc get route -n ${RHSSO_NAMESPACE} | grep secured | awk '{print $2;}')/auth
 export THREESCALE_APP_DOMAIN=arekkusu.io
 export THREESCALE_API_URL=https://$(oc get routes -n ${THREESCALE_NAMESPACE} | grep auth-integration | grep production | awk '{print $2;}')
-export INTEGRATION_HEALTH_URL=https://$(oc get routes -n ${APIS_NAMESPACE} | grep auth-integration | grep metrics | awk '{print $2;}')
+export INTEGRATION_HEALTH_URL=http://$(oc get routes -n ${APIS_NAMESPACE} | grep auth-integration | grep metrics | awk '{print $2;}')
 
 echo -e \
 " PORT=4200\n" \
@@ -455,13 +475,15 @@ echo -e \
 > temp
 
 sed "s/^.//g" temp >> nodejs-config.properties
+rm -fr temp
 
 # oc delete all -lapp=nodejs-web
-oc new-app nodejs-8-rhel7:latest~https://github.com/aelkz/microservices-security.git --name=nodejs-web --context-dir=/webapp -n ${APIS_NAMESPACE}  
+oc new-app nodejs-8-rhel7:latest~https://github.com/aelkz/microservices-security.git --name=nodejs-web --context-dir=/webapp -n ${APIS_NAMESPACE}
 
-oc create configmap nodejs-config --from-file=nodejs-config.properties
-oc set env --from=configmap/nodejs-config dc/nodejs-web
-oc create route edge --service=nodejs-app --cert=server.cert --key=server.key
+#oc create configmap nodejs-config --from-file=nodejs-config.properties -n ${APIS_NAMESPACE}
+#oc set env --from=configmap/nodejs-config dc/nodejs-web -n ${APIS_NAMESPACE}
+
+oc create route edge --service=nodejs-web --cert=webapp/server.cert --key=webapp/server.key -n ${APIS_NAMESPACE}
 ```
 
 ### `EXTERNAL REFERENCES`
@@ -477,3 +499,4 @@ https://openidconnect.net
 Thanks for reading and taking the time to comment!<br>
 Feel free to create a <b>PR</b><br>
 [raphael abreu](rabreu@redhat.com)
+
