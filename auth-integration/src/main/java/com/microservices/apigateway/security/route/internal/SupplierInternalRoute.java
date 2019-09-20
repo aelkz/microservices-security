@@ -3,18 +3,33 @@ package com.microservices.apigateway.security.route.internal;
 import com.microservices.apigateway.security.configuration.SupplierConfiguration;
 import com.microservices.apigateway.security.configuration.SupplierServiceAccountConfiguration;
 import com.microservices.apigateway.security.processor.ExceptionProcessor;
+import com.microservices.security.common.ssl.InsecureSSLComponent;
 import io.opentracing.Span;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.http4.HttpComponent;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.opentracing.ActiveSpanManager;
+import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.util.jsse.TrustManagersParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.net.ssl.*;
 import javax.ws.rs.core.MediaType;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.Socket;
+import java.net.URL;
+import java.net.URLConnection;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 
 @Component("SupplierInternalRoute")
 public class SupplierInternalRoute extends RouteBuilder {
@@ -32,12 +47,17 @@ public class SupplierInternalRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        onException(Exception.class)
-                .handled(true)
-                .process(exceptionProcessor)
-                .redeliveryDelay(150)
-                .maximumRedeliveries(2) // 1 + 2 retries
-                .to("log:exception");
+        errorHandler(noErrorHandler());
+
+        TrustManagersParameters trustManagersParameters = new TrustManagersParameters();
+        X509ExtendedTrustManager extendedTrustManager = new SupplierInternalRoute.InsecureX509TrustManager();
+        trustManagersParameters.setTrustManager(extendedTrustManager);
+
+        SSLContextParameters scp = new SSLContextParameters();
+        scp.setTrustManagers(trustManagersParameters);
+
+        HttpComponent httpComponent = getContext().getComponent("https4", HttpComponent.class);
+        httpComponent.setSslContextParameters(scp);
 
         // /--------------------------------------------------\
         // | Internal route definition                        |
@@ -48,20 +68,19 @@ public class SupplierInternalRoute extends RouteBuilder {
                 .to("log:list?showHeaders=true&level=DEBUG")
                 .removeHeader("origin")
                 .removeHeader(Exchange.HTTP_PATH)
-                .log("HELLO2")
                 .setHeader(Exchange.CONTENT_TYPE, constant(MediaType.APPLICATION_JSON))
                 .removeHeader("breadcrumbId")
                 .removeHeader("Authorization")
+                .to(authCredentials())
                 .process((e) -> {
                     e.getIn().getHeaders().forEach((k,v) -> {
-                        System.out.println(k + "=[" + v + "]");
+                        if (k.equals("Authorization")) {
+                            System.out.println(k + "=[" + v + "]");
+                        }
                     });
                 })
-                .to(authCredentials())
-                .log("HELLO3")
                 .to("log:post-list?showHeaders=true&level=DEBUG")
-                .log("http4://" + supplierConfig.getHost() + ":" + supplierConfig.getPort() + "/actuator/health?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
-                .to("http4://" + supplierConfig.getHost() + ":" + supplierConfig.getPort() + "/actuator/health?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
+                .to("https4://" + supplierConfig.getHost() + ":" + supplierConfig.getPort() + "/actuator/health?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
                 .unmarshal().json(JsonLibrary.Jackson)
             .end();
 
@@ -71,11 +90,12 @@ public class SupplierInternalRoute extends RouteBuilder {
                 .to("log:list?showHeaders=true&level=DEBUG")
                 .removeHeader("origin")
                 .removeHeader(Exchange.HTTP_PATH)
-                .setHeader(Exchange.HTTP_METHOD, constant("POST"))
                 .setHeader(Exchange.CONTENT_TYPE, constant(MediaType.APPLICATION_JSON))
+                .removeHeader("breadcrumbId")
+                .removeHeader("Authorization")
                 .to(authCredentials())
                 .to("log:post-list?showHeaders=true&level=DEBUG")
-                .to("http4://" + supplierConfig.getHost() + ":" + supplierConfig.getPort() + supplierConfig.getContextPath() + "?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
+                .to("https4://" + supplierConfig.getHost() + ":" + supplierConfig.getPort() + supplierConfig.getContextPath() + "?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
                 .unmarshal().json(JsonLibrary.Jackson)
             .end();
 
@@ -102,6 +122,31 @@ public class SupplierInternalRoute extends RouteBuilder {
         String userAgent = (String) exchange.getIn().getHeader("user-agent");
         Span span = ActiveSpanManager.getSpan(exchange);
         span.setBaggageItem("user-agent", userAgent);
+    }
+
+    private static class InsecureX509TrustManager extends X509ExtendedTrustManager {
+        @Override
+        public void checkClientTrusted(X509Certificate[] x509Certificates, String s, Socket socket) throws CertificateException { }
+
+        @Override
+        public void checkServerTrusted(X509Certificate[] x509Certificates, String s, Socket socket) throws CertificateException { }
+
+        @Override
+        public void checkClientTrusted(X509Certificate[] x509Certificates, String s, SSLEngine sslEngine) throws CertificateException { }
+
+        @Override
+        public void checkServerTrusted(X509Certificate[] x509Certificates, String s, SSLEngine sslEngine) throws CertificateException { }
+
+        @Override
+        public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException { }
+
+        @Override
+        public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException { }
+
+        @Override
+        public X509Certificate[] getAcceptedIssuers() {
+            return new X509Certificate[0];
+        }
     }
 
 }
