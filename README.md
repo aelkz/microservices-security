@@ -24,7 +24,7 @@
 
 <p align="left">
 <div>
-<img style="float: left; margin: 0px 15px 15px 0px;" src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/icon01.png" title="Microservices Security" width="20%" height="20%" /> This is a lengthy article with step by step instructions, screenshots of products and architecture concepts. All source-code is hosted on the <a href="https://github.com/aelkz/microservices-security" target="_blank">github</a>.
+<img style="float: left; margin: 0px 15px 15px 0px;" src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/icon01.png" title="Microservices Security" width="10%" height="10%" /> This is a lengthy article with step by step instructions, screenshots of products and architecture concepts. All source-code is hosted on the <a href="https://github.com/aelkz/microservices-security" target="_blank">github</a>.
 </div>
 </p>
 
