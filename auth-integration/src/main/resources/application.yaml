@@ -109,8 +109,8 @@ stock:
 # ---------------------------------------------
 supplier:
   api-key-name: supplier
-  host: localhost
-  port: 8080
+  host: supplier-api-production.apps.arekkusu.io
+  port: 443
   context-path: /api/v1/supplier
   status-path: /actuator/health
   # -------------------------------------------------------
@@ -121,9 +121,10 @@ supplier:
   auth:
     realm: 3scale-api
     client-id: 8f314bfa
-    grant-type: client-credentials
-    username: john-supplier-maintainer
-    password: 12345
+    # only password and client_credentials are supported
+    grant-type: client_credentials
+    #username: john
+    #password: 12345
     secret: 2d1beebcf1c9d00dd51be7a344abd87f
     auth-server-uri: http://authorization-server.apps.arekkusu.io/auth/
 

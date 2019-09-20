@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 
 import javax.ws.rs.core.MediaType;
 
-//@Component("StockInternalRoute")
+@Component("StockInternalRoute")
 public class StockInternalRoute extends RouteBuilder {
 
     static final Logger logger = LoggerFactory.getLogger(StockInternalRoute.class);
@@ -40,27 +40,27 @@ public class StockInternalRoute extends RouteBuilder {
         // | GET <?> Event                                    |
         // \--------------------------------------------------/
 
-        from("direct:internal-status-stock")
+        from("direct:internal-stock-status")
             .id("direct-status-stock")
-            .to("log:list?showHeaders=true&level=DEBUG")
-            .removeHeader("origin")
-            .removeHeader(Exchange.HTTP_PATH)
-            .to("log:post-list?showHeaders=true&level=DEBUG")
-            .to("http4://" + stockConfig.getHost() + ":" + stockConfig.getPort() + "/actuator/health?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
-            .unmarshal().json(JsonLibrary.Jackson)
+                .to("log:list?showHeaders=true&level=DEBUG")
+                .removeHeader("origin")
+                .removeHeader(Exchange.HTTP_PATH)
+                .to("log:post-list?showHeaders=true&level=DEBUG")
+                .to("http4://" + stockConfig.getHost() + ":" + stockConfig.getPort() + "/actuator/health?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
+                .unmarshal().json(JsonLibrary.Jackson)
             .end();
 
         from("direct:internal-stock-event")
             .id("direct-stock-event")
-            .log(LoggingLevel.WARN, logger, "internal route: preparing to call external api using http4 producer")
-            .to("log:list?showHeaders=true&level=DEBUG")
-            .removeHeader("origin")
-            .removeHeader(Exchange.HTTP_PATH)
-            .setHeader(Exchange.HTTP_METHOD, constant("POST"))
-            .setHeader(Exchange.CONTENT_TYPE, constant(MediaType.APPLICATION_JSON))
-            .to("log:post-list?showHeaders=true&level=DEBUG")
-            .to("http4://" + stockConfig.getHost() + ":" + stockConfig.getPort() + stockConfig.getContextPath() + "?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
-            .unmarshal().json(JsonLibrary.Jackson)
+                .log(LoggingLevel.WARN, logger, "internal route: preparing to call external api using http4 producer")
+                .to("log:list?showHeaders=true&level=DEBUG")
+                .removeHeader("origin")
+                .removeHeader(Exchange.HTTP_PATH)
+                .setHeader(Exchange.HTTP_METHOD, constant("POST"))
+                .setHeader(Exchange.CONTENT_TYPE, constant(MediaType.APPLICATION_JSON))
+                .to("log:post-list?showHeaders=true&level=DEBUG")
+                .to("http4://" + stockConfig.getHost() + ":" + stockConfig.getPort() + stockConfig.getContextPath() + "?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
+                .unmarshal().json(JsonLibrary.Jackson)
             .end();
 
     }
