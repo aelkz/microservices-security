@@ -188,10 +188,10 @@ public class IntegrationRestRoute extends RouteBuilder {
 
             .get("/status").description("Health")
                 .param().name("Authorization").type(RestParamType.header).description("Bearer Token").endParam()
-                .responseMessage().code(200).responseModel(Product.class).endResponseMessage()
+                .responseMessage().code(200).responseModel(String.class).endResponseMessage()
                 .responseMessage().code(500).responseModel(ApiResponse.class).endResponseMessage()
                 .route().routeId("status-stock")
-                    .to("direct:internal-status-stock")
+                    .to("direct:internal-stock-status")
                 .endRest()
 
             .get("/update").description("Call stock API").produces(MediaType.APPLICATION_JSON)
@@ -209,10 +209,11 @@ public class IntegrationRestRoute extends RouteBuilder {
 
             .get("/status").description("Health")
                 .param().name("Authorization").type(RestParamType.header).description("Bearer Token").endParam()
-                .responseMessage().code(200).responseModel(Product.class).endResponseMessage()
+                .responseMessage().code(200).responseModel(String.class).endResponseMessage()
                 .responseMessage().code(500).responseModel(ApiResponse.class).endResponseMessage()
                 .route().routeId("status-supplier")
-                    .to("direct:internal-status-supplier")
+                    .log("HELLO1")
+                    .to("direct:internal-supplier-status")
                 .endRest()
 
             .get("/update").description("Call supplier API").produces(MediaType.APPLICATION_JSON)

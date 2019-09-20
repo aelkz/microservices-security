@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 import javax.ws.rs.core.MediaType;
 
-//@Component("SupplierInternalRoute")
+@Component("SupplierInternalRoute")
 public class SupplierInternalRoute extends RouteBuilder {
 
     static final Logger logger = LoggerFactory.getLogger(SupplierInternalRoute.class);
@@ -43,29 +43,40 @@ public class SupplierInternalRoute extends RouteBuilder {
         // | Internal route definition                        |
         // | GET <?> Event                                    |
         // \--------------------------------------------------/
-        from("direct:internal-status-supplier")
+        from("direct:internal-supplier-status")
             .id("direct-status-supplier")
-            .to("log:list?showHeaders=true&level=DEBUG")
-            .removeHeader("origin")
-            .removeHeader(Exchange.HTTP_PATH)
-            .to(authCredentials())
-            .to("log:post-list?showHeaders=true&level=DEBUG")
-            .to("http4://" + supplierConfig.getHost() + ":" + supplierConfig.getPort() + "/actuator/health?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
-            .unmarshal().json(JsonLibrary.Jackson)
+                .to("log:list?showHeaders=true&level=DEBUG")
+                .removeHeader("origin")
+                .removeHeader(Exchange.HTTP_PATH)
+                .log("HELLO2")
+                .setHeader(Exchange.CONTENT_TYPE, constant(MediaType.APPLICATION_JSON))
+                .removeHeader("breadcrumbId")
+                .removeHeader("Authorization")
+                .process((e) -> {
+                    e.getIn().getHeaders().forEach((k,v) -> {
+                        System.out.println(k + "=[" + v + "]");
+                    });
+                })
+                .to(authCredentials())
+                .log("HELLO3")
+                .to("log:post-list?showHeaders=true&level=DEBUG")
+                .log("http4://" + supplierConfig.getHost() + ":" + supplierConfig.getPort() + "/actuator/health?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
+                .to("http4://" + supplierConfig.getHost() + ":" + supplierConfig.getPort() + "/actuator/health?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
+                .unmarshal().json(JsonLibrary.Jackson)
             .end();
 
         from("direct:internal-supplier-event")
             .id("direct-supplier-event")
-            .log(LoggingLevel.WARN, logger, "internal route: preparing to call external api using http4 producer")
-            .to("log:list?showHeaders=true&level=DEBUG")
-            .removeHeader("origin")
-            .removeHeader(Exchange.HTTP_PATH)
-            .setHeader(Exchange.HTTP_METHOD, constant("POST"))
-            .setHeader(Exchange.CONTENT_TYPE, constant(MediaType.APPLICATION_JSON))
-            .to(authCredentials())
-            .to("log:post-list?showHeaders=true&level=DEBUG")
-            .to("http4://" + supplierConfig.getHost() + ":" + supplierConfig.getPort() + supplierConfig.getContextPath() + "?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
-            .unmarshal().json(JsonLibrary.Jackson)
+                .log(LoggingLevel.WARN, logger, "internal route: preparing to call external api using http4 producer")
+                .to("log:list?showHeaders=true&level=DEBUG")
+                .removeHeader("origin")
+                .removeHeader(Exchange.HTTP_PATH)
+                .setHeader(Exchange.HTTP_METHOD, constant("POST"))
+                .setHeader(Exchange.CONTENT_TYPE, constant(MediaType.APPLICATION_JSON))
+                .to(authCredentials())
+                .to("log:post-list?showHeaders=true&level=DEBUG")
+                .to("http4://" + supplierConfig.getHost() + ":" + supplierConfig.getPort() + supplierConfig.getContextPath() + "?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
+                .unmarshal().json(JsonLibrary.Jackson)
             .end();
 
     }
