@@ -113,13 +113,18 @@ supplier:
   port: 8080
   context-path: /api/v1/supplier
   status-path: /actuator/health
+  # -------------------------------------------------------
+  # It is possible to use:
+  # grant-type: password (for a normal user)
+  # grant-type: client-credentials (for a service account)
+  # -------------------------------------------------------
   auth:
     realm: 3scale-api
-    client-id: a35f742a
-    grant-type: password
-    username: supplier-svcacc
+    client-id: 8f314bfa
+    grant-type: client-credentials
+    username: john-supplier-maintainer
     password: 12345
-    secret: 7108964da928a5e508bd4f201d972704
+    secret: 2d1beebcf1c9d00dd51be7a344abd87f
     auth-server-uri: http://authorization-server.apps.arekkusu.io/auth/
 
 # =============================================

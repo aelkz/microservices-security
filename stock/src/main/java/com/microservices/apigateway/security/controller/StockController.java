@@ -10,10 +10,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping(path = "/api", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
@@ -28,8 +27,8 @@ public class StockController extends BaseController {
             value = "Sync",
             notes = "Sync Stock",
             response = Event.class)
-    public ResponseEntity<Event> sync() {
-        Event e = new Event("HELLO");
+    public ResponseEntity<Event> sync(@Valid @RequestBody Event event) {
+        Event e = new Event("HELLO: " + event.getStatus());
         return ResponseEntity.ok().body(e);
     }
 

@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.ws.rs.core.MediaType;
+
 //@Component("SupplierInternalRoute")
 public class SupplierInternalRoute extends RouteBuilder {
 
@@ -49,7 +51,6 @@ public class SupplierInternalRoute extends RouteBuilder {
             .to(authCredentials())
             .to("log:post-list?showHeaders=true&level=DEBUG")
             .to("http4://" + supplierConfig.getHost() + ":" + supplierConfig.getPort() + "/actuator/health?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
-            //.unmarshal(new ListJacksonDataFormat(Event.class));
             .unmarshal().json(JsonLibrary.Jackson)
             .end();
 
@@ -59,6 +60,8 @@ public class SupplierInternalRoute extends RouteBuilder {
             .to("log:list?showHeaders=true&level=DEBUG")
             .removeHeader("origin")
             .removeHeader(Exchange.HTTP_PATH)
+            .setHeader(Exchange.HTTP_METHOD, constant("POST"))
+            .setHeader(Exchange.CONTENT_TYPE, constant(MediaType.APPLICATION_JSON))
             .to(authCredentials())
             .to("log:post-list?showHeaders=true&level=DEBUG")
             .to("http4://" + supplierConfig.getHost() + ":" + supplierConfig.getPort() + supplierConfig.getContextPath() + "?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")

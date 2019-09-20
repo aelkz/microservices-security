@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.ws.rs.core.MediaType;
+
 //@Component("StockInternalRoute")
 public class StockInternalRoute extends RouteBuilder {
 
@@ -54,6 +56,8 @@ public class StockInternalRoute extends RouteBuilder {
             .to("log:list?showHeaders=true&level=DEBUG")
             .removeHeader("origin")
             .removeHeader(Exchange.HTTP_PATH)
+            .setHeader(Exchange.HTTP_METHOD, constant("POST"))
+            .setHeader(Exchange.CONTENT_TYPE, constant(MediaType.APPLICATION_JSON))
             .to("log:post-list?showHeaders=true&level=DEBUG")
             .to("http4://" + stockConfig.getHost() + ":" + stockConfig.getPort() + stockConfig.getContextPath() + "?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
             .unmarshal().json(JsonLibrary.Jackson)
