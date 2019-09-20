@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-public class Event extends BaseModel{
+public class Event extends BaseModel {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
@@ -14,7 +14,25 @@ public class Event extends BaseModel{
     @Column(name="status", nullable = true)
     private String status;
 
+    public Event() { }
+
     public Event(String status) {
+        this.status = status;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
         this.status = status;
     }
 
