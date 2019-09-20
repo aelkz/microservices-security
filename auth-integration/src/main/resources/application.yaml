@@ -89,7 +89,7 @@ health:
 # ---------------------------------------------
 product:
   api-key-name: product
-  host: localhost
+  host: product-api.microservices-security.svc.cluster.local
   port: 8080
   context-path: /api/v1/product
   status-path: /actuator/health
@@ -109,6 +109,7 @@ stock:
 # ---------------------------------------------
 supplier:
   api-key-name: supplier
+  # 3scale production route
   host: supplier-api-production.apps.arekkusu.io
   port: 443
   context-path: /api/v1/supplier

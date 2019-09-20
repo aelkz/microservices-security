@@ -3,7 +3,6 @@ package com.microservices.apigateway.security.route.internal;
 import com.microservices.apigateway.security.configuration.SupplierConfiguration;
 import com.microservices.apigateway.security.configuration.SupplierServiceAccountConfiguration;
 import com.microservices.apigateway.security.processor.ExceptionProcessor;
-import com.microservices.security.common.ssl.InsecureSSLComponent;
 import io.opentracing.Span;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -17,17 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import javax.net.ssl.*;
 import javax.ws.rs.core.MediaType;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.Socket;
-import java.net.URL;
-import java.net.URLConnection;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
