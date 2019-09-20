@@ -33,19 +33,19 @@ public class SecurityConfigurer extends ResourceServerConfigurerAdapter {
 
     private ResourceServerProperties resourceServerProperties;
 
-    private SecurityConfiguration securityProperties;
+    private SecurityConfiguration securityConfig;
 
     /* Using spring constructor injection, @Autowired is implicit */
-    public SecurityConfigurer(ResourceServerProperties resourceServerProperties, SecurityConfiguration securityProperties) {
+    public SecurityConfigurer(ResourceServerProperties resourceServerProperties, SecurityConfiguration securityConfig) {
         this.resourceServerProperties = resourceServerProperties;
-        this.securityProperties = securityProperties;
+        this.securityConfig = securityConfig;
     }
 
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
+        // checks if `aud` claim has resourceServerProperties.getResourceId()
         resources.resourceId(resourceServerProperties.getResourceId());
     }
-
 
     @Override
     public void configure(final HttpSecurity http) throws Exception {
@@ -60,7 +60,7 @@ public class SecurityConfigurer extends ResourceServerConfigurerAdapter {
                 .csrf()
                 .disable()
                 .authorizeRequests()
-                .antMatchers(securityProperties.getApiMatcher())
+                .antMatchers(securityConfig.getApiMatcher())
                 .authenticated();
 
     }
@@ -68,8 +68,8 @@ public class SecurityConfigurer extends ResourceServerConfigurerAdapter {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        if (null != securityProperties.getCorsConfiguration()) {
-            source.registerCorsConfiguration("/**", securityProperties.getCorsConfiguration());
+        if (null != securityConfig.getCorsConfiguration()) {
+            source.registerCorsConfiguration("/**", securityConfig.getCorsConfiguration());
         }
         return source;
     }

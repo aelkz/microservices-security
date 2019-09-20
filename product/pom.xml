@@ -14,6 +14,7 @@
     <properties>
         <spring-cloud.version>Greenwich.SR3</spring-cloud.version>
         <springboot.version>2.1.8.RELEASE</springboot.version>
+        <springboot.security.version>2.0.1.RELEASE</springboot.security.version>
         <main.basedir>${basedir}/../..</main.basedir>
     </properties>
 
@@ -43,17 +44,9 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-oauth2-client</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.security.oauth.boot</groupId>
             <artifactId>spring-security-oauth2-autoconfigure</artifactId>
-            <version>${springboot.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-oauth2-jose</artifactId>
+            <version>${springboot.security.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>

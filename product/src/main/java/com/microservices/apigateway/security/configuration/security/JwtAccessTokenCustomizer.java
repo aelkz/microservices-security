@@ -19,13 +19,6 @@ import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.token.DefaultAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 
-/**
- * JwtAccessTokenCustomizer is to read roles and user_name in access token.
- * <p>
- * This class assumes, that you have define a Protocol Mapper in Keycloack to map user property 'username' to a claim named 'user_name' in access
- * token
- * </p>
- */
 public class JwtAccessTokenCustomizer extends DefaultAccessTokenConverter implements JwtAccessTokenConverterConfigurer {
 
     private static final Logger LOG = LoggerFactory.getLogger(JwtAccessTokenCustomizer.class);
@@ -36,7 +29,7 @@ public class JwtAccessTokenCustomizer extends DefaultAccessTokenConverter implem
 
     private ObjectMapper mapper;
 
-    /* Using spring constructor injection, @Autowired is implicit */
+    @Autowired
     public JwtAccessTokenCustomizer(ObjectMapper mapper) {
         this.mapper = mapper;
         LOG.info("Initialized {}", JwtAccessTokenCustomizer.class.getSimpleName());
@@ -72,6 +65,8 @@ public class JwtAccessTokenCustomizer extends DefaultAccessTokenConverter implem
         LOG.debug("End extractAuthentication");
         return new OAuth2Authentication(request, usernamePasswordAuthentication);
     }
+
+    // https://stackoverflow.com/questions/33205236/spring-security-added-prefix-role-to-all-roles-name
 
     private List<GrantedAuthority> extractRoles(JsonNode jwt) {
         LOG.debug("Begin extractRoles: jwt = {}", jwt);

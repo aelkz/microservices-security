@@ -20,8 +20,7 @@ public class SecurityContextUtils {
 
     private static final String ANONYMOUS = "anonymous";
 
-    private SecurityContextUtils() {
-    }
+    private SecurityContextUtils() { }
 
     public static String getUserName() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
