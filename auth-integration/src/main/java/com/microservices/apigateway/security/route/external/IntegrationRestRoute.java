@@ -212,7 +212,6 @@ public class IntegrationRestRoute extends RouteBuilder {
                 .responseMessage().code(200).responseModel(String.class).endResponseMessage()
                 .responseMessage().code(500).responseModel(ApiResponse.class).endResponseMessage()
                 .route().routeId("status-supplier")
-                    .log("HELLO1")
                     .to("direct:internal-supplier-status")
                 .endRest()
 

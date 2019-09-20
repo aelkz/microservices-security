@@ -90,7 +90,7 @@ health:
 product:
   api-key-name: product
   host: localhost
-  port: 8070
+  port: 8080
   context-path: /api/v1/product
   status-path: /actuator/health
 
@@ -120,13 +120,15 @@ supplier:
   # -------------------------------------------------------
   auth:
     realm: 3scale-api
-    client-id: 8f314bfa
+    client-id: 847d10c1
+    secret: 4519d24a04b3d9093aa9129aa7711d9d
     # only password and client_credentials are supported
-    grant-type: client_credentials
-    #username: john
-    #password: 12345
-    secret: 2d1beebcf1c9d00dd51be7a344abd87f
-    auth-server-uri: http://authorization-server.apps.arekkusu.io/auth/
+    # client_credentials don't need username and password and can't be used to authenticate on 3scale managed clients
+    # if your client is not managed by 3scale you're good to go with client_credentials, otherwise, use a user account.
+    grant-type: password
+    username: 8f314bfa_svcacc
+    password: 12345
+    auth-server-uri: 'http://authorization-server.apps.arekkusu.io/auth'
 
 # =============================================
 # Authorization Settings (Keycloak)
@@ -149,10 +151,10 @@ supplier:
 # ---------------------------------------------
 
 keycloak:
-  ssl-required: external
+  ssl-required: none
   realm: 3scale-api
   resource: 8f314bfa
-  auth-server-url: http://authorization-server.apps.arekkusu.io/auth/
+  auth-server-url: http://authorization-server.apps.arekkusu.io/auth
   credentials:
     secret: 2d1beebcf1c9d00dd51be7a344abd87f
   use-resource-role-mappings: true
