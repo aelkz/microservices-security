@@ -10,7 +10,6 @@ import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.opentracing.ActiveSpanManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import javax.ws.rs.core.MediaType;
 
@@ -19,11 +18,17 @@ public class StockInternalRoute extends RouteBuilder {
 
     static final Logger logger = LoggerFactory.getLogger(StockInternalRoute.class);
 
-    @Autowired
     private StockConfiguration stockConfig;
 
-    @Autowired
     private ExceptionProcessor exceptionProcessor;
+
+    public StockInternalRoute (
+            StockConfiguration stockConfig,
+            ExceptionProcessor exceptionProcessor
+    ) {
+        this.stockConfig = stockConfig;
+        this.exceptionProcessor = exceptionProcessor;
+    }
 
     @Override
     public void configure() throws Exception {

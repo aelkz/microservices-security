@@ -10,7 +10,6 @@ import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.model.rest.RestParamType;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import javax.ws.rs.core.MediaType;
@@ -31,8 +30,13 @@ public class IntegrationRestRoute extends RouteBuilder {
     @Value("${api.hostname}")
     private String apiHostname;
 
-    @Autowired
     private IntegrationHealthConfiguration healthConfig;
+
+    public IntegrationRestRoute (
+            IntegrationHealthConfiguration healthConfig
+    ) {
+        this.healthConfig = healthConfig;
+    }
 
     @Override
     public void configure() throws Exception {
