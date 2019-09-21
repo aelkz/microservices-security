@@ -130,6 +130,8 @@ keycloak-service-account:
   grant-type: password
   username: 8f314bfa_svcacc
   password: 12345
+  # if using self-signed certificate you must use HTTP and set required-ssl=none on keycloak realm
+  # https://lists.jboss.org/pipermail/keycloak-user/2017-April/010386.html
   auth-server-uri: "http://authorization-server.apps.arekkusu.io/auth"
 
 # =============================================
@@ -156,7 +158,7 @@ keycloak:
   ssl-required: none
   realm: 3scale-api
   resource: 8f314bfa
-  auth-server-url: "http://authorization-server.apps.arekkusu.io/auth"
+  auth-server-url: "https://sso73.apps.arekkusu.io/auth"
   credentials:
     secret: 2d1beebcf1c9d00dd51be7a344abd87f
   use-resource-role-mappings: true
