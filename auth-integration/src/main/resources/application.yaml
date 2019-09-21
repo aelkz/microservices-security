@@ -221,6 +221,3 @@ keycloak:
         - name: STOCK_MAINTAINER
           patterns: /api/v1/stock/update
           methods: GET
-  allow-any-hostname: true
-  disable-trust-manager: true
-  enabled: true
