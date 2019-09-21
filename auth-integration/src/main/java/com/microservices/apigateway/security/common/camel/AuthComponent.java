@@ -1,4 +1,4 @@
-package com.microservices.security.common.camel;
+package com.microservices.apigateway.security.common.camel;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;

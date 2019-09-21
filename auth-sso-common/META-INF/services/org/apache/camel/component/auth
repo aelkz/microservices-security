@@ -1,1 +1,1 @@
-class=com.microservices.security.common.camel.AuthComponent
+class=com.microservices.apigateway.security.common.camel.AuthComponent
