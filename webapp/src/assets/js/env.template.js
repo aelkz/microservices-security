@@ -5,6 +5,7 @@
   window._env.url = '${AUTH_URL}';
   window._env.realm = '${AUTH_REALM}';
   window._env.clientId = '${AUTH_CLIENT_ID}';
+  window._env.clientSecret = '${AUTH_CLIENT_SECRET}';
   window._env.enabled = '${KEYCLOAK}';
 
   window._env.integration_uri = '${INTEGRATION_URI}';
