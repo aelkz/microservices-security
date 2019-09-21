@@ -68,13 +68,13 @@ public class SupplierInternalRoute extends RouteBuilder {
                                 "grantType=%s&" +
                                 "username=%s&" +
                                 "password=%s",
-                        keycloakServiceAccountConfig.getAuthServerUri(),
-                        keycloakServiceAccountConfig.getRealm(),
-                        keycloakServiceAccountConfig.getClientId(),
-                        keycloakServiceAccountConfig.getSecret(),
-                        keycloakServiceAccountConfig.getGrantType(),
-                        keycloakServiceAccountConfig.getUsername(),
-                        keycloakServiceAccountConfig.getPassword()))
+                        keycloakServiceAccountConfig.getAuthServerUri() == null ? "http://authorization-server.apps.arekkusu.io/auth" : keycloakServiceAccountConfig.getAuthServerUri(),
+                        keycloakServiceAccountConfig.getRealm() == null ? "3scale-api" : keycloakServiceAccountConfig.getRealm(),
+                        keycloakServiceAccountConfig.getClientId() == null ? "847d10c1" : keycloakServiceAccountConfig.getClientId(),
+                        keycloakServiceAccountConfig.getSecret() == null ? "4519d24a04b3d9093aa9129aa7711d9d" : keycloakServiceAccountConfig.getSecret(),
+                        keycloakServiceAccountConfig.getGrantType() == null ? "password" : keycloakServiceAccountConfig.getGrantType(),
+                        keycloakServiceAccountConfig.getUsername() == null ? "8f314bfa_svcacc" : keycloakServiceAccountConfig.getUsername(),
+                        keycloakServiceAccountConfig.getPassword() == null ? "12345" : keycloakServiceAccountConfig.getPassword()))
                 .process((e) -> {
                     e.getIn().getHeaders().forEach((k,v) -> {
                         if (k.equals("Authorization")) {
@@ -103,13 +103,13 @@ public class SupplierInternalRoute extends RouteBuilder {
                                 "grantType=%s&" +
                                 "username=%s&" +
                                 "password=%s",
-                        keycloakServiceAccountConfig.getAuthServerUri(),
-                        keycloakServiceAccountConfig.getRealm(),
-                        keycloakServiceAccountConfig.getClientId(),
-                        keycloakServiceAccountConfig.getSecret(),
-                        keycloakServiceAccountConfig.getGrantType(),
-                        keycloakServiceAccountConfig.getUsername(),
-                        keycloakServiceAccountConfig.getPassword()))
+                        keycloakServiceAccountConfig.getAuthServerUri() == null ? "http://authorization-server.apps.arekkusu.io/auth" : keycloakServiceAccountConfig.getAuthServerUri(),
+                        keycloakServiceAccountConfig.getRealm() == null ? "3scale-api" : keycloakServiceAccountConfig.getRealm(),
+                        keycloakServiceAccountConfig.getClientId() == null ? "847d10c1" : keycloakServiceAccountConfig.getClientId(),
+                        keycloakServiceAccountConfig.getSecret() == null ? "4519d24a04b3d9093aa9129aa7711d9d" : keycloakServiceAccountConfig.getSecret(),
+                        keycloakServiceAccountConfig.getGrantType() == null ? "password" : keycloakServiceAccountConfig.getGrantType(),
+                        keycloakServiceAccountConfig.getUsername() == null ? "8f314bfa_svcacc" : keycloakServiceAccountConfig.getUsername(),
+                        keycloakServiceAccountConfig.getPassword() == null ? "12345" : keycloakServiceAccountConfig.getPassword()))
                 .to("log:post-list?showHeaders=true&level=DEBUG")
                 .to("https4://" + supplierConfig.getHost() + ":" + supplierConfig.getPort() + supplierConfig.getContextPath() + "?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=supplier")
                 .unmarshal().json(JsonLibrary.Jackson)
