@@ -13,7 +13,6 @@ import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.camel.util.jsse.TrustManagersParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import javax.net.ssl.*;
 import javax.ws.rs.core.MediaType;
@@ -26,11 +25,17 @@ public class SupplierInternalRoute extends RouteBuilder {
 
     static final Logger logger = LoggerFactory.getLogger(SupplierInternalRoute.class);
 
-    @Autowired
     private SupplierConfiguration supplierConfig;
 
-    @Autowired
     private SupplierServiceAccountConfiguration supplierServiceAccountConfig;
+
+    public SupplierInternalRoute (
+            SupplierConfiguration supplierConfig,
+            SupplierServiceAccountConfiguration supplierServiceAccountConfig
+    ) {
+        this.supplierConfig = supplierConfig;
+        this.supplierServiceAccountConfig = supplierServiceAccountConfig;
+    }
 
     @Override
     public void configure() throws Exception {

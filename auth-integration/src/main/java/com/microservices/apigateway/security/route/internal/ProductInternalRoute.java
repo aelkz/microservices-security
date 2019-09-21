@@ -10,7 +10,6 @@ import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.opentracing.ActiveSpanManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component("ProductInternalRoute")
@@ -18,11 +17,17 @@ public class ProductInternalRoute extends RouteBuilder {
 
     static final Logger logger = LoggerFactory.getLogger(ProductInternalRoute.class);
 
-    @Autowired
     private ProductConfiguration productConfig;
 
-    @Autowired
     private ExceptionProcessor exceptionProcessor;
+
+    public ProductInternalRoute (
+            ProductConfiguration productConfig,
+            ExceptionProcessor exceptionProcessor
+    ) {
+        this.productConfig = productConfig;
+        this.exceptionProcessor = exceptionProcessor;
+    }
 
     @Override
     public void configure() throws Exception {
