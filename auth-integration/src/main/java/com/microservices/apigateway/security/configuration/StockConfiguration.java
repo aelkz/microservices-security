@@ -1,16 +1,24 @@
 package com.microservices.apigateway.security.configuration;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix = "stock")
 public class StockConfiguration {
 
+    @Value("${stock.host}")
     private String host;
+
+    @Value("${stock.port}")
     private Integer port;
+
+    @Value("${stock.context-path}")
     private String contextPath;
+
+    @Value("${stock.status-path}")
     private String statusPath;
+
+    @Value("${stock.api-key-name}")
     private String apiKeyName;
 
     public String getHost() {

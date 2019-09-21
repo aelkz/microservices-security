@@ -121,18 +121,6 @@
             <version>${org.webjars.locator.version}</version>
         </dependency>
         <dependency>
-            <!-- https://github.com/cronn-de/reflection-util -->
-            <groupId>de.cronn</groupId>
-            <artifactId>reflection-util</artifactId>
-            <version>${reflection-util.version}</version>
-        </dependency>
-        <dependency>
-            <!-- https://github.com/google/gson -->
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>${google-gson.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-http4-starter</artifactId>
         </dependency>
@@ -203,10 +191,6 @@
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-spring-boot-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core-starter</artifactId>
         </dependency>
         <dependency>
             <groupId>org.keycloak</groupId>

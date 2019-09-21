@@ -1,18 +1,30 @@
 package com.microservices.apigateway.security.configuration;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix = "supplier.auth")
 public class SupplierServiceAccountConfiguration {
 
+    @Value("${supplier.auth.auth-server-uri}")
     private String authServerUri;
+
+    @Value("${supplier.auth.realm}")
     private String realm;
+
+    @Value("${supplier.auth.client-id}")
     private String clientId;
+
+    @Value("${supplier.auth.secret}")
     private String secret;
+
+    @Value("${supplier.auth.grant-type}")
     private String grantType;
+
+    @Value("${supplier.auth.username}")
     private String username;
+
+    @Value("${supplier.auth.password}")
     private String password;
 
     public String getAuthServerUri() {
@@ -70,4 +82,6 @@ public class SupplierServiceAccountConfiguration {
     public void setPassword(String password) {
         this.password = password;
     }
+
+
 }

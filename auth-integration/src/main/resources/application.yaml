@@ -83,7 +83,7 @@ integration:
   health:
     host: "auth-integration-api-metrics.microservices-security.svc.cluster.local"
     port: 8081
-    contextPath: health
+    context-path: health
 
 # =============================================
 # product api parameters
