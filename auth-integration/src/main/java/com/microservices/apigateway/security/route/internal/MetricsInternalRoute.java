@@ -6,6 +6,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import javax.ws.rs.core.MediaType;
 
@@ -14,20 +15,8 @@ public class MetricsInternalRoute extends RouteBuilder {
 
     static final Logger logger = LoggerFactory.getLogger(SupplierInternalRoute.class);
 
+    @Autowired
     private HealthConfiguration healthConfig;
-
-    public MetricsInternalRoute (
-            HealthConfiguration healthConfig
-    ) {
-        this.healthConfig = healthConfig;
-
-        if (this.healthConfig == null) {
-            this.healthConfig = new HealthConfiguration();
-            this.healthConfig.setContextPath("/health");
-            this.healthConfig.setHost("auth-integration-api-metrics.microservices-security.svc.cluster.local");
-            this.healthConfig.setPort(8081);
-        }
-    }
 
     @Override
     public void configure() throws Exception {

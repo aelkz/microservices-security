@@ -1,14 +1,18 @@
 package com.microservices.apigateway.security.configuration;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix = "integration.health")
 public class HealthConfiguration {
 
+    @Value("${integration.health.host}")
     private String host;
+
+    @Value("${integration.health.port}")
     private Integer port;
+
+    @Value("${integration.health.context-path}")
     private String contextPath;
 
     public String getHost() {
