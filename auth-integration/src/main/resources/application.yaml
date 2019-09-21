@@ -79,11 +79,10 @@ jaeger.tracer:
 # =============================================
 # auth-integration health parameters
 # ---------------------------------------------
-integration:
-  health:
-    host: "auth-integration-api-metrics.microservices-security.svc.cluster.local"
-    port: 8081
-    context-path: health
+metrics:
+  host: "auth-integration-api-metrics.microservices-security.svc.cluster.local"
+  port: 8081
+  context-path: health
 
 # =============================================
 # product api parameters

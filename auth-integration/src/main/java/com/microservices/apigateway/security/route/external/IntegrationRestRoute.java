@@ -1,6 +1,5 @@
 package com.microservices.apigateway.security.route.external;
 
-import com.microservices.apigateway.security.configuration.HealthConfiguration;
 import com.microservices.apigateway.security.model.ErrorMessage;
 import com.microservices.apigateway.security.model.Product;
 import com.microservices.apigateway.security.model.ApiResponse;

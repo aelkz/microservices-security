@@ -1,6 +1,6 @@
 package com.microservices.apigateway.security.route.internal;
 
-import com.microservices.apigateway.security.configuration.HealthConfiguration;
+import com.microservices.apigateway.security.configuration.MetricsConfiguration;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.JsonLibrary;
@@ -16,7 +16,7 @@ public class MetricsInternalRoute extends RouteBuilder {
     static final Logger logger = LoggerFactory.getLogger(SupplierInternalRoute.class);
 
     @Autowired
-    private HealthConfiguration healthConfig;
+    private MetricsConfiguration healthConfig;
 
     @Override
     public void configure() throws Exception {
