@@ -4,27 +4,27 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class SupplierServiceAccountConfiguration {
+public class KeycloakServiceAccountConfiguration {
 
-    @Value("${supplier.auth.auth-server-uri}")
+    @Value("${keycloak-service-account.auth-server-uri}")
     private String authServerUri;
 
-    @Value("${supplier.auth.realm}")
+    @Value("${keycloak-service-account.realm}")
     private String realm;
 
-    @Value("${supplier.auth.client-id}")
+    @Value("${keycloak-service-account.client-id}")
     private String clientId;
 
-    @Value("${supplier.auth.secret}")
+    @Value("${keycloak-service-account.secret}")
     private String secret;
 
-    @Value("${supplier.auth.grant-type}")
+    @Value("${keycloak-service-account.grant-type}")
     private String grantType;
 
-    @Value("${supplier.auth.username}")
+    @Value("${keycloak-service-account.username}")
     private String username;
 
-    @Value("${supplier.auth.password}")
+    @Value("${keycloak-service-account.password}")
     private String password;
 
     public String getAuthServerUri() {

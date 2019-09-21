@@ -1,7 +1,7 @@
 package com.microservices.apigateway.security.route.internal;
 
 import com.microservices.apigateway.security.configuration.SupplierConfiguration;
-import com.microservices.apigateway.security.configuration.SupplierServiceAccountConfiguration;
+import com.microservices.apigateway.security.configuration.KeycloakServiceAccountConfiguration;
 import io.opentracing.Span;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -31,7 +31,7 @@ public class SupplierInternalRoute extends RouteBuilder {
     private SupplierConfiguration supplierConfig;
 
     @Autowired
-    private SupplierServiceAccountConfiguration supplierServiceAccountConfig;
+    private KeycloakServiceAccountConfiguration supplierServiceAccountConfig;
 
     @Override
     public void configure() throws Exception {
