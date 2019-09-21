@@ -227,12 +227,6 @@
             <version>${httpclient.version}</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>javax.enterprise</groupId>
-            <artifactId>cdi-api</artifactId>
-            <version>2.0</version>
-        </dependency>
-
     </dependencies>
 
     <build>

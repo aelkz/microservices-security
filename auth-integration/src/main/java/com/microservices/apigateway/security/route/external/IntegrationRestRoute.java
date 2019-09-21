@@ -30,21 +30,6 @@ public class IntegrationRestRoute extends RouteBuilder {
     @Value("${api.hostname}")
     private String apiHostname;
 
-    private HealthConfiguration healthConfig;
-
-    public IntegrationRestRoute (
-            HealthConfiguration healthConfig
-    ) {
-        this.healthConfig = healthConfig;
-
-        if (this.healthConfig == null) {
-            this.healthConfig = new HealthConfiguration();
-            this.healthConfig.setContextPath("/health");
-            this.healthConfig.setHost("auth-integration-api-metrics.microservices-security.svc.cluster.local");
-            this.healthConfig.setPort(8081);
-        }
-    }
-
     @Override
     public void configure() throws Exception {
         // @formatter:off
@@ -71,7 +56,7 @@ public class IntegrationRestRoute extends RouteBuilder {
                 .corsHeaderProperty("Access-Control-Allow-Headers", "Authorization, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, app_id, app_key");
 
         // /--------------------------------------------------\
-        // | Expose route w/ REST Product endpoint            |
+        // | Expose route w/ REST Endpoints                   |
         // \--------------------------------------------------/
 
         rest("/status").id("status-endpoint")
@@ -87,7 +72,7 @@ public class IntegrationRestRoute extends RouteBuilder {
                 .removeHeader("origin")
                 .removeHeader(Exchange.HTTP_PATH)
                 .to("log:post-list?showHeaders=true&level=DEBUG")
-                .to("http4://" + healthConfig.getHost() + ":" + healthConfig.getPort() + healthConfig.getContextPath() + "?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=rest")
+                .to("direct:internal-integration-health")
                 .unmarshal().json(JsonLibrary.Jackson)
                 .endRest();
 
