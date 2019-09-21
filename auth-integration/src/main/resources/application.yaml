@@ -115,22 +115,23 @@ supplier:
   port: 443
   context-path: /api/v1/supplier
   status-path: /actuator/health
-  # -------------------------------------------------------
-  # It is possible to use:
-  # grant-type: password (for a normal user)
-  # grant-type: client-credentials (for a service account)
-  # -------------------------------------------------------
-  auth:
-    realm: 3scale-api
-    client-id: 847d10c1
-    secret: 4519d24a04b3d9093aa9129aa7711d9d
-    # only password and client_credentials are supported
-    # client_credentials don't need username and password and can't be used to authenticate on 3scale managed clients
-    # if your client is not managed by 3scale you're good to go with client_credentials, otherwise, use a user account.
-    grant-type: password
-    username: 8f314bfa_svcacc
-    password: 12345
-    auth-server-uri: "http://authorization-server.apps.arekkusu.io/auth"
+
+# -------------------------------------------------------
+# It is possible to use:
+# grant-type: password (for a normal user)
+# grant-type: client-credentials (for a service account)
+# -------------------------------------------------------
+keycloak-service-account:
+  realm: 3scale-api
+  client-id: 847d10c1
+  secret: 4519d24a04b3d9093aa9129aa7711d9d
+  # only password and client_credentials are supported
+  # client_credentials don't need username and password and can't be used to authenticate on 3scale managed clients
+  # if your client is not managed by 3scale you're good to go with client_credentials, otherwise, use a user account.
+  grant-type: password
+  username: 8f314bfa_svcacc
+  password: 12345
+  auth-server-uri: "http://authorization-server.apps.arekkusu.io/auth"
 
 # =============================================
 # Authorization Settings (Keycloak)
