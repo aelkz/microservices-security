@@ -38,6 +38,7 @@ public class IntegrationRestRoute extends RouteBuilder {
         this.healthConfig = healthConfig;
 
         if (this.healthConfig == null) {
+            this.healthConfig = new HealthConfiguration();
             this.healthConfig.setContextPath("/health");
             this.healthConfig.setHost("auth-integration-api-metrics.microservices-security.svc.cluster.local");
             this.healthConfig.setPort(8081);
