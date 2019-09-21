@@ -203,6 +203,12 @@ keycloak:
           patterns: /api/v1/stock/status
           methods: GET
     - authRoles:
+        - CHECK_INTEGRATION_STATUS
+      securityCollections:
+        - name: INTEGRATION_STATUS
+          patterns: /api/v1/status
+          methods: GET
+    - authRoles:
         - SUPPLIER_MAINTAINER
       securityCollections:
         - name: SUPPLIER_MAINTAINER
