@@ -13,8 +13,7 @@ export class AppInitService {
       config: {
         realm: window['_env'].realm,
         url: window['_env'].url,
-        clientId: window['_env'].clientId,
-
+        clientId: window['_env'].clientId
       },
       initOptions: {
         onLoad: 'login-required'

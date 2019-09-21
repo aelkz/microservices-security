@@ -11,7 +11,16 @@ let proxy = require('http-proxy-middleware');
 let cors = require('cors');
 
 let app = express();
-app.use(cors());
+//app.use(cors());
+
+let allowCrossDomain = function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+  next();
+};
+
+app.use(allowCrossDomain);
 
 app.set('port', process.env.PORT || 8080);
 app.set('integration-service', process.env.INTEGRATION_URI || 'http://auth-integration-api/v1/:8080');
