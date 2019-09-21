@@ -14,7 +14,6 @@ import org.apache.camel.util.jsse.TrustManagersParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import javax.net.ssl.*;
 import javax.ws.rs.core.MediaType;
@@ -31,7 +30,7 @@ public class SupplierInternalRoute extends RouteBuilder {
     private SupplierConfiguration supplierConfig;
 
     @Autowired
-    private KeycloakServiceAccountConfiguration supplierServiceAccountConfig;
+    private KeycloakServiceAccountConfiguration keycloakServiceAccountConfig;
 
     @Override
     public void configure() throws Exception {
@@ -62,7 +61,20 @@ public class SupplierInternalRoute extends RouteBuilder {
                 .setHeader(Exchange.CONTENT_TYPE, constant(MediaType.APPLICATION_JSON))
                 .removeHeader("breadcrumbId")
                 .removeHeader("Authorization")
-                .to(authCredentials())
+                .to(String.format("auth:api?serverUrl=%s&" +
+                                "realm=%s&" +
+                                "clientID=%s&" +
+                                "clientSecret=%s&" +
+                                "grantType=%s&" +
+                                "username=%s&" +
+                                "password=%s",
+                        keycloakServiceAccountConfig.getAuthServerUri(),
+                        keycloakServiceAccountConfig.getRealm(),
+                        keycloakServiceAccountConfig.getClientId(),
+                        keycloakServiceAccountConfig.getSecret(),
+                        keycloakServiceAccountConfig.getGrantType(),
+                        keycloakServiceAccountConfig.getUsername(),
+                        keycloakServiceAccountConfig.getPassword()))
                 .process((e) -> {
                     e.getIn().getHeaders().forEach((k,v) -> {
                         if (k.equals("Authorization")) {
@@ -84,29 +96,25 @@ public class SupplierInternalRoute extends RouteBuilder {
                 .setHeader(Exchange.CONTENT_TYPE, constant(MediaType.APPLICATION_JSON))
                 .removeHeader("breadcrumbId")
                 .removeHeader("Authorization")
-                .to(authCredentials())
+                .to(String.format("auth:api?serverUrl=%s&" +
+                                "realm=%s&" +
+                                "clientID=%s&" +
+                                "clientSecret=%s&" +
+                                "grantType=%s&" +
+                                "username=%s&" +
+                                "password=%s",
+                        keycloakServiceAccountConfig.getAuthServerUri(),
+                        keycloakServiceAccountConfig.getRealm(),
+                        keycloakServiceAccountConfig.getClientId(),
+                        keycloakServiceAccountConfig.getSecret(),
+                        keycloakServiceAccountConfig.getGrantType(),
+                        keycloakServiceAccountConfig.getUsername(),
+                        keycloakServiceAccountConfig.getPassword()))
                 .to("log:post-list?showHeaders=true&level=DEBUG")
                 .to("https4://" + supplierConfig.getHost() + ":" + supplierConfig.getPort() + supplierConfig.getContextPath() + "?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=supplier")
                 .unmarshal().json(JsonLibrary.Jackson)
             .end();
 
-    }
-
-    private String authCredentials() {
-        return String.format("auth:api?serverUrl=%s&" +
-                        "realm=%s&" +
-                        "clientID=%s&" +
-                        "clientSecret=%s&" +
-                        "grantType=%s&" +
-                        "username=%s&" +
-                        "password=%s",
-                supplierServiceAccountConfig.getAuthServerUri(),
-                supplierServiceAccountConfig.getRealm(),
-                supplierServiceAccountConfig.getClientId(),
-                supplierServiceAccountConfig.getSecret(),
-                supplierServiceAccountConfig.getGrantType(),
-                supplierServiceAccountConfig.getUsername(),
-                supplierServiceAccountConfig.getPassword());
     }
 
     public void addTracer(Exchange exchange){
