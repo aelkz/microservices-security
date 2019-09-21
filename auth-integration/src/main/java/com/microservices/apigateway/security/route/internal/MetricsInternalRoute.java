@@ -43,7 +43,7 @@ public class MetricsInternalRoute extends RouteBuilder {
                 .removeHeader(Exchange.HTTP_PATH)
                 .setHeader(Exchange.CONTENT_TYPE, constant(MediaType.APPLICATION_JSON))
                 .removeHeader("breadcrumbId")
-                .to("http4://" + healthConfig.getHost() + ":" + healthConfig.getPort() + healthConfig.getContextPath() + "?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=rest")
+                .to("http4://" + healthConfig.getHost() + ":" + healthConfig.getPort() + "/" + healthConfig.getContextPath() + "?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=metrics")
                 .unmarshal().json(JsonLibrary.Jackson)
                 .end();
     }
