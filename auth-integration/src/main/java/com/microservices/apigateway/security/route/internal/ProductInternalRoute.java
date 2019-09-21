@@ -43,7 +43,7 @@ public class ProductInternalRoute extends RouteBuilder {
             .removeHeader("origin")
             .removeHeader(Exchange.HTTP_PATH)
             .to("log:post-list?showHeaders=true&level=DEBUG")
-            .to("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + "/actuator/health?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
+            .to("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + "/actuator/health?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=product")
             .unmarshal().json(JsonLibrary.Jackson)
             .end();
 
@@ -54,7 +54,7 @@ public class ProductInternalRoute extends RouteBuilder {
             .removeHeader("origin")
             .removeHeader(Exchange.HTTP_PATH)
             .to("log:post-list?showHeaders=true&level=DEBUG")
-            .to("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + productConfig.getContextPath() + "s?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
+            .to("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + productConfig.getContextPath() + "s?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=product")
             .unmarshal().json(JsonLibrary.Jackson)
             .end();
 
@@ -73,7 +73,7 @@ public class ProductInternalRoute extends RouteBuilder {
                         System.out.println("["+k+"]="+v);
                     });
                 })
-                .toD("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + productConfig.getContextPath() + "/${header.productId}?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
+                .toD("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + productConfig.getContextPath() + "/${header.productId}?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=product")
             .end()
             .unmarshal().json(JsonLibrary.Jackson)
             .end();
@@ -86,7 +86,7 @@ public class ProductInternalRoute extends RouteBuilder {
             .removeHeader(Exchange.HTTP_PATH)
             .to("log:post-list?showHeaders=true&level=DEBUG")
             .marshal().json(JsonLibrary.Jackson)
-            .to("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + productConfig.getContextPath() + "?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
+            .to("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + productConfig.getContextPath() + "?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=product")
             .unmarshal().json(JsonLibrary.Jackson)
             .end();
 
@@ -98,7 +98,7 @@ public class ProductInternalRoute extends RouteBuilder {
             .removeHeader(Exchange.HTTP_PATH)
             .to("log:post-list?showHeaders=true&level=DEBUG")
             .marshal().json(JsonLibrary.Jackson)
-            .to("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + productConfig.getContextPath() + "/${header.productId}?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
+            .to("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + productConfig.getContextPath() + "/${header.productId}?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=product")
             .unmarshal().json(JsonLibrary.Jackson)
             .end();
 
@@ -109,7 +109,7 @@ public class ProductInternalRoute extends RouteBuilder {
             .removeHeader("origin")
             .removeHeader(Exchange.HTTP_PATH)
             .to("log:post-list?showHeaders=true&level=DEBUG")
-            .to("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + productConfig.getContextPath() + "/${header.productId}?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
+            .to("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + productConfig.getContextPath() + "/${header.productId}?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=product")
             .unmarshal().json(JsonLibrary.Jackson)
             .end();
     }

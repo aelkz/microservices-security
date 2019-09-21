@@ -2,11 +2,9 @@ package com.microservices.apigateway.security.route.external;
 
 import com.microservices.apigateway.security.configuration.IntegrationHealthConfiguration;
 import com.microservices.apigateway.security.model.ErrorMessage;
-import com.microservices.apigateway.security.model.Event;
 import com.microservices.apigateway.security.model.Product;
 import com.microservices.apigateway.security.model.ApiResponse;
 import org.apache.camel.Exchange;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.camel.model.dataformat.JsonLibrary;
@@ -14,13 +12,9 @@ import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.model.rest.RestParamType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-
-import javax.print.attribute.standard.Media;
 import javax.ws.rs.core.MediaType;
 import static org.apache.camel.model.rest.RestParamType.body;
-import static org.apache.camel.model.rest.RestParamType.path;
 
 @Component("IntegrationRestRoute")
 public class IntegrationRestRoute extends RouteBuilder {
@@ -36,9 +30,6 @@ public class IntegrationRestRoute extends RouteBuilder {
 
     @Value("${api.hostname}")
     private String apiHostname;
-
-    @Autowired
-    private Environment env;
 
     @Autowired
     private IntegrationHealthConfiguration healthConfig;
@@ -85,7 +76,7 @@ public class IntegrationRestRoute extends RouteBuilder {
                 .removeHeader("origin")
                 .removeHeader(Exchange.HTTP_PATH)
                 .to("log:post-list?showHeaders=true&level=DEBUG")
-                .to("http4://" + healthConfig.getHost() + ":" + healthConfig.getPort() + healthConfig.getContextPath() + "?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
+                .to("http4://" + healthConfig.getHost() + ":" + healthConfig.getPort() + healthConfig.getContextPath() + "?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=rest")
                 .unmarshal().json(JsonLibrary.Jackson)
                 .endRest();
 

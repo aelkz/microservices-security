@@ -45,7 +45,7 @@ public class StockInternalRoute extends RouteBuilder {
                 .removeHeader("origin")
                 .removeHeader(Exchange.HTTP_PATH)
                 .to("log:post-list?showHeaders=true&level=DEBUG")
-                .to("http4://" + stockConfig.getHost() + ":" + stockConfig.getPort() + "/actuator/health?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
+                .to("http4://" + stockConfig.getHost() + ":" + stockConfig.getPort() + "/actuator/health?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=stock")
                 .unmarshal().json(JsonLibrary.Jackson)
             .end();
 
@@ -58,7 +58,7 @@ public class StockInternalRoute extends RouteBuilder {
                 .setHeader(Exchange.HTTP_METHOD, constant("POST"))
                 .setHeader(Exchange.CONTENT_TYPE, constant(MediaType.APPLICATION_JSON))
                 .to("log:post-list?showHeaders=true&level=DEBUG")
-                .to("http4://" + stockConfig.getHost() + ":" + stockConfig.getPort() + stockConfig.getContextPath() + "?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
+                .to("http4://" + stockConfig.getHost() + ":" + stockConfig.getPort() + stockConfig.getContextPath() + "?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=stock")
                 .unmarshal().json(JsonLibrary.Jackson)
             .end();
 

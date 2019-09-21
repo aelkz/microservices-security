@@ -1,7 +1,7 @@
-package com.microservices.security.common.camel;
+package com.microservices.apigateway.security.common.camel;
 
-import com.microservices.security.common.oauth2.OAuth2ClientCredentials;
-import com.microservices.security.common.oauth2.Token;
+import com.microservices.apigateway.security.common.oauth2.OAuth2ClientCredentials;
+import com.microservices.apigateway.security.common.oauth2.Token;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 

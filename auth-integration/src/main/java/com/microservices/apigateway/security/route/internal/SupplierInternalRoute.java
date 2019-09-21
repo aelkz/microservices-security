@@ -2,7 +2,6 @@ package com.microservices.apigateway.security.route.internal;
 
 import com.microservices.apigateway.security.configuration.SupplierConfiguration;
 import com.microservices.apigateway.security.configuration.SupplierServiceAccountConfiguration;
-import com.microservices.apigateway.security.processor.ExceptionProcessor;
 import io.opentracing.Span;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -31,15 +30,14 @@ public class SupplierInternalRoute extends RouteBuilder {
     private SupplierConfiguration supplierConfig;
 
     @Autowired
-    private ExceptionProcessor exceptionProcessor;
-
-    @Autowired
     private SupplierServiceAccountConfiguration supplierServiceAccountConfig;
 
     @Override
     public void configure() throws Exception {
         errorHandler(noErrorHandler());
 
+        // CAUTION: Use the following block to bypass SSL self-signed certificates.
+        // ----------------------------------------------------------------------------------------------------
         TrustManagersParameters trustManagersParameters = new TrustManagersParameters();
         X509ExtendedTrustManager extendedTrustManager = new SupplierInternalRoute.InsecureX509TrustManager();
         trustManagersParameters.setTrustManager(extendedTrustManager);
@@ -49,6 +47,7 @@ public class SupplierInternalRoute extends RouteBuilder {
 
         HttpComponent httpComponent = getContext().getComponent("https4", HttpComponent.class);
         httpComponent.setSslContextParameters(scp);
+        // ----------------------------------------------------------------------------------------------------
 
         // /--------------------------------------------------\
         // | Internal route definition                        |
@@ -71,7 +70,7 @@ public class SupplierInternalRoute extends RouteBuilder {
                     });
                 })
                 .to("log:post-list?showHeaders=true&level=DEBUG")
-                .to("https4://" + supplierConfig.getHost() + ":" + supplierConfig.getPort() + "/actuator/health?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
+                .to("https4://" + supplierConfig.getHost() + ":" + supplierConfig.getPort() + "/actuator/health?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=supplier")
                 .unmarshal().json(JsonLibrary.Jackson)
             .end();
 
@@ -86,7 +85,7 @@ public class SupplierInternalRoute extends RouteBuilder {
                 .removeHeader("Authorization")
                 .to(authCredentials())
                 .to("log:post-list?showHeaders=true&level=DEBUG")
-                .to("https4://" + supplierConfig.getHost() + ":" + supplierConfig.getPort() + supplierConfig.getContextPath() + "?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true")
+                .to("https4://" + supplierConfig.getHost() + ":" + supplierConfig.getPort() + supplierConfig.getContextPath() + "?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=supplier")
                 .unmarshal().json(JsonLibrary.Jackson)
             .end();
 
