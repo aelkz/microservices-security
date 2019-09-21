@@ -1,6 +1,6 @@
 package com.microservices.apigateway.security.route.external;
 
-import com.microservices.apigateway.security.configuration.IntegrationHealthConfiguration;
+import com.microservices.apigateway.security.configuration.HealthConfiguration;
 import com.microservices.apigateway.security.model.ErrorMessage;
 import com.microservices.apigateway.security.model.Product;
 import com.microservices.apigateway.security.model.ApiResponse;
@@ -30,12 +30,18 @@ public class IntegrationRestRoute extends RouteBuilder {
     @Value("${api.hostname}")
     private String apiHostname;
 
-    private IntegrationHealthConfiguration healthConfig;
+    private HealthConfiguration healthConfig;
 
     public IntegrationRestRoute (
-            IntegrationHealthConfiguration healthConfig
+            HealthConfiguration healthConfig
     ) {
         this.healthConfig = healthConfig;
+
+        if (this.healthConfig == null) {
+            this.healthConfig.setContextPath("/health");
+            this.healthConfig.setHost("auth-integration-api-metrics.microservices-security.svc.cluster.local");
+            this.healthConfig.setPort(8081);
+        }
     }
 
     @Override

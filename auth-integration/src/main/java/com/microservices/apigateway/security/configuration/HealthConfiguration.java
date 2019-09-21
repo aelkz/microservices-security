@@ -4,11 +4,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix = "health")
-public class IntegrationHealthConfiguration {
+@ConfigurationProperties(prefix = "integration.health")
+public class HealthConfiguration {
 
     private String host;
-    private String port;
+    private Integer port;
     private String contextPath;
 
     public String getHost() {
@@ -19,11 +19,11 @@ public class IntegrationHealthConfiguration {
         this.host = host;
     }
 
-    public String getPort() {
+    public Integer getPort() {
         return port;
     }
 
-    public void setPort(String port) {
+    public void setPort(Integer port) {
         this.port = port;
     }
 
