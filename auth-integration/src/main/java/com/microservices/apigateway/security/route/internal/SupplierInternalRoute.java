@@ -92,7 +92,6 @@ public class SupplierInternalRoute extends RouteBuilder {
 
     }
 
-    @Bean
     private String authCredentials() {
         return String.format("auth:api?serverUrl=%s&" +
                         "realm=%s&" +
