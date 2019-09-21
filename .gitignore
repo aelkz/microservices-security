@@ -1,0 +1,7 @@
+# Created by .ignore support plugin (hsz.mobi)
+
+auth-integration/target
+product/target
+stock/target
+supplier/target
+webapp/dist

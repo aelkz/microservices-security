@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 public class ProductConfiguration {
 
     private String host;
-    private String port;
+    private Integer port;
     private String contextPath;
     private String statusPath;
     private String apiKeyName;
@@ -21,11 +21,11 @@ public class ProductConfiguration {
         this.host = host;
     }
 
-    public String getPort() {
+    public Integer getPort() {
         return port;
     }
 
-    public void setPort(String port) {
+    public void setPort(Integer port) {
         this.port = port;
     }
 
