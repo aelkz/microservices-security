@@ -1,30 +1,18 @@
 package com.microservices.apigateway.security.configuration;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@ConfigurationProperties(prefix="keycloak-service-account")
 public class KeycloakServiceAccountConfiguration {
 
-    @Value("${keycloak-service-account.auth-server-uri}")
     private String authServerUri;
-
-    @Value("${keycloak-service-account.realm}")
     private String realm;
-
-    @Value("${keycloak-service-account.client-id}")
     private String clientId;
-
-    @Value("${keycloak-service-account.secret}")
     private String secret;
-
-    @Value("${keycloak-service-account.grant-type}")
     private String grantType;
-
-    @Value("${keycloak-service-account.username}")
     private String username;
-
-    @Value("${keycloak-service-account.password}")
     private String password;
 
     public String getAuthServerUri() {
