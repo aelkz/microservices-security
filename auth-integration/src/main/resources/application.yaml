@@ -15,7 +15,7 @@ api:
 
 logging:
   config: classpath:logback.xml
-  level: debug
+  level: DEBUG
 
 # options from org.apache.camel.spring.boot.CamelConfigurationProperties can be configured here
 camel:
@@ -159,7 +159,7 @@ keycloak:
   ssl-required: none
   realm: 3scale-api
   resource: 8f314bfa
-  auth-server-url: https://sso73.apps.arekkusu.io/auth/
+  auth-server-url: https://sso73.apps.arekkusu.io/auth
   credentials:
     secret: 2d1beebcf1c9d00dd51be7a344abd87f
   use-resource-role-mappings: true
@@ -213,11 +213,11 @@ keycloak:
         - SUPPLIER_MAINTAINER
       securityCollections:
         - name: SUPPLIER_MAINTAINER
-          patterns: /api/v1/supplier/update
+          patterns: /api/v1/supplier/maintenance
           methods: GET
     - authRoles:
         - STOCK_MAINTAINER
       securityCollections:
         - name: STOCK_MAINTAINER
-          patterns: /api/v1/stock/update
+          patterns: /api/v1/stock/maintenance
           methods: GET
