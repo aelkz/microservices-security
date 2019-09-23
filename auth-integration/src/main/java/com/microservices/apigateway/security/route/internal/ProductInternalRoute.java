@@ -1,6 +1,7 @@
 package com.microservices.apigateway.security.route.internal;
 
 import com.microservices.apigateway.security.configuration.ProductConfiguration;
+import com.microservices.apigateway.security.model.Product;
 import com.microservices.apigateway.security.processor.ExceptionProcessor;
 import io.opentracing.Span;
 import org.apache.camel.Exchange;
@@ -45,22 +46,21 @@ public class ProductInternalRoute extends RouteBuilder {
         from("direct:internal-status-product")
             .id("direct-status-product")
             .to("log:list?showHeaders=true&level=DEBUG")
-            .removeHeader("origin")
-            .removeHeader(Exchange.HTTP_PATH)
-            .to("log:post-list?showHeaders=true&level=DEBUG")
-            .to("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + "/actuator/health?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=product")
-            .unmarshal().json(JsonLibrary.Jackson)
+                .removeHeader("origin")
+                .removeHeader(Exchange.HTTP_PATH)
+                .to("log:post-list?showHeaders=true&level=DEBUG")
+                .to("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + "/actuator/health?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=product")
             .end();
 
         from("direct:internal-list-products")
             .id("direct-list-products")
             .log(LoggingLevel.WARN, logger, "internal route: preparing to call external api using http4 producer")
             .to("log:list?showHeaders=true&level=DEBUG")
-            .removeHeader("origin")
-            .removeHeader(Exchange.HTTP_PATH)
-            .to("log:post-list?showHeaders=true&level=DEBUG")
-            .to("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + productConfig.getContextPath() + "s?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=product")
-            .unmarshal().json(JsonLibrary.Jackson)
+                .removeHeader("origin")
+                .removeHeader(Exchange.HTTP_PATH)
+                .to("log:post-list?showHeaders=true&level=DEBUG")
+                .to("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + productConfig.getContextPath() + "s?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=product")
+                .unmarshal().json(JsonLibrary.Jackson)
             .end();
 
         // ${header.productId}
@@ -80,7 +80,7 @@ public class ProductInternalRoute extends RouteBuilder {
                 })
                 .toD("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + productConfig.getContextPath() + "/${header.productId}?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=product")
             .end()
-            .unmarshal().json(JsonLibrary.Jackson)
+            .unmarshal().json(JsonLibrary.Jackson, Product.class)
             .end();
 
         from("direct:internal-create-product")
@@ -92,7 +92,7 @@ public class ProductInternalRoute extends RouteBuilder {
             .to("log:post-list?showHeaders=true&level=DEBUG")
             .marshal().json(JsonLibrary.Jackson)
             .to("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + productConfig.getContextPath() + "?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=product")
-            .unmarshal().json(JsonLibrary.Jackson)
+            .unmarshal().json(JsonLibrary.Jackson, Product.class)
             .end();
 
         from("direct:internal-update-product")
@@ -104,7 +104,7 @@ public class ProductInternalRoute extends RouteBuilder {
             .to("log:post-list?showHeaders=true&level=DEBUG")
             .marshal().json(JsonLibrary.Jackson)
             .to("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + productConfig.getContextPath() + "/${header.productId}?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=product")
-            .unmarshal().json(JsonLibrary.Jackson)
+            .unmarshal().json(JsonLibrary.Jackson, Product.class)
             .end();
 
         from("direct:internal-delete-product")
@@ -115,7 +115,7 @@ public class ProductInternalRoute extends RouteBuilder {
             .removeHeader(Exchange.HTTP_PATH)
             .to("log:post-list?showHeaders=true&level=DEBUG")
             .to("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + productConfig.getContextPath() + "/${header.productId}?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=product")
-            .unmarshal().json(JsonLibrary.Jackson)
+            .unmarshal().json(JsonLibrary.Jackson, Product.class)
             .end();
     }
 

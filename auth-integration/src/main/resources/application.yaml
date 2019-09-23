@@ -80,7 +80,7 @@ jaeger.tracer:
 # auth-integration health parameters
 # ---------------------------------------------
 metrics:
-  host: "auth-integration-api-metrics.microservices-security.svc.cluster.local"
+  host: "localhost"
   port: 8081
   context-path: health
 

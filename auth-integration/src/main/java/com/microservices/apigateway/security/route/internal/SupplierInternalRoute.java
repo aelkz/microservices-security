@@ -6,11 +6,8 @@ import io.opentracing.Span;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http4.HttpComponent;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.opentracing.ActiveSpanManager;
-import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.camel.util.jsse.TrustManagersParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +36,10 @@ public class SupplierInternalRoute extends RouteBuilder {
         // CAUTION: Use the following block to bypass SSL self-signed certificates.
         // ----------------------------------------------------------------------------------------------------
         /*
+        import org.apache.camel.component.http4.HttpComponent;
+        import org.apache.camel.util.jsse.SSLContextParameters;
+        import org.apache.camel.util.jsse.TrustManagersParameters;
+
         TrustManagersParameters trustManagersParameters = new TrustManagersParameters();
         X509ExtendedTrustManager extendedTrustManager = new SupplierInternalRoute.InsecureX509TrustManager();
         trustManagersParameters.setTrustManager(extendedTrustManager);
@@ -86,7 +87,6 @@ public class SupplierInternalRoute extends RouteBuilder {
                 })
                 .to("log:post-list?showHeaders=true&level=DEBUG")
                 .to("https4://" + supplierConfig.getHost() + ":" + supplierConfig.getPort() + "/actuator/health?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=supplier")
-                .unmarshal().json(JsonLibrary.Jackson)
             .end();
 
         from("direct:internal-supplier-event")
