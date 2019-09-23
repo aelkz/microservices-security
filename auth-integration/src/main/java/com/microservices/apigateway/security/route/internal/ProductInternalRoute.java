@@ -60,7 +60,7 @@ public class ProductInternalRoute extends RouteBuilder {
                 .removeHeader("origin")
                 .removeHeader(Exchange.HTTP_PATH)
                 .to("log:post-list?showHeaders=true&level=DEBUG")
-                .to("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + productConfig.getContextPath() + "s?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=product")
+                .to("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + productConfig.getContextPath() + "?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=product")
                 .unmarshal().json(JsonLibrary.Jackson)
             .end();
 
