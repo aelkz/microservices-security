@@ -45,3 +45,56 @@ john 12345
 
 
 
+https://sso73.apps.arekkusu.io/auth/realms/3scale-api/protocol/openid-connect/certs
+
+
+# openssl x509 -in <(openssl s_client -connect auth.example.com:443 -prexit 2>/dev/null) -out ~/auth.example.com.crt
+# keytool -importcert -file ~/auth.example.com.crt -alias keycloak -keystore ${JDK_HOME}/jre/lib/security/cacerts -storepass changeit
+
+
+# local machine
+mkdir temp
+openssl x509 -in <(openssl s_client -connect sso73.apps.arekkusu.io:443 -prexit 2>/dev/null) -out temp/sso73.apps.arekkusu.io.crt
+API_NAMESPACE=microservices-security
+API_POD=$(oc get pods --selector deploymentconfig=auth-integration-api -n ${API_NAMESPACE} | { read line1 ; read line2 ; echo "$line2" ; } | awk '{print $1;}')
+oc rsync temp ${API_POD}:/home/jboss
+oc exec ${API_POD} "keytool -importcert -file home/jboss/temp/sso73.apps.arekkusu.io.crt -alias keycloak -keystore ${JDK_HOME}/jre/lib/security/cacerts -storepass changeit"
+
+
+oc exec ${API_POD} "keytool -import -trustcacerts -keystore /etc/pki/ca-trust/extracted/java/cacerts -storepass changeit -noprompt -alias keycloak -file /home/jboss/temp/sso73.apps.arekkusu.io.crt"
+
+
+
+
+Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,app_id,app_key
+
+Authorization, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, app_id, app_key
+
+
+
+
+
+
+https://auth-integration-api-microservices-security.apps.arekkusu.io
+https://auth-integration-api-production.apps.arekkusu.io
+
+
+
+
+https://auth-integration-api-microservices-security.apps.arekkusu.io/
+
+
+
+https://better-coding.com/how-to-add-ssl-certificate-into-java-cacerts-file-and-jks-keystore/
+
+
+
+awk 'split_after == 1 {n++;split_after=0}/-----END CERTIFICATE-----/ {split_after=1}{print > "cert" n ".pem"}' < self-signed-cert.pem
+
+
+awk 'split_after==1{n++;split_after=0} /-----END CERTIFICATE-----/ {split_after=1} {print > "cert" n ".pem"}' < self-signed-cert.pem
+
+
+
+openssl x509 -in <(openssl s_client -connect sso73.apps.arekkusu.io:443 -prexit 2>/dev/null) -out demo.crt
+
