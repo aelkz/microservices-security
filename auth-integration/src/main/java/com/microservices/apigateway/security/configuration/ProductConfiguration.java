@@ -1,24 +1,16 @@
 package com.microservices.apigateway.security.configuration;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@ConfigurationProperties(prefix="product")
 public class ProductConfiguration {
 
-    @Value("${product.host}")
     private String host;
-
-    @Value("${product.port}")
     private Integer port;
-
-    @Value("${product.context-path}")
     private String contextPath;
-
-    @Value("${product.status-path}")
     private String statusPath;
-
-    @Value("${product.api-key-name}")
     private String apiKeyName;
 
     public String getHost() {
