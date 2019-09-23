@@ -20,7 +20,8 @@ export class AppInitService {
       },
       initOptions: {
         onLoad: 'login-required'
-      }
+      },
+      bearerPrefix: 'Bearer'
     };
   }
 
