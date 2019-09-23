@@ -37,13 +37,14 @@
         <fuse.bom.version>7.3.0.fuse-730058-redhat-00001</fuse.bom.version>
         -->
         <fuse.bom.version>7.4.0.fuse-740036-redhat-00002</fuse.bom.version>
-        <!-- Red Hat Single Sign-On 7.2.x-->
-        <!--
+        <!-- ############################## WARNING !!! ############################## -->
+        <!-- Changing keycloak.bom.version will cause a major impact on dependencies used in fuse applications! -->
+        <!-- 3.4.12 will enable javax.ws.rs.core.MediaType class which 4.8.3 does not  -->
+        <!-- ######################################################################### -->
+        <!-- Red Hat Single Sign-On 7.2.x -->
         <keycloak.bom.version>3.4.12.Final-redhat-2</keycloak.bom.version>
-        -->
-        <!-- Red Hat Single Sign-On 7.3.x-->
-        <keycloak.bom.version>4.8.3.Final-redhat-00001</keycloak.bom.version>
-        <!-- -->
+        <!-- Red Hat Single Sign-On 7.3.x (not tested with springboot 1.5.x) -->
+        <!-- <keycloak.bom.version>4.8.3.Final-redhat-00001</keycloak.bom.version> -->
         <httpclient.version>4.5.2.redhat-2</httpclient.version>
         <postgresql.version>42.2.5</postgresql.version>
         <h2.version>1.4.199</h2.version>
