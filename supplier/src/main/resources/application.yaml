@@ -83,12 +83,12 @@ security:
       # ----------------------------------------------------------------------------------------------------
       # To access another secured micro-service
       #client:
-      #client-id: 847d10c1
-      #client-secret: 20c33103-e1b6-4fc1-afb0-c21dbc01ecd7
-      #user-authorization-uri: ${rest.security.issuer-uri}/protocol/openid-connect/auth
-      #access-token-uri: ${rest.security.issuer-uri}/protocol/openid-connect/token
-      #scope: openid
-      #grant-type: client_credentials
+        #client-id: 847d10c1
+        #client-secret: 20c33103-e1b6-4fc1-afb0-c21dbc01ecd7
+        #user-authorization-uri: ${rest.security.issuer-uri}/protocol/openid-connect/auth
+        #access-token-uri: ${rest.security.issuer-uri}/protocol/openid-connect/token
+        #scope: openid
+        #grant-type: client_credentials
 
 # =============================================
 # spring actuator configurations
@@ -126,16 +126,3 @@ opentracing:
 jaeger.tracer:
   host: jaeger-agent.microservices.svc
   port: 6831
-
-# =============================================
-# google api parameters
-# ---------------------------------------------
-# http://localhost:8070/api/v1/event
-integration:
-  social:
-    app1:
-      host: social-integration-api.microservices.svc.cluster.local
-      port: 8080
-      path: /api/v1/social/strava
-      apiKey: Strava-API-User-Key
-

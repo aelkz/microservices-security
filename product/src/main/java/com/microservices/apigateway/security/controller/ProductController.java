@@ -34,7 +34,7 @@ public class ProductController extends BaseController {
     @Autowired
     ProductService productService;
 
-    @RequestMapping(path = "/v1/products", method = RequestMethod.GET)
+    @RequestMapping(path = "/v1/product", method = RequestMethod.GET)
     @ApiOperation(
             value = "Get all products",
             notes = "Returns first N products specified by the size parameter with page offset specified by page parameter.",
