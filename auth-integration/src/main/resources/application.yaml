@@ -156,7 +156,7 @@ keycloak-service-account:
 
 keycloak:
   cors: true
-  ssl-required: none
+  ssl-required: external
   realm: 3scale-api
   resource: 8f314bfa
   auth-server-url: https://sso73.apps.arekkusu.io/auth

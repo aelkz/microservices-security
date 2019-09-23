@@ -38,6 +38,7 @@ public class SupplierInternalRoute extends RouteBuilder {
 
         // CAUTION: Use the following block to bypass SSL self-signed certificates.
         // ----------------------------------------------------------------------------------------------------
+        /*
         TrustManagersParameters trustManagersParameters = new TrustManagersParameters();
         X509ExtendedTrustManager extendedTrustManager = new SupplierInternalRoute.InsecureX509TrustManager();
         trustManagersParameters.setTrustManager(extendedTrustManager);
@@ -47,6 +48,7 @@ public class SupplierInternalRoute extends RouteBuilder {
 
         HttpComponent httpComponent = getContext().getComponent("https4", HttpComponent.class);
         httpComponent.setSslContextParameters(scp);
+        */
         // ----------------------------------------------------------------------------------------------------
 
         // /--------------------------------------------------\
