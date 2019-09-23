@@ -19,7 +19,7 @@ export class ProductService {
   ) { }
 
   getProducts(): Observable<ProductPageable> {
-    return this.http.get<ProductPageable>(`${this.productAPI}/products`, this.headers()).pipe(
+    return this.http.get<ProductPageable>(`${this.productAPI}/product`, this.headers()).pipe(
       retry(1),
       map(data => new ProductPageable().deserialize(data)),
       catchError(res => {

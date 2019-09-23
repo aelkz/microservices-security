@@ -1,12 +1,18 @@
 package com.microservices.apigateway.security.configuration;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 
-@ConfigurationProperties(prefix="metrics")
+@Configuration
 public class MetricsConfiguration {
 
+    @Value("${metrics.host}")
     private String host;
+
+    @Value("${metrics.port}")
     private Integer port;
+
+    @Value("${metrics.context-path}")
     private String contextPath;
 
     public String getHost() {
