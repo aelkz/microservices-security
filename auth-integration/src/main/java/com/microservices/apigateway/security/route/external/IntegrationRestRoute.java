@@ -53,7 +53,7 @@ public class IntegrationRestRoute extends RouteBuilder {
                 .enableCORS(true)
                 //.corsAllowCredentials(true)
                 //.corsHeaderProperty("Access-Control-Allow-Origin","*")
-                .corsHeaderProperty("Access-Control-Allow-Headers", "Authorization, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, app_id, app_key, Content-Length");
+                .corsHeaderProperty("Access-Control-Allow-Headers", "Authorization, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Content-Length");
 
         // /--------------------------------------------------\
         // | Expose route w/ REST Endpoints                   |
