@@ -51,8 +51,8 @@ public class IntegrationRestRoute extends RouteBuilder {
                 .dataFormatProperty("prettyPrint", "true")
                 .bindingMode(RestBindingMode.json)
                 .enableCORS(true)
-                .corsAllowCredentials(true)
-                .corsHeaderProperty("Access-Control-Allow-Origin","*")
+                //.corsAllowCredentials(true)
+                //.corsHeaderProperty("Access-Control-Allow-Origin","*")
                 .corsHeaderProperty("Access-Control-Allow-Headers", "Authorization, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, app_id, app_key, Content-Length");
 
         // /--------------------------------------------------\
@@ -69,8 +69,8 @@ public class IntegrationRestRoute extends RouteBuilder {
                 .responseMessage().code(200).responseModel(Product.class).endResponseMessage()
                 .responseMessage().code(500).responseModel(ApiResponse.class).endResponseMessage()
                 .route().routeId("status")
-                .removeHeader("origin")
-                .removeHeader(Exchange.HTTP_PATH)
+                //.removeHeader("origin")
+                //.removeHeader(Exchange.HTTP_PATH)
                 .to("log:post-list?showHeaders=true&level=DEBUG")
                 .to("direct:internal-integration-health")
                 .unmarshal().json(JsonLibrary.Jackson)
