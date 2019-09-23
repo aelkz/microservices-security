@@ -11,7 +11,7 @@ import org.apache.camel.opentracing.ActiveSpanManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import javax.ws.rs.core.MediaType;
+import org.springframework.http.MediaType;
 
 @Component("StockInternalRoute")
 public class StockInternalRoute extends RouteBuilder {

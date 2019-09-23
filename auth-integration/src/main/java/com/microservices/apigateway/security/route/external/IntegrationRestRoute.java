@@ -12,6 +12,7 @@ import org.apache.camel.model.rest.RestParamType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import javax.ws.rs.core.MediaType;
+
 import static org.apache.camel.model.rest.RestParamType.body;
 
 @Component("IntegrationRestRoute")
