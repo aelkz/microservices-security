@@ -3,6 +3,7 @@ package com.microservices.apigateway.security.route.external;
 import com.microservices.apigateway.security.model.ErrorMessage;
 import com.microservices.apigateway.security.model.Product;
 import com.microservices.apigateway.security.model.ApiResponse;
+import com.microservices.apigateway.security.model.health.springboot1.Health;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.common.HttpOperationFailedException;
@@ -12,7 +13,6 @@ import org.apache.camel.model.rest.RestParamType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import javax.ws.rs.core.MediaType;
-
 import static org.apache.camel.model.rest.RestParamType.body;
 
 @Component("IntegrationRestRoute")
@@ -65,15 +65,15 @@ public class IntegrationRestRoute extends RouteBuilder {
             .skipBindingOnErrorCode(false) // enable json marshalling for body in case of errors
 
             .get().description("Health")
+                .outType(Health.class)
                 .param().name("Authorization").type(RestParamType.header).description("Bearer Token").endParam()
-                .responseMessage().code(200).responseModel(Product.class).endResponseMessage()
+                .responseMessage().code(200).responseModel(Health.class).endResponseMessage()
                 .responseMessage().code(500).responseModel(ApiResponse.class).endResponseMessage()
                 .route().routeId("status")
-                //.removeHeader("origin")
-                //.removeHeader(Exchange.HTTP_PATH)
-                .to("log:post-list?showHeaders=true&level=DEBUG")
-                .to("direct:internal-integration-health")
-                .unmarshal().json(JsonLibrary.Jackson)
+                    .streamCaching()
+                    .to("log:post-list?showHeaders=true&level=DEBUG")
+                    .to("direct:internal-integration-health")
+                    .unmarshal().json(JsonLibrary.Jackson, Health.class)
                 .endRest();
 
         // /--------------------------------------------------\
@@ -90,7 +90,9 @@ public class IntegrationRestRoute extends RouteBuilder {
                 .responseMessage().code(200).responseModel(Product.class).endResponseMessage()
                 .responseMessage().code(500).responseModel(ApiResponse.class).endResponseMessage()
                 .route().routeId("status-product")
+                    .streamCaching()
                     .to("direct:internal-status-product")
+                    .unmarshal().json(JsonLibrary.Jackson, com.microservices.apigateway.security.model.health.springboot2.Health.class)
                 .endRest()
 
             .get().description("List Product")
@@ -178,12 +180,15 @@ public class IntegrationRestRoute extends RouteBuilder {
                 .responseMessage().code(200).responseModel(String.class).endResponseMessage()
                 .responseMessage().code(500).responseModel(ApiResponse.class).endResponseMessage()
                 .route().routeId("status-stock")
+                    .streamCaching()
                     .to("direct:internal-stock-status")
+                    .unmarshal().json(JsonLibrary.Jackson, com.microservices.apigateway.security.model.health.springboot2.Health.class)
                 .endRest()
 
             .get("/update").description("Call stock API").produces(MediaType.APPLICATION_JSON)
                 .param().name("Authorization").type(RestParamType.header).description("Bearer Token").endParam()
                 .route().routeId("stock-event")
+                    .streamCaching()
                     .to("direct:internal-stock-event")
                 .endRest();
 
@@ -199,12 +204,15 @@ public class IntegrationRestRoute extends RouteBuilder {
                 .responseMessage().code(200).responseModel(String.class).endResponseMessage()
                 .responseMessage().code(500).responseModel(ApiResponse.class).endResponseMessage()
                 .route().routeId("status-supplier")
+                    .streamCaching()
                     .to("direct:internal-supplier-status")
+                    .unmarshal().json(JsonLibrary.Jackson, com.microservices.apigateway.security.model.health.springboot2.Health.class)
                 .endRest()
 
             .get("/update").description("Call supplier API").produces(MediaType.APPLICATION_JSON)
                 .param().name("Authorization").type(RestParamType.header).description("Bearer Token").endParam()
                 .route().routeId("supplier-event")
+                    .streamCaching()
                     .to("direct:internal-supplier-event")
                 .endRest();
 
