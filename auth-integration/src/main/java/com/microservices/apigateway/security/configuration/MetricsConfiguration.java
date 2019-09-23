@@ -1,9 +1,7 @@
 package com.microservices.apigateway.security.configuration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
 @ConfigurationProperties(prefix="metrics")
 public class MetricsConfiguration {
 
@@ -34,5 +32,4 @@ public class MetricsConfiguration {
     public void setContextPath(String contextPath) {
         this.contextPath = contextPath;
     }
-
 }

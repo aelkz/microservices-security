@@ -195,7 +195,7 @@
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-admin-client</artifactId>
-            <version>3.4.12.Final-redhat-2</version>
+            <version>4.8.3.Final-redhat-00001</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.resteasy</groupId>

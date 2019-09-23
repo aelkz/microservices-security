@@ -7,16 +7,18 @@ import org.apache.camel.model.dataformat.JsonLibrary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 import javax.ws.rs.core.MediaType;
 
 @Component("MetricsInternalRoute")
+@EnableConfigurationProperties(MetricsConfiguration.class)
 public class MetricsInternalRoute extends RouteBuilder {
 
-    static final Logger logger = LoggerFactory.getLogger(SupplierInternalRoute.class);
+    static final Logger logger = LoggerFactory.getLogger(MetricsInternalRoute.class);
 
     @Autowired
-    private MetricsConfiguration healthConfig;
+    private MetricsConfiguration metricsConfig;
 
     @Override
     public void configure() throws Exception {
@@ -32,7 +34,7 @@ public class MetricsInternalRoute extends RouteBuilder {
                 .removeHeader(Exchange.HTTP_PATH)
                 .setHeader(Exchange.CONTENT_TYPE, constant(MediaType.APPLICATION_JSON))
                 .removeHeader("breadcrumbId")
-                .to("http4://" + healthConfig.getHost() + ":" + healthConfig.getPort() + "/" + healthConfig.getContextPath() + "?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=metrics")
+                .to("http4://" + metricsConfig.getHost() + ":" + metricsConfig.getPort() + "/" + metricsConfig.getContextPath() + "?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=metrics")
                 .unmarshal().json(JsonLibrary.Jackson)
                 .end();
     }
