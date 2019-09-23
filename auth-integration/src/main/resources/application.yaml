@@ -11,7 +11,7 @@ api:
   title: fuse-auth-integration-api
   description: secured fuse application with keycloak adapter
   version: 1
-  hostname: fuse-auth-integration-api.arekkusu.io
+  hostname: auth-integration-api-microservices-security.apps.arekkusu.io
 
 logging:
   config: classpath:logback.xml
