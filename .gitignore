@@ -5,3 +5,16 @@ product/target
 stock/target
 supplier/target
 webapp/dist
+
+### Java-Web ###
+## ignoring target file
+target/
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+.DS_Store
+_images
+
+.idea
