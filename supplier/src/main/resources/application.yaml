@@ -58,7 +58,7 @@ rest:
       allowed-headers: '*'
       allowed-methods: GET,POST,PUT,PATCH,DELETE,OPTIONS
       max-age: 3600
-    issuer-uri: http://authorization-server.apps.arekkusu.io/auth/realms/3scale-api
+    issuer-uri: https://sso73.apps.arekkusu.io/auth/realms/3scale-api
 
 security:
   oauth2:
