@@ -85,9 +85,10 @@ public class IntegrationRestRoute extends RouteBuilder {
             .consumes(MediaType.APPLICATION_JSON)
             .skipBindingOnErrorCode(false) // enable json marshalling for body in case of errors
 
-            .get("/status").description("Health")
+            .get("/status").id("product-status").description("Product Health")
+                .outType(com.microservices.apigateway.security.model.health.springboot2.Health.class)
                 .param().name("Authorization").type(RestParamType.header).description("Bearer Token").endParam()
-                .responseMessage().code(200).responseModel(Product.class).endResponseMessage()
+                .responseMessage().code(200).responseModel(com.microservices.apigateway.security.model.health.springboot2.Health.class).endResponseMessage()
                 .responseMessage().code(500).responseModel(ApiResponse.class).endResponseMessage()
                 .route().routeId("status-product")
                     .streamCaching()
@@ -175,9 +176,10 @@ public class IntegrationRestRoute extends RouteBuilder {
 
         rest("/stock").id("stock-endpoint")
 
-            .get("/status").description("Health")
+            .get("/status").id("stock-status").description("Stock Health")
+                .outType(com.microservices.apigateway.security.model.health.springboot2.Health.class)
                 .param().name("Authorization").type(RestParamType.header).description("Bearer Token").endParam()
-                .responseMessage().code(200).responseModel(String.class).endResponseMessage()
+                .responseMessage().code(200).responseModel(com.microservices.apigateway.security.model.health.springboot2.Health.class).endResponseMessage()
                 .responseMessage().code(500).responseModel(ApiResponse.class).endResponseMessage()
                 .route().routeId("status-stock")
                     .streamCaching()
@@ -199,9 +201,10 @@ public class IntegrationRestRoute extends RouteBuilder {
 
         rest("/supplier").id("supplier-endpoint")
 
-            .get("/status").description("Health")
+            .get("/status").id("supplier-status").description("Supplier Health")
+                .outType(com.microservices.apigateway.security.model.health.springboot2.Health.class)
                 .param().name("Authorization").type(RestParamType.header).description("Bearer Token").endParam()
-                .responseMessage().code(200).responseModel(String.class).endResponseMessage()
+                .responseMessage().code(200).responseModel(com.microservices.apigateway.security.model.health.springboot2.Health.class).endResponseMessage()
                 .responseMessage().code(500).responseModel(ApiResponse.class).endResponseMessage()
                 .route().routeId("status-supplier")
                     .streamCaching()

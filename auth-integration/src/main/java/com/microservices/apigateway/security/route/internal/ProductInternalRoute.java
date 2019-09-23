@@ -43,6 +43,7 @@ public class ProductInternalRoute extends RouteBuilder {
         // | Internal route definition:                       |
         // | Product CRUD Operations                          |
         // \--------------------------------------------------/
+
         from("direct:internal-status-product")
             .id("direct-status-product")
             .to("log:list?showHeaders=true&level=DEBUG")

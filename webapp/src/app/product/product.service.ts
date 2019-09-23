@@ -4,7 +4,7 @@ import {catchError, map, retry} from 'rxjs/operators';
 import { MessageService } from '../message/message.service';
 import { Observable, of } from 'rxjs';
 import { Product } from './product.model';
-import {ProductPageable} from "./product.pageable.model";
+import {ProductPageable} from './product.pageable.model';
 
 @Injectable({
   providedIn: 'root'
