@@ -7,13 +7,26 @@ import {appAnimations} from '../app-animations';
 @Component({
   selector: 'app-status',
   templateUrl: './status.component.html',
+  styles: [
+    `
+      .http_success {
+        background-color: #03ed9a;
+      }
+      .http_error {
+        background-color: #d34b5a;
+      }
+      .http_loading {
+        background-color: #c2c2c2;
+      }
+    `
+  ],
   animations: appAnimations
 })
 export class StatusComponent implements OnInit {
 
   constructor(private messageService: MessageService, private statusService: StatusService) { }
 
-  status: any = {};
+  response: any = {};
   cogIcon: IconDefinition;
   circleIcon: IconDefinition;
 
@@ -21,6 +34,10 @@ export class StatusComponent implements OnInit {
   loadingProductAPI: boolean;
   loadingStockAPI: boolean;
   loadingSupplierAPI: boolean;
+
+  httpSuccess: boolean;
+  httpError: boolean;
+  httpLoading: boolean;
 
   setLoading(value: boolean, idx: number, timeout: number) {
     setTimeout(() => {
@@ -43,56 +60,116 @@ export class StatusComponent implements OnInit {
 
   getAuthIntegration(): void {
     this.loadingIntegrationAPI = true;
-    this.statusService.getAuthIntegrationHealth().subscribe(res => {
-      this.status = res;
+    this.httpLoading = true;
+    this.httpError = false;
+    this.httpSuccess = false;
 
-      if (this.status.body != null) {
+    this.statusService.getAuthIntegrationHealth().subscribe(res => {
+      this.response = res;
+
+      if (this.response.body != null) {
+        this.httpSuccess = true;
+        if (this.response.status != 200) {
+          this.httpLoading = false;
+          this.httpError = true;
+          this.httpSuccess = false;
+        }
         this.messageService.success('successfully checked auth-integration-api status');
       }
     },
-    (err) => this.setLoading(false, 0, 2000),
+    (err) => {
+      this.httpError = true;
+      this.httpSuccess = false;
+      this.httpLoading = false;
+      this.setLoading(false, 0, 2000);
+      },
     () => this.setLoading(false, 0, 1000)
     );
   }
 
   getProduct(): void {
     this.loadingProductAPI = true;
-    this.statusService.getProductHealth().subscribe(res => {
-      this.status = res;
+    this.httpLoading = true;
+    this.httpError = false;
+    this.httpSuccess = false;
 
-      if (this.status.body != null) {
+    this.statusService.getProductHealth().subscribe(res => {
+      this.response = res;
+
+      if (this.response.body != null) {
+        this.httpSuccess = true;
+        if (this.response.status != 200) {
+          this.httpLoading = false;
+          this.httpError = true;
+          this.httpSuccess = false;
+        }
         this.messageService.success('Successfully checked product-api status');
       }
     },
-    (err) => this.setLoading(false, 1, 2000),
+    (err) => {
+      this.httpError = true;
+      this.httpSuccess = false;
+      this.httpLoading = false;
+      this.setLoading(false, 1, 2000);
+      },
     () => this.setLoading(false, 1, 1000)
     );
   }
 
   getStock(): void {
     this.loadingStockAPI = true;
-    this.statusService.getStockHealth().subscribe(res => {
-      this.status = res;
+    this.httpLoading = true;
+    this.httpError = false;
+    this.httpSuccess = false;
 
-      if (this.status.body != null) {
+    this.statusService.getStockHealth().subscribe(res => {
+      this.response = res;
+
+      if (this.response.body != null) {
+        this.httpSuccess = true;
+        if (this.response.status != 200) {
+          this.httpLoading = false;
+          this.httpError = true;
+          this.httpSuccess = false;
+        }
         this.messageService.success('Successfully checked stock-api status');
       }
     },
-    (err) => this.setLoading(false, 2, 2000),
+      (err) => {
+        this.httpError = true;
+        this.httpSuccess = false;
+        this.httpLoading = false;
+        this.setLoading(false, 1, 2000);
+      },
     () => this.setLoading(false, 2, 1000)
     );
   }
 
   getSupplier(): void {
     this.loadingSupplierAPI = true;
-    this.statusService.getSupplierHealth().subscribe(res => {
-      this.status = res;
+    this.httpLoading = true;
+    this.httpError = false;
+    this.httpSuccess = false;
 
-      if (this.status.body != null) {
+    this.statusService.getSupplierHealth().subscribe(res => {
+      this.response = res;
+
+      if (this.response.body != null) {
+        this.httpSuccess = true;
+        if (this.response.status != 200) {
+          this.httpLoading = false;
+          this.httpError = true;
+          this.httpSuccess = false;
+        }
         this.messageService.success('Successfully checked supplier-api status');
       }
     },
-    (err) => this.setLoading(false, 3, 2000),
+      (err) => {
+        this.httpError = true;
+        this.httpSuccess = false;
+        this.httpLoading = false;
+        this.setLoading(false, 1, 2000);
+      },
     () => this.setLoading(false, 3, 1000)
     );
   }
@@ -101,4 +178,17 @@ export class StatusComponent implements OnInit {
     this.cogIcon = faCog;
     this.circleIcon = faCircleNotch;
   }
+
+  isSuccess(): boolean {
+    return this.httpSuccess;
+  }
+
+  isLoading(): boolean {
+    return this.httpLoading;
+  }
+
+  isError(): boolean {
+    return this.httpError;
+  }
+
 }

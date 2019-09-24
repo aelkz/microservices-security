@@ -4,7 +4,8 @@
     <div class="card-body">
       <div class="card-text">
         <p>Is the auth-integration-api up?</p>
-        <button class="btn btn-primary btn-lg" (click)="getAuthIntegration()" *ngIf="loadingIntegrationAPI" [@fadeInOut]>
+        <p>ROLE: <b>CHECK_INTEGRATION_STATUS</b></p>
+        <button class="btn btn-warning btn-lg" (click)="getAuthIntegration()" *ngIf="loadingIntegrationAPI" [@fadeInOut]>
           <fa-icon [icon]="circleIcon" class="mr-1" [spin]="true"></fa-icon>Fuse Integration API
         </button>
         <button class="btn btn-primary btn-lg" (click)="getAuthIntegration()" *ngIf="!loadingIntegrationAPI" [@fadeInOut]>
@@ -22,7 +23,7 @@
       <div class="card-text">
         <p>Is the product-api up?</p>
         <p>ROLE: <b>CHECK_PRODUCT_STATUS</b></p>
-        <button class="btn btn-lg btn-primary" (click)="getProduct()" *ngIf="loadingProductAPI" [@fadeInOut]>
+        <button class="btn btn-lg btn-warning" (click)="getProduct()" *ngIf="loadingProductAPI" [@fadeInOut]>
           <fa-icon [icon]="circleIcon" class="mr-1" [spin]="true"></fa-icon>Product API
         </button>
         <button class="btn btn-lg btn-primary" (click)="getProduct()" *ngIf="!loadingProductAPI">
@@ -38,7 +39,7 @@
       <div class="card-text">
         <p>Is the stock-api up?</p>
         <p>ROLE: <b>CHECK_STOCK_STATUS</b></p>
-        <button class="btn btn-lg btn-primary" (click)="getStock()" *ngIf="loadingStockAPI" [@fadeInOut]>
+        <button class="btn btn-lg btn-warning" (click)="getStock()" *ngIf="loadingStockAPI" [@fadeInOut]>
           <fa-icon [icon]="circleIcon" class="mr-1" [spin]="true"></fa-icon>Stock API
         </button>
         <button class="btn btn-lg btn-primary" (click)="getStock()" *ngIf="!loadingStockAPI">
@@ -54,7 +55,7 @@
       <div class="card-text">
         <p>Is the supplier-api up?</p>
         <p>ROLE: <b>CHECK_SUPPLIER_STATUS</b></p>
-        <button class="btn btn-lg btn-primary" (click)="getSupplier()" *ngIf="loadingSupplierAPI" [@fadeInOut]>
+        <button class="btn btn-lg btn-warning" (click)="getSupplier()" *ngIf="loadingSupplierAPI" [@fadeInOut]>
           <fa-icon [icon]="circleIcon" class="mr-1" [spin]="true"></fa-icon>Supplier API
         </button>
         <button class="btn btn-lg btn-primary" (click)="getSupplier()" *ngIf="!loadingSupplierAPI">
@@ -67,10 +68,10 @@
 
 <div class="card-deck">
   <div class="card">
-    <div class="card-header">HTTP Response</div>
+    <div class="card-header" [class.http_success]="isSuccess()" [class.http_error]="isError()" [class.http_loading]="isLoading()">HTTP Response</div>
     <div class="card-body">
       <div class="card-text">
-        <pre>{{ status | json }}</pre>
+        <pre>{{ response | json }}</pre>
       </div>
     </div>
   </div>
