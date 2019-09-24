@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import { MaintenanceService } from './maintenance.service';
 import { MessageService } from '../message/message.service';
 import { IconDefinition, faCog, faCircleNotch } from '@fortawesome/free-solid-svg-icons';
@@ -24,7 +24,11 @@ import {appAnimations} from '../app-animations';
 })
 export class MaintenanceComponent implements OnInit {
 
-  constructor(private messageService: MessageService, private statusService: MaintenanceService) { }
+  constructor(
+      private messageService: MessageService,
+      private statusService: MaintenanceService,
+      private cdr: ChangeDetectorRef
+  ) { }
 
   response: any = {};
   cogIcon: IconDefinition;
@@ -48,6 +52,7 @@ export class MaintenanceComponent implements OnInit {
           break;
       }
     }, timeout);
+    this.cdr.detectChanges();
   }
 
   setCardBackground(isLoading:boolean, isSuccess:boolean, isError:boolean) {
@@ -78,6 +83,7 @@ export class MaintenanceComponent implements OnInit {
     if (this.response.status != 200) {
       this.setCardBackground(false, false, true);
     }
+    this.cdr.detectChanges();
   }
 
   getSupplierMaintenance(): void {
@@ -102,11 +108,15 @@ export class MaintenanceComponent implements OnInit {
     if (this.response.status != 200) {
       this.setCardBackground(false, false, true);
     }
+    this.cdr.detectChanges();
   }
 
   ngOnInit() {
     this.cogIcon = faCog;
     this.circleIcon = faCircleNotch;
+    this.httpLoading = false;
+    this.httpSuccess = false;
+    this.httpError = false;
   }
 
   isSuccess(): boolean {
