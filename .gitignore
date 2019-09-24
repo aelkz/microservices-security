@@ -1,13 +1,9 @@
-# Created by .ignore support plugin (hsz.mobi)
-
 auth-integration/target
 product/target
 stock/target
 supplier/target
 webapp/dist
 
-### Java-Web ###
-## ignoring target file
 target/
 
 # Dependency directories
@@ -17,7 +13,7 @@ jspm_packages/
 .DS_Store
 _images
 
+# IntelliJ
 *.iml
 .idea/*.iml
-
 .idea/*
