@@ -17,4 +17,7 @@ jspm_packages/
 .DS_Store
 _images
 
+*.iml
+.idea/*.iml
+
 .idea/*
