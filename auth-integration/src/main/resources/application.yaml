@@ -132,7 +132,7 @@ keycloak-service-account:
   password: 12345
   # if using self-signed certificate you must use HTTP and set required-ssl=none on keycloak realm
   # https://lists.jboss.org/pipermail/keycloak-user/2017-April/010386.html
-  auth-server-uri: "http://authorization-server.apps.arekkusu.io/auth"
+  auth-server-uri: "https://sso73.apps.arekkusu.io/auth"
 
 # =============================================
 # Authorization Settings (Keycloak)
