@@ -1,14 +1,14 @@
 # Created by .ignore support plugin (hsz.mobi)
 
 auth-integration/target
-product/target
+#product/target
 stock/target
 supplier/target
 webapp/dist
 
 ### Java-Web ###
 ## ignoring target file
-target/
+#target/
 
 # Dependency directories
 node_modules/
