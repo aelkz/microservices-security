@@ -60,8 +60,8 @@ export class StatusComponent implements OnInit {
 
   setCardBackground(isLoading:boolean, isSuccess:boolean, isError:boolean) {
     this.httpLoading = isLoading;
-    this.httpError = isError;
     this.httpSuccess = isSuccess;
+    this.httpError = isError;
   }
 
   getAuthIntegration(): void {
@@ -72,19 +72,19 @@ export class StatusComponent implements OnInit {
       this.response = res;
 
       if (this.response.body != null) {
-        if (this.response.status != 200) {
-          this.setCardBackground(false, false, true);
-        }
         this.messageService.success('successfully checked auth-integration-api status');
         this.setCardBackground(false, true, false);
       }
     },
     (err) => {
-      this.setCardBackground(false, false, true);
       this.setLoading(false, 0, 2000);
       },
     () => this.setLoading(false, 0, 1000)
     );
+
+    if (this.response.status != 200) {
+      this.setCardBackground(false, false, true);
+    }
   }
 
   getProduct(): void {
@@ -95,19 +95,19 @@ export class StatusComponent implements OnInit {
       this.response = res;
 
       if (this.response.body != null) {
-        if (this.response.status != 200) {
-          this.setCardBackground(false, false, true);
-        }
         this.messageService.success('Successfully checked product-api status');
         this.setCardBackground(false, true, false);
       }
     },
     (err) => {
-      this.setCardBackground(false, false, true);
       this.setLoading(false, 1, 2000);
       },
     () => this.setLoading(false, 1, 1000)
     );
+
+    if (this.response.status != 200) {
+      this.setCardBackground(false, false, true);
+    }
   }
 
   getStock(): void {
@@ -119,19 +119,19 @@ export class StatusComponent implements OnInit {
 
       if (this.response.body != null) {
         this.httpSuccess = true;
-        if (this.response.status != 200) {
-          this.setCardBackground(false, false, true);
-        }
         this.messageService.success('Successfully checked stock-api status');
         this.setCardBackground(false, true, false);
       }
     },
       (err) => {
-        this.setCardBackground(false, false, true);
         this.setLoading(false, 1, 2000);
       },
     () => this.setLoading(false, 2, 1000)
     );
+
+    if (this.response.status != 200) {
+      this.setCardBackground(false, false, true);
+    }
   }
 
   getSupplier(): void {
@@ -143,19 +143,19 @@ export class StatusComponent implements OnInit {
 
       if (this.response.body != null) {
         this.httpSuccess = true;
-        if (this.response.status != 200) {
-          this.setCardBackground(false, false, true);
-        }
         this.messageService.success('Successfully checked supplier-api status');
         this.setCardBackground(false, true, false);
       }
     },
       (err) => {
-        this.setCardBackground(false, false, true);
         this.setLoading(false, 1, 2000);
       },
     () => this.setLoading(false, 3, 1000)
     );
+
+    if (this.response.status != 200) {
+      this.setCardBackground(false, false, true);
+    }
   }
 
   ngOnInit() {
