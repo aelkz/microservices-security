@@ -1,7 +1,7 @@
 # MICROSERVICES SECURITY
 ###### HOW TO SECURE APIs WITH RED HAT SINGLE SIGN-ON (KEYCLOAK), FUSE (CAMEL) AND 3SCALE.
 
-![security](https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/03.png "Microservices Security")
+![security](https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/01.png "Microservices Security")
 
 <p align="center">
 
