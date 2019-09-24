@@ -58,29 +58,29 @@ export class StatusComponent implements OnInit {
     }, timeout);
   }
 
+  setCardBackground(isLoading:boolean, isSuccess:boolean, isError:boolean) {
+    this.httpLoading = isLoading;
+    this.httpError = isError;
+    this.httpSuccess = isSuccess;
+  }
+
   getAuthIntegration(): void {
     this.loadingIntegrationAPI = true;
-    this.httpLoading = true;
-    this.httpError = false;
-    this.httpSuccess = false;
+    this.setCardBackground(true, false, false);
 
     this.statusService.getAuthIntegrationHealth().subscribe(res => {
       this.response = res;
 
       if (this.response.body != null) {
-        this.httpSuccess = true;
         if (this.response.status != 200) {
-          this.httpLoading = false;
-          this.httpError = true;
-          this.httpSuccess = false;
+          this.setCardBackground(false, false, true);
         }
         this.messageService.success('successfully checked auth-integration-api status');
+        this.setCardBackground(false, true, false);
       }
     },
     (err) => {
-      this.httpError = true;
-      this.httpSuccess = false;
-      this.httpLoading = false;
+      this.setCardBackground(false, false, true);
       this.setLoading(false, 0, 2000);
       },
     () => this.setLoading(false, 0, 1000)
@@ -89,27 +89,21 @@ export class StatusComponent implements OnInit {
 
   getProduct(): void {
     this.loadingProductAPI = true;
-    this.httpLoading = true;
-    this.httpError = false;
-    this.httpSuccess = false;
+    this.setCardBackground(true, false, false);
 
     this.statusService.getProductHealth().subscribe(res => {
       this.response = res;
 
       if (this.response.body != null) {
-        this.httpSuccess = true;
         if (this.response.status != 200) {
-          this.httpLoading = false;
-          this.httpError = true;
-          this.httpSuccess = false;
+          this.setCardBackground(false, false, true);
         }
         this.messageService.success('Successfully checked product-api status');
+        this.setCardBackground(false, true, false);
       }
     },
     (err) => {
-      this.httpError = true;
-      this.httpSuccess = false;
-      this.httpLoading = false;
+      this.setCardBackground(false, false, true);
       this.setLoading(false, 1, 2000);
       },
     () => this.setLoading(false, 1, 1000)
@@ -118,9 +112,7 @@ export class StatusComponent implements OnInit {
 
   getStock(): void {
     this.loadingStockAPI = true;
-    this.httpLoading = true;
-    this.httpError = false;
-    this.httpSuccess = false;
+    this.setCardBackground(true, false, false);
 
     this.statusService.getStockHealth().subscribe(res => {
       this.response = res;
@@ -128,17 +120,14 @@ export class StatusComponent implements OnInit {
       if (this.response.body != null) {
         this.httpSuccess = true;
         if (this.response.status != 200) {
-          this.httpLoading = false;
-          this.httpError = true;
-          this.httpSuccess = false;
+          this.setCardBackground(false, false, true);
         }
         this.messageService.success('Successfully checked stock-api status');
+        this.setCardBackground(false, true, false);
       }
     },
       (err) => {
-        this.httpError = true;
-        this.httpSuccess = false;
-        this.httpLoading = false;
+        this.setCardBackground(false, false, true);
         this.setLoading(false, 1, 2000);
       },
     () => this.setLoading(false, 2, 1000)
@@ -147,9 +136,7 @@ export class StatusComponent implements OnInit {
 
   getSupplier(): void {
     this.loadingSupplierAPI = true;
-    this.httpLoading = true;
-    this.httpError = false;
-    this.httpSuccess = false;
+    this.setCardBackground(true, false, false);
 
     this.statusService.getSupplierHealth().subscribe(res => {
       this.response = res;
@@ -157,17 +144,14 @@ export class StatusComponent implements OnInit {
       if (this.response.body != null) {
         this.httpSuccess = true;
         if (this.response.status != 200) {
-          this.httpLoading = false;
-          this.httpError = true;
-          this.httpSuccess = false;
+          this.setCardBackground(false, false, true);
         }
         this.messageService.success('Successfully checked supplier-api status');
+        this.setCardBackground(false, true, false);
       }
     },
       (err) => {
-        this.httpError = true;
-        this.httpSuccess = false;
-        this.httpLoading = false;
+        this.setCardBackground(false, false, true);
         this.setLoading(false, 1, 2000);
       },
     () => this.setLoading(false, 3, 1000)

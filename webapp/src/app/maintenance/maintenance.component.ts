@@ -50,11 +50,15 @@ export class MaintenanceComponent implements OnInit {
     }, timeout);
   }
 
+  setCardBackground(isLoading:boolean, isSuccess:boolean, isError:boolean) {
+    this.httpLoading = isLoading;
+    this.httpError = isError;
+    this.httpSuccess = isSuccess;
+  }
+
   getStockMaintenance(): void {
     this.loadingStockMaintenanceAPI = true;
-    this.httpLoading = true;
-    this.httpError = false;
-    this.httpSuccess = false;
+    this.setCardBackground(true, false, false);
 
     this.statusService.getStockMaintenance().subscribe(res => {
           this.response = res;
@@ -62,17 +66,14 @@ export class MaintenanceComponent implements OnInit {
           if (this.response.body != null) {
             this.httpSuccess = true;
             if (this.response.status != 200) {
-              this.httpLoading = false;
-              this.httpError = true;
-              this.httpSuccess = false;
+              this.setCardBackground(false, false, true);
             }
             this.messageService.success('Successfully called stock-maintenance-api');
+            this.setCardBackground(false, true, false);
           }
         },
         (err) => {
-          this.httpError = true;
-          this.httpSuccess = false;
-          this.httpLoading = false;
+          this.setCardBackground(false, false, true);
           this.setLoading(false, 0, 2000);
         },
         () => this.setLoading(false, 0, 1000)
@@ -81,9 +82,7 @@ export class MaintenanceComponent implements OnInit {
 
   getSupplierMaintenance(): void {
     this.loadingSupplierMaintenanceAPI = true;
-    this.httpLoading = true;
-    this.httpError = false;
-    this.httpSuccess = false;
+    this.setCardBackground(true, false, false);
 
     this.statusService.getSupplierMaintenance().subscribe(res => {
           this.response = res;
@@ -91,17 +90,14 @@ export class MaintenanceComponent implements OnInit {
           if (this.response.body != null) {
             this.httpSuccess = true;
             if (this.response.status != 200) {
-              this.httpLoading = false;
-              this.httpError = true;
-              this.httpSuccess = false;
+              this.setCardBackground(false, false, true);
             }
             this.messageService.success('Successfully called supplier-maintenance-api');
+            this.setCardBackground(false, true, false);
           }
         },
         (err) => {
-          this.httpError = true;
-          this.httpSuccess = false;
-          this.httpLoading = false;
+          this.setCardBackground(false, false, true);
           this.setLoading(false, 0, 2000);
         },
         () => this.setLoading(false, 1, 1000)
