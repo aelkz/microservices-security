@@ -50,7 +50,7 @@ public class StockInternalRoute extends RouteBuilder {
                 .removeHeader("origin")
                 .removeHeader(Exchange.HTTP_PATH)
                 .to("log:post-list?showHeaders=true&level=DEBUG")
-                .to("http4://" + stockConfig.getHost() + ":" + stockConfig.getPort() + "/actuator/health?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=stock")
+                .to("http4://" + stockConfig.getHost() + ":" + stockConfig.getPort() + stockConfig.getStatusPath() + "?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=stock")
             .end();
 
         from("direct:internal-stock-event")
