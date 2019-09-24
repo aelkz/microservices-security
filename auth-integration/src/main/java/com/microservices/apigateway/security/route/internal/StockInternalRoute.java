@@ -1,6 +1,7 @@
 package com.microservices.apigateway.security.route.internal;
 
 import com.microservices.apigateway.security.configuration.StockConfiguration;
+import com.microservices.apigateway.security.model.Event;
 import com.microservices.apigateway.security.processor.ExceptionProcessor;
 import io.opentracing.Span;
 import org.apache.camel.Exchange;
@@ -61,9 +62,11 @@ public class StockInternalRoute extends RouteBuilder {
                 .removeHeader(Exchange.HTTP_PATH)
                 .setHeader(Exchange.HTTP_METHOD, constant("POST"))
                 .setHeader(Exchange.CONTENT_TYPE, constant(MediaType.APPLICATION_JSON))
+                .setBody(constant(new Event("foobar1")))
+                .marshal().json(JsonLibrary.Jackson)
                 .to("log:post-list?showHeaders=true&level=DEBUG")
                 .to("http4://" + stockConfig.getHost() + ":" + stockConfig.getPort() + stockConfig.getContextPath() + "/sync?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=stock")
-                .unmarshal().json(JsonLibrary.Jackson)
+                .unmarshal().json(JsonLibrary.Jackson, Event.class)
             .end();
 
     }
