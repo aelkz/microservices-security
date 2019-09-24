@@ -113,7 +113,7 @@ public class SupplierInternalRoute extends RouteBuilder {
                         keycloakServiceAccountConfig.getUsername(),
                         keycloakServiceAccountConfig.getPassword()))
                 .to("log:post-list?showHeaders=true&level=DEBUG")
-                .to("https4://" + supplierConfig.getHost() + ":" + supplierConfig.getPort() + supplierConfig.getContextPath() + "/sync?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=supplier")
+                .to("https4://" + supplierConfig.getHost() + ":" + supplierConfig.getPort() + "/sync?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=supplier")
                 .unmarshal().json(JsonLibrary.Jackson)
             .end();
 

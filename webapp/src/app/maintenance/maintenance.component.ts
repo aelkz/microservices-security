@@ -7,6 +7,19 @@ import {appAnimations} from '../app-animations';
 @Component({
   selector: 'app-maintenance',
   templateUrl: './maintenance.component.html',
+  styles: [
+    `
+      .http_success {
+        background-color: #03ed9a;
+      }
+      .http_error {
+        background-color: #d34b5a;
+      }
+      .http_loading {
+        background-color: #c2c2c2;
+      }
+    `
+  ],
   animations: appAnimations
 })
 export class MaintenanceComponent implements OnInit {
