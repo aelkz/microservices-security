@@ -14,22 +14,22 @@
 
 </p>
 
-<b>TL;DR</b> This is a demonstration on how to protect APIs with Keycloak and 3Scale.
+<b>TL;DR</b> This is a demonstration on how to protect APIs with Red Hat Single Sign-On (Keycloak) and 3Scale.
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/04.png" title="Microservices Security" width="40%" height="40%" />
 </p>
 
-<b>WARNING</b>: This is a proof of concept. In production environments, there will be needed adittional configurations regarding scalability and security like CORS and Using a proper CA trusted certificate.
+<b>WARNING</b>: This is a proof of concept. In production environments, there will be needed adittional configurations regarding scalability and security like CORS, HTTP Headers filtering and using a proper CA trusted certificate.
 
 <p align="left">
 <div>
-<img style="float: left; margin: 0px 15px 15px 0px;" src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/icon01.png" title="Microservices Security" width="10%" height="10%" /> This is a lengthy article with step by step instructions, screenshots of products and architecture concepts. All source-code is hosted on the <a href="https://github.com/aelkz/microservices-security" target="_blank">github</a>.
+<img style="float: left; margin: 0px 15px 15px 0px;" src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/icon01.png" title="Microservices Security" width="7%" height="7%" /> This is a lengthy article with step by step instructions, screenshots of products and architecture concepts. All source-code is hosted on the <a href="https://github.com/aelkz/microservices-security" target="_blank">github</a>.
 </div>
 </p>
 
 <b>The use-case scenario:</b>
-The main proposal is achieve some concepts regarding security of microservices using a wide use-case scenario. A webapp is offered to promote easier understanding of all API calls and authorizations used.
+The main proposal is to achieve some concepts regarding security of microservices using a wide use-case scenario. A webapp is offered to promote easier understanding of all API calls and authorizations used.
 
 All APIs catalog is exposed bellow:
 
@@ -209,6 +209,8 @@ curl -o s2i-microservices-fuse74-spring-boot-camel.yaml -s https://raw.githubuse
 oc delete template s2i-microservices-fuse74-spring-boot-camel -n ${PROJECT_NAMESPACE}
 oc create -n ${PROJECT_NAMESPACE} -f s2i-microservices-fuse74-spring-boot-camel.yaml
 
+# NOTE. You may want to check the ..selfsigned.yaml template as it uses a customized imagestream for use with self-signed certificates. (see the APPENDIX-README.md for for info)
+
 export NEXUS_NAMESPACE=cicd-devtools
 export PROJECT_NAMESPACE=microservices-security
 export APP=auth-integration-api
@@ -217,10 +219,11 @@ export APP_GROUP=com.redhat.microservices
 export APP_GIT=https://github.com/aelkz/microservices-security.git
 export APP_GIT_BRANCH=master
 export MAVEN_URL=http://$(oc get route nexus3 -n ${NEXUS_NAMESPACE} --template='{{ .spec.host }}')/repository/maven-group/
+export CUSTOM_TEMPLATE=s2i-microservices-fuse74-spring-boot-camel-selfsigned
 
 # the previous template have some modifications regarding services,route and group definitions.
 # oc delete all -lapp=${APP}
-oc new-app --template=s2i-microservices-fuse74-spring-boot-camel --name=${APP} --build-env='MAVEN_MIRROR_URL='${MAVEN_URL} -e MAVEN_MIRROR_URL=${MAVEN_URL} --param GIT_REPO=${APP_GIT} --param APP_NAME=${APP} --param ARTIFACT_DIR=${APP_NAME}/target --param GIT_REF=${APP_GIT_BRANCH} --param MAVEN_ARGS_APPEND='-pl '${APP_NAME}' --also-make'
+oc new-app --template=${CUSTOM_TEMPLATE} --name=${APP} --build-env='MAVEN_MIRROR_URL='${MAVEN_URL} -e MAVEN_MIRROR_URL=${MAVEN_URL} --param GIT_REPO=${APP_GIT} --param APP_NAME=${APP} --param ARTIFACT_DIR=${APP_NAME}/target --param GIT_REF=${APP_GIT_BRANCH} --param MAVEN_ARGS_APPEND='-pl '${APP_NAME}' --also-make'
 
 # check the created services:
 # 1 for default app-context and 1 for /metrics endpoint.
@@ -233,13 +236,11 @@ curl -o application.yaml -s https://raw.githubusercontent.com/aelkz/microservice
 
 # create a configmap and mount a volume for auth-integration-api
 
-oc delete configmap ${APP}
+oc delete configmap ${APP} -n ${PROJECT_NAMESPACE}
 
-oc create configmap ${APP}-config --from-file=application.yaml
+oc create configmap ${APP}-config --from-file=application.yaml -n ${PROJECT_NAMESPACE}
 
-oc set volume dc/${APP} --add --overwrite --name=${APP}-config-volume -m /deployments/config -t configmap --configmap-name=${APP}-config
-
-rm -fr application.yaml
+oc set volume dc/${APP} --add --overwrite --name=${APP}-config-volume -m /deployments/config -t configmap --configmap-name=${APP}-config -n ${PROJECT_NAMESPACE}
 ```
 
 ### `SECURITY LAB: STEP 10 - RHSSO REALMS CONFIGURATION`
@@ -357,11 +358,24 @@ Next, define the `Private Base URL` that is, your auth-integration-api URL and t
 
 <b>NOTE</b>. Set your correct domain under each URL (that will be your public address for Openshift).
 
-Next, define all mapping rules for this API, accordingly to the following image:
+Next, define all mapping rules for this API, accordingly to the following table:
 
-<p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/18.png" title="3Scale admin portal - auth-integration-api configuration" width="95%" height="95%" />
-</p>
+| Verb    | Pattern                     | + | Metric or Method |
+| ------- | --------------------------- | --| ---------------- |
+| POST    | /api/v1/product             | 1 | hits             |
+| DELETE  | /api/v1/product/*           | 1 | hits             |
+| PUT     | /api/v1/product/*           | 1 | hits             |
+| GET     | /api/v1/product$            | 1 | hits             |
+| GET     | /api/v1/product/*           | 1 | hits             |
+| GET     | /actuator/*                 | 1 | hits             |
+| GET     | /api/v1/status              | 1 | hits             |
+| GET     | /api/v1/product/status      | 1 | hits             |
+| GET     | /api/v1/supplier/status     | 1 | hits             |
+| GET     | /api/v1/stock/status        | 1 | hits             |
+| GET     | /api/v1/supplier/update     | 1 | hits             |
+| GET     | /api/v1/stock/update        | 1 | hits             |
+| GET     | /api/v1/stock/maintenance   | 1 | hits             |
+| GET     | /api/v1/supplier/maintenance| 1 | hits             |
 
 Next, configuire the API policies that will be required to enable communication between resources inside the Openshift Container Platform:
 
@@ -377,9 +391,36 @@ Next, define the authentication mechanism for this API:
 
 Select `Authorization Code Flow` , `Service Accounts Flow` and `Direct Access Grant Flow` under `OIDC AUTHORIZATION FLOW` section.
 
-Leave the rest as default, and save the configuration.
+On `Credentials location` set <b>As HTTP Headers</b>
 
-<b>NOTE</b>. After every changes, remember to promote the staging configuration to production.
+Netx, on `Policies` section add in this order:
+- CORS
+- 3Scale APIcast
+
+Expand CORS configuration, and set:
+
+<b>Enabled</b>=checked
+
+<b>ALLOW_HEADERS</b> (add one by one per input array)<br>
+Content-Type, Authorization, Content-Length, X-Requested-With, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Accept-Encoding, Accept-Language, Connection, Host, Referer, User-Agent, Access-Control-Allow-Origin, X-Business-FooBar.
+
+The latest header is used only for testing purposes.
+
+<b>allow_credentials</b>=checked
+
+<b>ALLOW_METHODS</b> (add one by one per input array)<br>
+GET, HEAD, POST, PUT, DELETE, OPTIONS
+
+<b>allow_origin</b>
+Leave empty.
+
+Leave the rest as default, and save the CORS configuration.
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/32.png" title="3Scale admin portal - CORS policy" width="20%" height="20%" />
+</p>
+
+<b>NOTE</b>. After every change, remember to promote the staging configuration to production.
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/20.png" title="3Scale admin portal - auth-integration-api configuration promotion" width="25%" height="25%" />
@@ -387,7 +428,12 @@ Leave the rest as default, and save the configuration.
 
 You `auth-integration-api` is ready to be used!
 
-Define the same steps for the `Supplier API`. This API will have only one mapping rule: `GET /api/v1/sync` and `Authorization Code Flow` and `Direct Access Grant Flow` under `OIDC AUTHORIZATION FLOW` section.
+Repeat the same steps for the `Supplier API`. This API will have only two mapping rules:
+
+| Verb    | Pattern                     | + | Metric or Method |
+| ------- | --------------------------- | --| ---------------- |
+| POST    | /api/v1/sync                | 1 | hits             |
+| GET     | /actuator/health            | 1 | hits             |
 
 ### `SECURITY LAB: STEP 12 - 3SCALE MICROSERVICES APPLICATION PLANS`
 
@@ -486,17 +532,53 @@ oc new-app nodejs-8-rhel7:latest~https://github.com/aelkz/microservices-security
 oc create route edge --service=nodejs-web --cert=webapp/server.cert --key=webapp/server.key -n ${APIS_NAMESPACE}
 ```
 
+### `SECURITY LAB: STEP 15 - APPLICATION SETTINGS AND ROLES`
+
+Next step is to create our application roles.
+Theses roles will be assigned to the application users that will be used in our demonstration.
+
+Access the client-id that represents the `auth-integration` client registered previsously by 3Scale application.
+
+Go to the `Settings` tab on the client and apply additional configurations:
+
+<b>Valid Redirect URIs</b>
+- http://*
+- https://*
+
+<b>Web Origins</b>
+*
+
+Go to the `Roles` tab on `Clients` menu on RHSSO (Keycloak) and create the following roles:
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/32.png" title="RHSSO - auth-integration-api client roles" width="75%" height="75%" />
+</p>
+
+Repeat the same steps for the `Supplier API` client. This client will have only one role defined:
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/33.png" title="RHSSO - supplier-api client roles" width="75%" height="75%" />
+</p>
+
+Note that this client was also generated through 3Scale.
+
+### `SECURITY LAB: STEP 16 - USERS ROLES`
+
+In this step, we will be assigning the roles to `john doe` user and the `service-account` user that will handle the supplier-service calls inside the auth-integration-api.
+
+
 ### `EXTERNAL REFERENCES`
 
 API Key Generator
 https://codepen.io/corenominal/pen/rxOmMJ<br>
 JWT Key Generator
-http://jwt.io
+http://jwt.io<br>
 OpenID Connect Debugger
 https://openidconnect.net
+Generate Plain Old Java Objects from JSON or JSON-Schema<br>
+http://www.jsonschema2pojo.org
 
 - - - - - - - - - -
 Thanks for reading and taking the time to comment!<br>
 Feel free to create a <b>PR</b><br>
 [raphael abreu](rabreu@redhat.com)
-
