@@ -66,24 +66,26 @@ export class MaintenanceComponent implements OnInit {
     this.setCardBackground(true, false, false);
 
     this.statusService.getStockMaintenance().subscribe(res => {
-          this.response = res;
+      this.response = res;
 
-          if (this.response.body != null) {
-            this.httpSuccess = true;
-            this.messageService.success('Successfully called stock-maintenance-api');
-            this.setCardBackground(false, true, false);
-          }
-        },
-        (err) => {
-          this.setLoading(false, 0, 2000);
-        },
-        () => this.setLoading(false, 0, 1000)
+      if (this.response.body != null) {
+        this.httpSuccess = true;
+        this.messageService.success('Successfully called stock-maintenance-api');
+        this.setCardBackground(false, true, false);
+      }
+      if (this.response.status != 200) {
+        this.setCardBackground(false, false, true);
+      }
+    },
+    (err) => {
+      if (this.response != null && this.response.status != 200) {
+        this.setCardBackground(false, false, true);
+      }
+
+      this.setLoading(false, 0, 2000);
+    },
+    () => this.setLoading(false, 0, 1000)
     );
-
-    if (this.response.status != 200) {
-      this.setCardBackground(false, false, true);
-    }
-    this.cdr.detectChanges();
   }
 
   getSupplierMaintenance(): void {
@@ -91,24 +93,26 @@ export class MaintenanceComponent implements OnInit {
     this.setCardBackground(true, false, false);
 
     this.statusService.getSupplierMaintenance().subscribe(res => {
-          this.response = res;
+      this.response = res;
 
-          if (this.response.body != null) {
-            this.httpSuccess = true;
-            this.messageService.success('Successfully called supplier-maintenance-api');
-            this.setCardBackground(false, true, false);
-          }
-        },
-        (err) => {
-          this.setLoading(false, 0, 2000);
-        },
-        () => this.setLoading(false, 1, 1000)
+      if (this.response.body != null) {
+        this.httpSuccess = true;
+        this.messageService.success('Successfully called supplier-maintenance-api');
+        this.setCardBackground(false, true, false);
+      }
+      if (this.response.status != 200) {
+        this.setCardBackground(false, false, true);
+      }
+    },
+    (err) => {
+      if (this.response != null && this.response.status != 200) {
+        this.setCardBackground(false, false, true);
+      }
+
+      this.setLoading(false, 0, 2000);
+    },
+   () => this.setLoading(false, 1, 1000)
     );
-
-    if (this.response.status != 200) {
-      this.setCardBackground(false, false, true);
-    }
-    this.cdr.detectChanges();
   }
 
   ngOnInit() {
