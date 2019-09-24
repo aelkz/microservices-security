@@ -2,6 +2,7 @@ package com.microservices.apigateway.security.route.internal;
 
 import com.microservices.apigateway.security.configuration.SupplierConfiguration;
 import com.microservices.apigateway.security.configuration.KeycloakServiceAccountConfiguration;
+import com.microservices.apigateway.security.model.Event;
 import io.opentracing.Span;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -95,9 +96,10 @@ public class SupplierInternalRoute extends RouteBuilder {
                 .to("log:list?showHeaders=true&level=DEBUG")
                 .removeHeader("origin")
                 .removeHeader(Exchange.HTTP_PATH)
+                .setHeader(Exchange.HTTP_METHOD, constant("POST"))
                 .setHeader(Exchange.CONTENT_TYPE, constant(MediaType.APPLICATION_JSON))
                 .removeHeader("breadcrumbId")
-                .removeHeader("Authorization")
+                .removeHeader("Authorization") // previous authorization is removed to acquire a new one for service account
                 .to(String.format("auth:api?serverUrl=%s&" +
                                 "realm=%s&" +
                                 "clientID=%s&" +
@@ -112,9 +114,11 @@ public class SupplierInternalRoute extends RouteBuilder {
                         keycloakServiceAccountConfig.getGrantType(),
                         keycloakServiceAccountConfig.getUsername(),
                         keycloakServiceAccountConfig.getPassword()))
+                .setBody(constant(new Event("foobar2")))
+                .marshal().json(JsonLibrary.Jackson)
                 .to("log:post-list?showHeaders=true&level=DEBUG")
                 .to("https4://" + supplierConfig.getHost() + ":" + supplierConfig.getPort() + supplierConfig.getContextPath() + "/sync?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=supplier")
-                .unmarshal().json(JsonLibrary.Jackson)
+                .unmarshal().json(JsonLibrary.Jackson, Event.class)
             .end();
 
     }

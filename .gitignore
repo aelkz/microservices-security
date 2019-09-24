@@ -17,4 +17,4 @@ jspm_packages/
 .DS_Store
 _images
 
-.idea
+.idea/*
