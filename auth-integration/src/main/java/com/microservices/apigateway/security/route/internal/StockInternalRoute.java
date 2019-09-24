@@ -62,7 +62,7 @@ public class StockInternalRoute extends RouteBuilder {
                 .setHeader(Exchange.HTTP_METHOD, constant("POST"))
                 .setHeader(Exchange.CONTENT_TYPE, constant(MediaType.APPLICATION_JSON))
                 .to("log:post-list?showHeaders=true&level=DEBUG")
-                .to("http4://" + stockConfig.getHost() + ":" + stockConfig.getPort() + "/sync?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=stock")
+                .to("http4://" + stockConfig.getHost() + ":" + stockConfig.getPort() + stockConfig.getContextPath() + "/sync?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=stock")
                 .unmarshal().json(JsonLibrary.Jackson)
             .end();
 
