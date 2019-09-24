@@ -86,7 +86,7 @@ public class SupplierInternalRoute extends RouteBuilder {
                     });
                 })
                 .to("log:post-list?showHeaders=true&level=DEBUG")
-                .to("https4://" + supplierConfig.getHost() + ":" + supplierConfig.getPort() + "/actuator/health?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=supplier")
+                .to("https4://" + supplierConfig.getHost() + ":" + supplierConfig.getPort() + supplierConfig.getStatusPath() + "?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=supplier")
             .end();
 
         from("direct:internal-supplier-event")
