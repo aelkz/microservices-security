@@ -33,7 +33,7 @@ public class Product extends BaseModel {
     private String description;
 
     @NotNull
-    @Size(min = 5, max = 10, message = "Code must have between 5 and 10 characters.")
+    @Size(min = 2, max = 10, message = "Code must have between 5 and 10 characters.")
     @Column(name="code", nullable = false)
     private String code;
 

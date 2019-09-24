@@ -10,7 +10,7 @@
           Has it's own 3scale service? (needs additional 3scale authentication) <b>false</b><br>
           Is managed by Keycloak? <b>false</b><br>
         </p>
-        <button class="btn btn-lg btn-success" (click)="getStockMaintenance()" *ngIf="loadingStockMaintenanceAPI" [@fadeInOut]>
+        <button class="btn btn-lg btn-danger" (click)="getStockMaintenance()" *ngIf="loadingStockMaintenanceAPI" [@fadeInOut]>
           <fa-icon [icon]="circleIcon" class="mr-1" [spin]="true"></fa-icon>Stock Maintenance
         </button>
         <button class="btn btn-lg btn-success" (click)="getStockMaintenance()" *ngIf="!loadingStockMaintenanceAPI">
@@ -31,7 +31,7 @@
           Has it's own 3scale service? (needs additional 3scale authentication) <b>true</b><br>
           Is managed by Keycloak? <b>true</b><br>
         </p>
-        <button class="btn btn-lg btn-success" (click)="getSupplierMaintenance()" *ngIf="loadingSupplierMaintenanceAPI" [@fadeInOut]>
+        <button class="btn btn-lg btn-danger" (click)="getSupplierMaintenance()" *ngIf="loadingSupplierMaintenanceAPI" [@fadeInOut]>
           <fa-icon [icon]="circleIcon" class="mr-1" [spin]="true"></fa-icon>Supplier Maintenance
         </button>
         <button class="btn btn-lg btn-success" (click)="getSupplierMaintenance()" *ngIf="!loadingSupplierMaintenanceAPI">
@@ -44,10 +44,10 @@
 
 <div class="card-deck">
   <div class="card">
-    <div class="card-header">HTTP Response</div>
+    <div class="card-header" [class.http_success]="isSuccess()" [class.http_error]="isError()" [class.http_loading]="isLoading()">HTTP Response</div>
     <div class="card-body">
       <div class="card-text">
-        <pre>{{ status | json }}</pre>
+        <pre>{{ response | json }}</pre>
       </div>
     </div>
   </div>

@@ -13,12 +13,16 @@ export class MaintenanceComponent implements OnInit {
 
   constructor(private messageService: MessageService, private statusService: MaintenanceService) { }
 
-  status: any = {};
+  response: any = {};
   cogIcon: IconDefinition;
   circleIcon: IconDefinition;
 
   loadingStockMaintenanceAPI: boolean;
   loadingSupplierMaintenanceAPI: boolean;
+
+  httpSuccess: boolean;
+  httpError: boolean;
+  httpLoading: boolean;
 
   setLoading(value: boolean, idx: number, timeout: number) {
     setTimeout(() => {
@@ -35,28 +39,58 @@ export class MaintenanceComponent implements OnInit {
 
   getStockMaintenance(): void {
     this.loadingStockMaintenanceAPI = true;
-    this.statusService.getStockMaintenance().subscribe(res => {
-          this.status = res;
+    this.httpLoading = true;
+    this.httpError = false;
+    this.httpSuccess = false;
 
-          if (this.status.body != null) {
+    this.statusService.getStockMaintenance().subscribe(res => {
+          this.response = res;
+
+          if (this.response.body != null) {
+            this.httpSuccess = true;
+            if (this.response.status != 200) {
+              this.httpLoading = false;
+              this.httpError = true;
+              this.httpSuccess = false;
+            }
             this.messageService.success('Successfully called stock-maintenance-api');
           }
         },
-        (err) => this.setLoading(false, 0, 2000),
+        (err) => {
+          this.httpError = true;
+          this.httpSuccess = false;
+          this.httpLoading = false;
+          this.setLoading(false, 0, 2000);
+        },
         () => this.setLoading(false, 0, 1000)
     );
   }
 
   getSupplierMaintenance(): void {
     this.loadingSupplierMaintenanceAPI = true;
-    this.statusService.getSupplierMaintenance().subscribe(res => {
-          this.status = res;
+    this.httpLoading = true;
+    this.httpError = false;
+    this.httpSuccess = false;
 
-          if (this.status.body != null) {
+    this.statusService.getSupplierMaintenance().subscribe(res => {
+          this.response = res;
+
+          if (this.response.body != null) {
+            this.httpSuccess = true;
+            if (this.response.status != 200) {
+              this.httpLoading = false;
+              this.httpError = true;
+              this.httpSuccess = false;
+            }
             this.messageService.success('Successfully called supplier-maintenance-api');
           }
         },
-        (err) => this.setLoading(false, 1, 2000),
+        (err) => {
+          this.httpError = true;
+          this.httpSuccess = false;
+          this.httpLoading = false;
+          this.setLoading(false, 0, 2000);
+        },
         () => this.setLoading(false, 1, 1000)
     );
   }
@@ -65,4 +99,17 @@ export class MaintenanceComponent implements OnInit {
     this.cogIcon = faCog;
     this.circleIcon = faCircleNotch;
   }
+
+  isSuccess(): boolean {
+    return this.httpSuccess;
+  }
+
+  isLoading(): boolean {
+    return this.httpLoading;
+  }
+
+  isError(): boolean {
+    return this.httpError;
+  }
+
 }
