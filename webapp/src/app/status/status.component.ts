@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import { StatusService } from './status.service';
 import { MessageService } from '../message/message.service';
 import { IconDefinition, faCog, faCircleNotch } from '@fortawesome/free-solid-svg-icons';
@@ -24,7 +24,11 @@ import {appAnimations} from '../app-animations';
 })
 export class StatusComponent implements OnInit {
 
-  constructor(private messageService: MessageService, private statusService: StatusService) { }
+  constructor(
+      private messageService: MessageService,
+      private statusService: StatusService,
+      private cdr: ChangeDetectorRef
+  ) { }
 
   response: any = {};
   cogIcon: IconDefinition;
@@ -56,6 +60,7 @@ export class StatusComponent implements OnInit {
           break;
       }
     }, timeout);
+    this.cdr.detectChanges();
   }
 
   setCardBackground(isLoading:boolean, isSuccess:boolean, isError:boolean) {
@@ -85,6 +90,7 @@ export class StatusComponent implements OnInit {
     if (this.response.status != 200) {
       this.setCardBackground(false, false, true);
     }
+    this.cdr.detectChanges();
   }
 
   getProduct(): void {
@@ -108,6 +114,7 @@ export class StatusComponent implements OnInit {
     if (this.response.status != 200) {
       this.setCardBackground(false, false, true);
     }
+    this.cdr.detectChanges();
   }
 
   getStock(): void {
@@ -132,6 +139,7 @@ export class StatusComponent implements OnInit {
     if (this.response.status != 200) {
       this.setCardBackground(false, false, true);
     }
+    this.cdr.detectChanges();
   }
 
   getSupplier(): void {
@@ -139,28 +147,32 @@ export class StatusComponent implements OnInit {
     this.setCardBackground(true, false, false);
 
     this.statusService.getSupplierHealth().subscribe(res => {
-      this.response = res;
+          this.response = res;
 
-      if (this.response.body != null) {
-        this.httpSuccess = true;
-        this.messageService.success('Successfully checked supplier-api status');
-        this.setCardBackground(false, true, false);
-      }
-    },
-      (err) => {
-        this.setLoading(false, 1, 2000);
-      },
-    () => this.setLoading(false, 3, 1000)
+          if (this.response.body != null) {
+            this.httpSuccess = true;
+            this.messageService.success('Successfully checked supplier-api status');
+            this.setCardBackground(false, true, false);
+          }
+        },
+        (err) => {
+          this.setLoading(false, 1, 2000);
+        },
+        () => this.setLoading(false, 3, 1000)
     );
 
     if (this.response.status != 200) {
       this.setCardBackground(false, false, true);
     }
+    this.cdr.detectChanges();
   }
 
   ngOnInit() {
     this.cogIcon = faCog;
     this.circleIcon = faCircleNotch;
+    this.httpLoading = false;
+    this.httpSuccess = false;
+    this.httpError = false;
   }
 
   isSuccess(): boolean {
