@@ -19,16 +19,14 @@ public class Health implements Serializable {
 
     @JsonProperty("status")
     private String status;
+
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+
     private final static long serialVersionUID = 4504776979039875142L;
 
     public Health() { }
 
-    /**
-     *
-     * @param status
-     */
     public Health(String status) {
         super();
         this.status = status;

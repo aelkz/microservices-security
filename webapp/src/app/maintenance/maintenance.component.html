@@ -46,9 +46,10 @@
   <div class="card">
     <div [ngClass]="
     {
-      'card-header http_success' : isSuccess(),
-       'card-header http_error' : isError(),
-       'card-header http_loading' : isLoading()
+      'card-header' : !isSuccess() && !isLoading() && !isError(),
+      'ng-tns-c1-26 card-header http_success' : isSuccess(),
+      'ng-tns-c1-26 card-header http_error' : isError(),
+      'ng-tns-c1-26 card-header http_loading' : isLoading()
     }">HTTP Response</div>
     <div class="card-body">
       <div class="card-text">

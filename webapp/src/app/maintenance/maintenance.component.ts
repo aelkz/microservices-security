@@ -52,8 +52,8 @@ export class MaintenanceComponent implements OnInit {
 
   setCardBackground(isLoading:boolean, isSuccess:boolean, isError:boolean) {
     this.httpLoading = isLoading;
-    this.httpError = isError;
     this.httpSuccess = isSuccess;
+    this.httpError = isError;
   }
 
   getStockMaintenance(): void {
@@ -65,19 +65,19 @@ export class MaintenanceComponent implements OnInit {
 
           if (this.response.body != null) {
             this.httpSuccess = true;
-            if (this.response.status != 200) {
-              this.setCardBackground(false, false, true);
-            }
             this.messageService.success('Successfully called stock-maintenance-api');
             this.setCardBackground(false, true, false);
           }
         },
         (err) => {
-          this.setCardBackground(false, false, true);
           this.setLoading(false, 0, 2000);
         },
         () => this.setLoading(false, 0, 1000)
     );
+
+    if (this.response.status != 200) {
+      this.setCardBackground(false, false, true);
+    }
   }
 
   getSupplierMaintenance(): void {
@@ -89,19 +89,19 @@ export class MaintenanceComponent implements OnInit {
 
           if (this.response.body != null) {
             this.httpSuccess = true;
-            if (this.response.status != 200) {
-              this.setCardBackground(false, false, true);
-            }
             this.messageService.success('Successfully called supplier-maintenance-api');
             this.setCardBackground(false, true, false);
           }
         },
         (err) => {
-          this.setCardBackground(false, false, true);
           this.setLoading(false, 0, 2000);
         },
         () => this.setLoading(false, 1, 1000)
     );
+
+    if (this.response.status != 200) {
+      this.setCardBackground(false, false, true);
+    }
   }
 
   ngOnInit() {
