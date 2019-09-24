@@ -11,6 +11,7 @@ import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.opentracing.ActiveSpanManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
 @Component("ProductInternalRoute")
@@ -44,11 +45,20 @@ public class ProductInternalRoute extends RouteBuilder {
         // | Product CRUD Operations                          |
         // \--------------------------------------------------/
 
-        from("direct:internal-status-product")
-            .id("direct-status-product")
+        from("direct:internal-product-status")
+            .id("direct-product-status")
             .to("log:list?showHeaders=true&level=DEBUG")
                 .removeHeader("origin")
                 .removeHeader(Exchange.HTTP_PATH)
+                .setHeader(Exchange.CONTENT_TYPE, constant(MediaType.APPLICATION_JSON))
+                .removeHeader("breadcrumbId")
+                .process((e) -> {
+                    e.getIn().getHeaders().forEach((k,v) -> {
+                        if (k.equals("Authorization")) {
+                            System.out.println(k + "=[" + v + "]");
+                        }
+                    });
+                })
                 .to("log:post-list?showHeaders=true&level=DEBUG")
                 .to("http4://" + productConfig.getHost() + ":" + productConfig.getPort() + "/actuator/health?connectTimeout=500&bridgeEndpoint=true&copyHeaders=true&connectionClose=true&type=product")
             .end();
