@@ -212,7 +212,7 @@ Create a new API on 3Scale admin portal. You can hit the `NEW API` link on the m
 This new API will represent the `auth-integration-api`, previously deployed.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/11.png" title="3Scale admin portal - auth-integration-api" width="70%" height="70%" />
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/11.png" title="3Scale admin portal - auth-integration-api" width="50%" height="50%" />
 </p>
 
 Then, navigate through the `Configuration` menu under `Integration`, to setup the API mappings and security.
@@ -255,19 +255,19 @@ Next, define all <b>mapping rules</b> for this API, accordingly to the following
 | GET     | /api/v1/stock/maintenance   | 1 | hits             |
 | GET     | /api/v1/supplier/maintenance| 1 | hits             |
 
-Next, configure API policies that will be required to enable proper communication between resources inside the Openshift Container Platform:
-
-<p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/30.png" title="3Scale admin portal - auth-integration-api policies" width="70%" height="70%" />
-</p>
-
 Next, define the authentication mechanism for this API:
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/19.png" title="3Scale admin portal - auth-integration-api configuration" width="85%" height="85%" />
 </p>
 
-####Please follow the next steps carefully:
+Next, configure API policies that will be required to enable proper communication between resources inside the Openshift Container Platform:
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/30.png" title="3Scale admin portal - auth-integration-api policies" width="70%" height="70%" />
+</p>
+
+#### Please follow the next steps carefully:
 
 Select `Authorization Code Flow` , `Service Accounts Flow` and `Direct Access Grant Flow` under `OIDC AUTHORIZATION FLOW` section.
 
@@ -534,7 +534,21 @@ On `Step 7` we've created the `John Doe` user. We will need to create <b>another
 
 We will also need to assign the `SUPPLIER_MAINTAINER` role to this user.
 
-### `SECURITY LAB: STEP 14 - MICROSERVICES DEPLOYMENT`
+### `SECURITY LAB: STEP 14 - ARCHIVE SSO-COMMON LIBRARY JAR ON NEXUS`
+
+```sh
+# NOTE: To make sure the auth-integration-api (FUSE) works correctly, we need to archive a library that will be used to provide authentication and authorizations capabilities on top of Red Hat Single Sing-On (Keycloak).Then, this library will be used on auth-integration-api to enable such capabilities.
+
+# Deploy auth-sso-common library on nexus
+mvn clean package deploy -DnexusReleaseRepoUrl=$MAVEN_URL_RELEASES -DnexusSnapshotRepoUrl=$MAVEN_URL_SNAPSHOTS -s ./maven-settings.xml -e -X -pl auth-sso-common
+```
+
+This will create the following artifact on Nexus:
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/06.png" title="auth-sso-common artifact on nexus" width="35%" height="35%" />
+</p>
+
+### `SECURITY LAB: STEP 15 - MICROSERVICES DEPLOYMENT`
 
 Retrieve RHSSO realm public key:
 
@@ -570,14 +584,15 @@ echo "-----BEGIN CERTIFICATE-----" > $REALM_CERT; echo $RSA_PUB_KEY >> $RSA_CERT
 openssl x509 -in $REALM_CERT -text -noout
 ```
 
-Deploy the parent project:
+Deploy the `parent` project:
 
 ```sh
 # Deploy parent project on nexus
 mvn clean package deploy -DnexusReleaseRepoUrl=$MAVEN_URL_RELEASES -DnexusSnapshotRepoUrl=$MAVEN_URL_SNAPSHOTS -s ./maven-settings.xml -e -X -N
 ```
 
-Deploy stock-api
+Deploy `stock-api`
+
 ```
 # oc delete all -lapp=stock-api
 oc new-app openjdk-8-rhel8:latest~https://github.com/aelkz/microservices-security.git --name=stock-api --context-dir=/stock --build-env='MAVEN_MIRROR_URL='${MAVEN_URL} -e MAVEN_MIRROR_URL=${MAVEN_URL}
@@ -587,12 +602,13 @@ oc patch svc stock-api -p '{"spec":{"ports":[{"name":"http","port":8080,"protoco
 oc label svc stock-api monitor=springboot2-api
 ```
 
-Deploy supplier-api
+Deploy `supplier-api`
+
 <b>NOTE</b>. Please check all settings on `application.yaml` file before continuing. 
 The following attributes must be updated to reflect your actual environment:
-- `issuer-uri` on Line 61
-- `resource.id` on Line 71
-- `jwt.key-value` on Line 75
+- `rest.security.issuer-uri` on Line 61
+- `security.oauth2.resource.id` on Line 71
+- `security.oauth2.resource.jwt.key-value` on Line 75
 
 ```
 # oc delete all -lapp=supplier-api
@@ -603,11 +619,12 @@ oc patch svc supplier-api -p '{"spec":{"ports":[{"name":"http","port":8080,"prot
 oc label svc supplier-api monitor=springboot2-api
 ```
 
-Deploy product-api
+Deploy `product-api`
+
 <b>NOTE</b>. Please check all settings on `application.yaml` file before continuing. 
 The following attributes must be updated to reflect your actual environment:
-- `issuer-uri` on Line 61
-- `jwt.key-value` on Line 75
+- `rest.security.issuer-uri` on Line 61
+- `security.oauth2.resource.jwt.key-value` on Line 75
 
 ```
 # oc delete all -lapp=product-api
@@ -617,20 +634,6 @@ oc patch svc product-api -p '{"spec":{"ports":[{"name":"http","port":8080,"proto
 
 oc label svc product-api monitor=springboot2-api
 ```
-
-### `SECURITY LAB: STEP 15 - ARCHIVE SSO-COMMON LIBRARY JAR ON NEXUS`
-
-```sh
-# NOTE: To make sure the auth-integration-api (FUSE) works correctly, we need to archive a library that will be used to provide authentication and authorizations capabilities on top of Red Hat Single Sing-On (Keycloak).Then, this library will be used on auth-integration-api to enable such capabilities.
-
-# Deploy auth-sso-common library on nexus
-mvn clean package deploy -DnexusReleaseRepoUrl=$MAVEN_URL_RELEASES -DnexusSnapshotRepoUrl=$MAVEN_URL_SNAPSHOTS -s ./maven-settings.xml -e -X -pl auth-sso-common
-```
-
-This will create the following artifact on Nexus:
-<p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/06.png" title="auth-sso-common artifact on nexus" width="35%" height="35%" />
-</p>
 
 ### `SECURITY LAB: STEP 16 - INTEGRATION DEPLOYMENT (FUSE)`
 Now that the microservices APIs are deployed, let’s deploy the integration layer.
