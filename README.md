@@ -534,6 +534,8 @@ On `Step 7` we've created the `John Doe` user. We will need to create <b>another
 
 We will also need to assign the `SUPPLIER_MAINTAINER` role to this user.
 
+<b>NOTE:</b> This procedure is used as an alternative to the `token-exchange` mechanism, but we could have a more detailed study of other possibilities of consuming third-party APIs by using the `token-exchange` feature.
+
 At last, create a realm-admin user. This user will serve to consume the RHSSO REST API.
 Assign the credentials `12345` and all `realm-management` roles.
 
@@ -598,14 +600,14 @@ echo "-----BEGIN CERTIFICATE-----" > $REALM_CERT; echo $RSA_PUB_KEY >> $REALM_CE
 # openssl x509 -in $RHSSO_REALM.fixed.pem -noout -issuer -fingerprint
 ```
 
-Deploy the `parent` project:
+<b>Deploy</b> the `parent` project:
 
 ```sh
 # Deploy parent project on nexus
 mvn clean package deploy -DnexusReleaseRepoUrl=$MAVEN_URL_RELEASES -DnexusSnapshotRepoUrl=$MAVEN_URL_SNAPSHOTS -s ./maven-settings.xml -e -X -N
 ```
 
-Deploy `stock-api`
+<b>Deploy</b> `stock-api`
 
 ```
 # oc delete all -lapp=stock-api
@@ -616,7 +618,7 @@ oc patch svc stock-api -p '{"spec":{"ports":[{"name":"http","port":8080,"protoco
 oc label svc stock-api monitor=springboot2-api
 ```
 
-Deploy `supplier-api`
+<b>Deploy</b> `supplier-api`
 
 <b>NOTE</b>. Please check all settings on `application.yaml` file before continuing. 
 The following attributes must be updated to reflect your actual environment:
@@ -702,7 +704,11 @@ export MICROSERVICES_NAMESPACE=microservices-security
 echo http://$(oc get route nodejs-web -n ${MICROSERVICES_NAMESPACE} --template='{{ .spec.host }}')
 ```
 
-If you're using a self-signed certificate, the browser will request authorization to open an insecure URL. Navigate through the menus and test all actions clicking on every button to see the final result. If some action return <b>401</b> or <b>403</b> it is probabilly some pending configuration on 3Scale or the credentials on every application. If you get the <b>500</b>, the application maybe is unavailable. Try changing `Jon Doe` roles and check every situation.
+If you're using a `self-signed` certificate, the browser will request authorization to open an insecure URL. Navigate through the menus and test all actions clicking on every button to see the final result. If some action returns <b>401</b> or <b>403</b> it is probabilly some pending configuration on 3Scale or missing/invalid credentials on some application. If you get http error <b>500</b>, maybe the application is unavailable. Try changing `Jon Doe` roles and check every situation after refreshing the access token.
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_videos/screen01.gif" title="Microservices Security Lab" width="75%" height="75%" />
+</p>
 
 I hope you enjoyed this tutorial. The troubleshooting was not easy because of all OAuth2 adapters and security mechanisms involved. Please, let me know if you want to improve something or add more context to this PoC. Thank you!
 

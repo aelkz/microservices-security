@@ -17,28 +17,29 @@ public class OAuth2ClientCredentials {
             String password) {
 
         keycloak = KeycloakBuilder.builder()
-                .clientId(clientId)
-                .clientSecret(clientSecret)
-                .grantType(grantType)
-                .realm(realm)
-                .serverUrl(serverUrl)
-                .username(username)
-                .password(password)
-                .build();
+            .clientId(clientId)
+            .clientSecret(clientSecret)
+            .grantType(grantType)
+            .realm(realm)
+            .serverUrl(serverUrl)
+            .username(username)
+            .password(password)
+            .build();
     }
 
     public Token getToken() {
-        AccessTokenResponse accessToken = keycloak.tokenManager().getAccessToken();
+        AccessTokenResponse accessToken = null;
+        accessToken = keycloak.tokenManager().getAccessToken();
         return new Token(
-                accessToken.getToken(),
-                accessToken.getExpiresIn(),
-                accessToken.getRefreshExpiresIn(),
-                accessToken.getRefreshToken(),
-                accessToken.getTokenType(),
-                accessToken.getIdToken(),
-                accessToken.getNotBeforePolicy(),
-                accessToken.getSessionState(),
-                accessToken.getOtherClaims(),
-                accessToken.getScope());
+            accessToken.getToken(),
+            accessToken.getExpiresIn(),
+            accessToken.getRefreshExpiresIn(),
+            accessToken.getRefreshToken(),
+            accessToken.getTokenType(),
+            accessToken.getIdToken(),
+            accessToken.getNotBeforePolicy(),
+            accessToken.getSessionState(),
+            accessToken.getOtherClaims(),
+            accessToken.getScope());
     }
 }

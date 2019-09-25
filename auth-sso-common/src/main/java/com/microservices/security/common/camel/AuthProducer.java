@@ -39,7 +39,8 @@ public class AuthProducer extends DefaultProducer {
 
     @SuppressWarnings("unused")
     protected String getBearer() {
-        String tokenString = getToken().getAccessToken();
+        String tokenString = null;
+        tokenString = getToken().getAccessToken();
         if (tokenString == null) {
             throw new NullPointerException("Token is null");
         }
