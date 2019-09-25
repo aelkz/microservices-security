@@ -695,6 +695,8 @@ oc create configmap ${APP}-config --from-file=application.yaml -n ${PROJECT_NAME
 oc set volume dc/${APP} --add --overwrite --name=${APP}-config-volume -m /deployments/config -t configmap --configmap-name=${APP}-config -n ${PROJECT_NAMESPACE}
 ```
 
+<b>NOTE:</b> All application roles are prefixed with <b>ROLE_</b> on source-code. This could be changed if you want at line 80 in `../configuration/security/JwtAccessTokenCustomizer.java` class. On RHSSO, these roles are registered without this prefix. [stack overflow](https://stackoverflow.com/questions/33205236/spring-security-added-prefix-role-to-all-roles-name)
+
 ### `SECURITY LAB: FINAL STEP`
 
 Open the nodejs webapp into your browser:
@@ -707,7 +709,8 @@ echo http://$(oc get route nodejs-web -n ${MICROSERVICES_NAMESPACE} --template='
 If you're using a `self-signed` certificate, the browser will request authorization to open an insecure URL. Navigate through the menus and test all actions clicking on every button to see the final result. If some action returns <b>401</b> or <b>403</b> it is probabilly some pending configuration on 3Scale or missing/invalid credentials on some application. If you get http error <b>500</b>, maybe the application is unavailable. Try changing `Jon Doe` roles and check every situation after refreshing the access token.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_videos/screen01.gif" title="Microservices Security Lab" width="75%" height="75%" />
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_videos/screen01.gif" title="Microservices Security Lab" width="85%" height="85%" />
+<br>(click on the image to see it larger)
 </p>
 
 I hope you enjoyed this tutorial. The troubleshooting was not easy because of all OAuth2 adapters and security mechanisms involved. Please, let me know if you want to improve something or add more context to this PoC. Thank you!
@@ -719,12 +722,19 @@ https://codepen.io/corenominal/pen/rxOmMJ<br>
 JWT Key Generator
 http://jwt.io<br>
 OpenID Connect Debugger
-https://openidconnect.net
-Generate Plain Old Java Objects from JSON or JSON-Schema<br>
-http://www.jsonschema2pojo.org
+https://openidconnect.net<br>
+Generate Plain Old Java Objects from JSON or JSON-Schema
+http://www.jsonschema2pojo.org<br>
+Securing REST API using Keycloak and Spring Oauth2
+https://medium.com/@bcarunmail/securing-rest-api-using-keycloak-and-spring-oauth2-6ddf3a1efcc2<br>
+Keycloak: A real Scenario from Development to Production
+https://medium.com/@siweheee/keycloak-a-real-scenario-from-development-to-production-ce57800e3ba9<br>
+HOW-TO setup 3scale OpenID Connect (OIDC) Integration with RH SSO
+https://developers.redhat.com/blog/2017/11/21/setup-3scale-openid-connect-oidc-integration-rh-sso/<br>
+Red Hat Openshift Single Sign-On Secured N-tier application
+https://github.com/aelkz/ocp-sso/blob/master/README.pt-br.md
 
 - - - - - - - - - -
 Thanks for reading and taking the time to comment!<br>
 Feel free to create a <b>PR</b><br>
 [raphael abreu](rabreu@redhat.com)
-
