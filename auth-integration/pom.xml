@@ -179,6 +179,8 @@
         </dependency>
 
         <!-- auth sso common dependency -->
+        <!-- ADD THIS FOR PRODUCTION ENVIRONMENTS -->
+        <!-- (extract keycloak dependencies in another project -->
         <!--
         <dependency>
             <groupId>com.microservices.security.common</groupId>
