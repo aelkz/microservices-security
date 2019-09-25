@@ -35,45 +35,48 @@ All APIs catalog is exposed bellow:
 
 ### `auth-integration-api` endpoints
 
-:8081
+<b>:8081</b>
+
+| Method | URI | Description |
+| ------ | --- | ----------- |
+| GET    |/health | API actuator embedded health |
+| GET    |/metrics | API actuator embedded metrics |
+
+<b>:8080</b>
 
 | Method | URI | Description | Secured? |
 | ------ | --- | ----------- | -------- | 
-| GET    |/health | API actuator embedded health | false |
-| GET    |/metrics | API actuator embedded metrics | false |
-
-:8080
-
-| Method | URI | Description | Secured? |
-| ------ | --- | ----------- | -------- | 
-| POST   |/api/v1/product  | Create new product | true |
-| DELETE |/api/v1/product/{id}  | Delete product by Id | true |
-| PUT   |/api/v1/product/{id}  | Update product by Id | true |
-| GET   |/api/v1/product/{id}  | Retrieve product by Id | true |
-| GET   |/api/v1/product  | Retrieve all products | true |
-| GET   |/api/v1/product/status  | Check Product API health | true |
-| GET   |/api/v1/supplier/status  | Check Supplier API health | true |
-| GET   |/api/v1/stock/status  | Check Stock API health | true |
-| GET   |/api/v1/supplier/update  | Call the Supplier Maintenance API | true |
-| GET   |/api/v1/stock/update  | Call the Stock Maintenance API | true |
+| POST    | /api/v1/product             | Create new product | true |
+| DELETE  | /api/v1/product/*           | Delete product by Id | true |
+| PUT     | /api/v1/product/*           | Update product by Id | true |
+| GET     | /api/v1/product$            | Retrieve all products | true |
+| GET     | /api/v1/product/*           | // | true |
+| GET     | /api/v1/status              | Check Integration API health | true |
+| GET     | /api/v1/product/status      | Check Product API health | true |
+| GET     | /api/v1/supplier/status     | Check Supplier API health | true |
+| GET     | /api/v1/stock/status        | Check Stock API health | true |
+| GET     | /api/v1/stock/maintenance   | Call Stock API maintenance | true |
+| GET     | /api/v1/supplier/maintenance| Call Supplier API maintenance | true |
 
 ### `stock-api` endpoints
 
-| Method | URI | Description | Secured? |
-| ------ | --- | ----------- | -------- |
-| GET    |/api/v1/sync | Stock Maintenance | false |
+| Method | URI | Description |
+| ------ | --- | ----------- |
+| GET    |/api/v1/sync | Stock Maintenance |
+| GET    |/actuator/health | Supplier Maintenance |
 
 ### `supplier-api` endpoints
 
 | Method | URI | Description | Secured? |
 | ------ | --- | ----------- | -------- |
 | GET    |/api/v1/sync | Supplier Maintenance | true | 
+| GET    |/actuator/health | Supplier Maintenance | true | 
 
 ### `product-api` endpoints
 
 | Method | URI | Description | Secured? |
 | ------ | --- | ----------- | -------- |
-| GET    |/api/v1/products | Retrieve all products | true |
+| GET    |/api/v1/product | Retrieve all products | true |
 | GET    |/api/v1/product/{id} | Retrieve product by Id | true |
 | POST   |/api/v1/product | Create new product | true |
 | PUT    |/api/v1/product/{id} | Update product by Id | true |
@@ -83,7 +86,7 @@ Each endpoint has it's own specifity, so in order to drive our test scenarios, I
 
 1. This API will be protected by an Integration Layer (FUSE)?
 2. This API will be exposed as a unique service on 3Scale AMP?
-3. This API will be managed by Keycloak having it's own client-id, groups and roles?
+3. This API will be managed by RHSSO (Keycloak) having it's own client-id, groups and roles?
 
 This lead me to draw this requirements matrix:
 
@@ -91,7 +94,7 @@ This lead me to draw this requirements matrix:
 <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/05.png" title="APIs Requirements" width="100%" height="100%" />
 </p>
 
-As we can see, each API has some differences, and we will strive to demonstrate each one in this tutorial.
+As we can see, each API has some differences, and we will strive to demonstrate each one in this security lab!
 
 ### `SECURITY LAB: STEP 1 - PROJECT CREATION`
 
@@ -256,7 +259,7 @@ Now that all APIs are alive and kicking, let's define some configurations on RHS
 
 After creating the realms, you'll have this:
 <p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/07.png" title="RHSSO realms" width="20%" height="20%" />
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/07.png" title="RHSSO realms" width="45%" height="45%" />
 </p>
 
 On `3scale-api` realm, create a client `3scale` with the following definition:
@@ -280,12 +283,12 @@ Under the realm `3scale-api` create a new user with the following definition:
 Also, set a new password for this user on `Credentials` tab with `temporary=false` and set to `true` the `Email Verified` on `Details` tab.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/10.png" title="realm:3scale-api user:john" width="40%" height="40%" />
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/10.png" title="realm:3scale-api user:john" width="55%" height="55%" />
 </p>
 
-<b>Troublehsooting</b>: After creating the API definition on 3Scale, check if the generated client was created into 3scale-api realm on RHSSO. If you're using a self-signed certificate, you'll need to make additional configurations in order to enable the zync-que 3Scale application synchronizes correctly. Please refer to the [Documentation: Troubleshooting SSL issues](https://access.redhat.com/documentation/en-us/red_hat_3scale_api_management/2.6/html-single/operating_3scale/index#troubleshooting_ssl_issues) and [Configure Zync to use custom CA certificates](https://access.redhat.com/documentation/en-us/red_hat_3scale_api_management/2.4/html-single/api_authentication/index#zync-oidc-integration)
+<b>Troublehsooting</b>: After creating the API definition on 3Scale, check if the generated client was created into 3scale-api realm on RHSSO. If you're using a <b>self-signed</b> certificate, you'll need to make additional configurations in order to enable the zync-que 3Scale application synchronizes correctly. Please refer to the [Documentation: Troubleshooting SSL issues](https://access.redhat.com/documentation/en-us/red_hat_3scale_api_management/2.6/html-single/operating_3scale/index#troubleshooting_ssl_issues) and [Configure Zync to use custom CA certificates](https://access.redhat.com/documentation/en-us/red_hat_3scale_api_management/2.4/html-single/api_authentication/index#zync-oidc-integration)
 
-To <b>fix</b> this, you can proceed with the self-signed certificate configuration:
+To <b>fix</b> this, you can proceed with the self-signed certificate installation:
 ```sh
 export THREESCALE_NAMESPACE=3scale26
 export THREESCALE_ZYNC_QUE_POD=$(oc get pods --selector deploymentconfig=zync-que -n 3scale26 | { read line1 ; read line2 ; echo "$line2" ; } | awk '{print $1;}')
@@ -315,7 +318,7 @@ oc exec ${THREESCALE_ZYNC_QUE_POD} cat /etc/pki/tls/zync-que/zync-que.pem -n ${T
 oc set env dc/zync-que SSL_CERT_FILE=/etc/pki/tls/zync-que/zync-que.pem -n ${THREESCALE_NAMESPACE}
 
 # wait for the container restart.
-# Voila! You have the 3Scale in sync with RHSSO.
+# Voila! You have the 3Scale in sync with RHSSO using a self-signed certificate.
 ```
 
 ### `SECURITY LAB: STEP 11 - 3SCALE MICROSERVICES CONFIGURATION`
@@ -367,13 +370,10 @@ Next, define all mapping rules for this API, accordingly to the following table:
 | PUT     | /api/v1/product/*           | 1 | hits             |
 | GET     | /api/v1/product$            | 1 | hits             |
 | GET     | /api/v1/product/*           | 1 | hits             |
-| GET     | /actuator/*                 | 1 | hits             |
 | GET     | /api/v1/status              | 1 | hits             |
 | GET     | /api/v1/product/status      | 1 | hits             |
 | GET     | /api/v1/supplier/status     | 1 | hits             |
 | GET     | /api/v1/stock/status        | 1 | hits             |
-| GET     | /api/v1/supplier/update     | 1 | hits             |
-| GET     | /api/v1/stock/update        | 1 | hits             |
 | GET     | /api/v1/stock/maintenance   | 1 | hits             |
 | GET     | /api/v1/supplier/maintenance| 1 | hits             |
 
@@ -417,7 +417,7 @@ Leave empty.
 Leave the rest as default, and save the CORS configuration.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/32.png" title="3Scale admin portal - CORS policy" width="20%" height="20%" />
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/32.png" title="3Scale admin portal - CORS policy" width="65%" height="65%" />
 </p>
 
 <b>NOTE</b>. After every change, remember to promote the staging configuration to production.
@@ -564,8 +564,27 @@ Note that this client was also generated through 3Scale.
 
 ### `SECURITY LAB: STEP 16 - USERS ROLES`
 
-In this step, we will be assigning the roles to `john doe` user and the `service-account` user that will handle the supplier-service calls inside the auth-integration-api.
+In this step, we will be assigning all roles to `john doe` user and the `service-account` user that will handle the `supplier-service` calls <b>inside</b> the `auth-integration-api`.
 
+Go to the `Role Mappings` tab on `John Doe` user-details page on `Users` menu.
+Assign all roles to the user, following the image bellow:
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/34.png" title="RHSSO - user roles assignment" width="75%" height="75%" />
+</p>
+
+### `SECURITY LAB: FINAL STEP`
+
+Open the nodejs webapp into your browser:
+
+```
+export MICROSERVICES_NAMESPACE=microservices-security
+echo http://$(oc get route nodejs-web -n ${MICROSERVICES_NAMESPACE} --template='{{ .spec.host }}')
+```
+
+If you're using a self-signed certificate, the browser will request authorization to open an insecure URL. Navigate through the menus and test all actions clicking on every button to see the final result. If some action return <b>401</b> or <b>403</b> it is probabilly some pending configuration on 3Scale or the credentials on every application. If you get the <b>500</b>, the application maybe is unavailable. Try changing `Jon Doe` roles and check every situation.
+
+I hope you enjoyed this tutorial. The troubleshooting was not easy because of all OAuth2 adapters and security mechanisms involved. Please, let me know if you want to improve something or add more context to this PoC. Thank you!
 
 ### `EXTERNAL REFERENCES`
 
