@@ -713,6 +713,10 @@ If you're using a `self-signed` certificate, the browser will request authorizat
 <br>(click on the image to see it larger)
 </p>
 
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/37.png" title="Microservices Security Lab" width="85%" height="85%" />
+</p>
+
 I hope you enjoyed this tutorial. The troubleshooting was not easy because of all OAuth2 adapters and security mechanisms involved. Please, let me know if you want to improve something or add more context to this PoC. Thank you!
 
 ### `EXTERNAL REFERENCES`
@@ -725,13 +729,13 @@ OpenID Connect Debugger
 https://openidconnect.net<br>
 Generate Plain Old Java Objects from JSON or JSON-Schema
 http://www.jsonschema2pojo.org<br>
-Securing REST API using Keycloak and Spring Oauth2
+Securing REST API using Keycloak and Spring Oauth2 (@bcarun)
 https://medium.com/@bcarunmail/securing-rest-api-using-keycloak-and-spring-oauth2-6ddf3a1efcc2<br>
 Keycloak: A real Scenario from Development to Production
 https://medium.com/@siweheee/keycloak-a-real-scenario-from-development-to-production-ce57800e3ba9<br>
 HOW-TO setup 3scale OpenID Connect (OIDC) Integration with RH SSO
 https://developers.redhat.com/blog/2017/11/21/setup-3scale-openid-connect-oidc-integration-rh-sso/<br>
-Red Hat Openshift Single Sign-On Secured N-tier application
+Red Hat Openshift Single Sign-On Secured N-tier application (@mechevarria)
 https://github.com/aelkz/ocp-sso/blob/master/README.pt-br.md
 
 - - - - - - - - - -
