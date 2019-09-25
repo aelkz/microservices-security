@@ -537,10 +537,14 @@ We will also need to assign the `SUPPLIER_MAINTAINER` role to this user.
 At last, create a realm-admin user. This user will serve to consume the RHSSO REST API.
 Assign the credentials `12345` and all `realm-management` roles.
 
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/35.png" title="RHSSO - user roles assignment" width="75%" height="75%" />
+</p>
+
 At the end, we will have 3 users on `3scale-api` realm:
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/35.png" title="RHSSO - user roles assignment" width="75%" height="75%" />
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/36.png" title="RHSSO - 3scale-api realm users" width="75%" height="75%" />
 </p>
 
 ### `SECURITY LAB: STEP 14 - ARCHIVE SSO-COMMON LIBRARY JAR ON NEXUS`
@@ -717,3 +721,4 @@ http://www.jsonschema2pojo.org
 Thanks for reading and taking the time to comment!<br>
 Feel free to create a <b>PR</b><br>
 [raphael abreu](rabreu@redhat.com)
+
