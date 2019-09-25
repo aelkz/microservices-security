@@ -5,6 +5,7 @@ supplier/target
 webapp/dist
 
 target/
+_camtasia
 
 # Dependency directories
 node_modules/

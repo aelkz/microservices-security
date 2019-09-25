@@ -120,6 +120,10 @@ supplier:
 # grant-type: password (for a normal user)
 # grant-type: client-credentials (for a service account)
 # -------------------------------------------------------
+# Description: used as mechanism to exchange the original
+# token to another one that can be used to consumer
+# supplier-api
+# -------------------------------------------------------
 keycloak-service-account:
   realm: 3scale-api
   client-id: 847d10c1
