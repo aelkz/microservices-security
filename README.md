@@ -20,7 +20,7 @@
 <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/04.png" title="Microservices Security" width="40%" height="40%" />
 </p>
 
-<b>WARNING</b>: This is a proof of concept. In production environments, there will be needed adittional configurations regarding scalability and security like CORS, HTTP Headers filtering and using a proper CA trusted certificate.
+<b>WARNING</b>: This is a proof of concept. In production environments, there will be needed adittional configurations regarding scalability, security and using a proper CA trusted certificate.
 
 <p align="left">
 <div>
@@ -85,7 +85,7 @@ All APIs catalog is exposed bellow:
 Each endpoint has it's own specifity, so in order to drive our test scenarios, I've ended up with 3 simple questions:
 
 1. This API will be protected by an Integration Layer (FUSE)?
-2. This API will be exposed as a unique service on 3Scale AMP?
+2. This API will be exposed as a unique service on 3Scale AMP? This will enable API self-service subscription for external clients.
 3. This API will be managed by RHSSO (Keycloak) having it's own client-id, groups and roles?
 
 This lead me to draw this requirements matrix:
@@ -94,7 +94,7 @@ This lead me to draw this requirements matrix:
 <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/05.png" title="APIs Requirements" width="100%" height="100%" />
 </p>
 
-As we can see, each API has some differences, and we will strive to demonstrate each one in this security lab!
+As we can see, each API has some differences, and we will strive to demonstrate each one in this <b>microservices security lab</b>!
 
 ### `SECURITY LAB: STEP 1 - PROJECT CREATION`
 
@@ -157,29 +157,459 @@ oc secrets link default redhat.io --for=pull -n $PROJECT_NAMESPACE
 oc secrets link builder redhat.io -n $PROJECT_NAMESPACE
 ```
 
-### `SECURITY LAB: STEP 7 - MICROSERVICES DEPLOYMENT`
+### `SECURITY LAB: STEP 7 - RHSSO REALMS CONFIGURATION`
+
+In this step we will configure `realms` on RHSSO to register all the 5 applications.
+
+```sh
+1. Login into RHSSO
+2. Create 3 realms with default settings:
+  - 3scale-api
+  - 3scale-admin
+  - 3scale-devportal
+```
+
+After creating the realms, you'll have something like this:
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/07.png" title="RHSSO realms" width="35%" height="35%" />
+</p>
+
+On `3scale-api` realm, create a client `3scale` with the following definition:
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/08.png" title="realm:3scale-api client:3scale" width="40%" height="40%" />
+</p>
+
+Leave blank the fields: `root URL` , `base URL` and `admin URL`.
+
+On `Service Account Roles` <b>tab</b>, assign the role `manage-clients` from `realm-management`.
+
+Copy and save the `client-secret` that was genereated for this client. <b>This will be used later to configure OAuth service authentication on 3Scale.</b>
+
+The client-secret will be something like this:
+`823b6ek5-1936-42e6-1135-d48rt3a1f632`
+
+Under the realm `3scale-api` create a <b>new user</b> with the following definition:
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/09.png" title="realm:3scale-api user:john" width="60%" height="60%" />
+</p>
+
+Also, set a new password for this user on `Credentials` tab with `temporary=false` and set to `true` the `Email Verified` attribute on `Details` tab.
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/10.png" title="realm:3scale-api user:john" width="55%" height="55%" />
+</p>
+
+### `SECURITY LAB: STEP 8 - 3SCALE MICROSERVICES CONFIGURATION`
+In this step we will register the APIs and configure them to enable 3Scale automatic <b>synchronization</b> with RHSSO.
+Let's setup the `auth-integration-api` and the `supplier-api`.
+
+Create a new API on 3Scale admin portal. You can hit the `NEW API` link on the main dashboard.
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/12.png" title="3Scale admin portal - New API" width="10%" height="10%" />
+</p>
+
+This new API will represent the `auth-integration-api`, previously deployed.
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/11.png" title="3Scale admin portal - auth-integration-api" width="70%" height="70%" />
+</p>
+
+Then, navigate through the `Configuration` menu under `Integration`, to setup the API mappings and security.
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/13.png" title="3Scale admin portal - auth-integration-api configuration" width="85%" height="85%" />
+</p>
+
+Choose `APICast` for the gateway and `OpenID Connect` in Integration Settings,
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/14.png" title="APICast Gateway" width="30%" height="30%" />&nbsp;&nbsp;&nbsp;<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/15.png" title="OpenID Connect" width="30%" height="30%" />
+</p>
+
+<b>NOTE</b>. The OpenID Connection is choosen because we are going to protect our APIs with OAuth2 capabilities provided by RHSSO.
+
+Then click on <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/16.png" title="button: add the base URL of your API and save the configuration" width="35%" height="35%" />
+
+Next, define the `Private Base URL` that is, your auth-integration-api URL and the `staging` and `production` URLs:
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/17.png" title="3Scale admin portal - auth-integration-api configuration" width="70%" height="70%" />
+</p>
+
+<b>NOTE</b>. Set your correct domain under each URL (that will be your API route on Openshift).
+
+Next, define all <b>mapping rules</b> for this API, accordingly to the following table:
+
+| Verb    | Pattern                     | + | Metric or Method |
+| ------- | --------------------------- | --| ---------------- |
+| POST    | /api/v1/product             | 1 | hits             |
+| DELETE  | /api/v1/product/*           | 1 | hits             |
+| PUT     | /api/v1/product/*           | 1 | hits             |
+| GET     | /api/v1/product$            | 1 | hits             |
+| GET     | /api/v1/product/*           | 1 | hits             |
+| GET     | /api/v1/status              | 1 | hits             |
+| GET     | /api/v1/product/status      | 1 | hits             |
+| GET     | /api/v1/supplier/status     | 1 | hits             |
+| GET     | /api/v1/stock/status        | 1 | hits             |
+| GET     | /api/v1/stock/maintenance   | 1 | hits             |
+| GET     | /api/v1/supplier/maintenance| 1 | hits             |
+
+Next, configure API policies that will be required to enable proper communication between resources inside the Openshift Container Platform:
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/30.png" title="3Scale admin portal - auth-integration-api policies" width="70%" height="70%" />
+</p>
+
+Next, define the authentication mechanism for this API:
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/19.png" title="3Scale admin portal - auth-integration-api configuration" width="85%" height="85%" />
+</p>
+
+####Please follow the next steps carefully:
+
+Select `Authorization Code Flow` , `Service Accounts Flow` and `Direct Access Grant Flow` under `OIDC AUTHORIZATION FLOW` section.
+
+On `Credentials location` set <b>As HTTP Headers</b>
+
+Netx, on `Policies` section add in this order:
+- CORS
+- 3Scale APIcast
+
+Expand CORS configuration, and set:
+
+<b>Enabled</b>=checked
+
+<b>ALLOW_HEADERS</b> (add one by one per input array)<br>
+
+| 3Scale CORS Policy: Headers  |
+| ---------------------------- |
+| Content-Type |
+| Authorization |
+| Content-Length |
+| X-Requested-With |
+| Origin |
+| Accept |
+| X-Requested-With |
+| Content-Type |
+| Access-Control-Request-Method |
+| Access-Control-Request-Headers |
+| Accept-Encoding |
+| Accept-Language |
+| Connection |
+| Host |
+| Referer |
+| User-Agent |
+| Access-Control-Allow-Origin |
+| X-Business-FooBar |
+
+<b>NOTE</b>. The latest header is used only for testing purposes.
+
+<b>allow_credentials</b>=checked
+
+<b>ALLOW_METHODS</b> (add one by one per input array)<br>
+
+| 3Scale CORS Policy: Http Methods |
+| -------------------------------- |
+| GET |
+| HEAD |
+| POST |
+| PUT |
+| DELETE |
+| OPTIONS |
+
+<b>allow_origin</b>
+Leave empty.
+
+Leave the rest as default, and save the CORS configuration.
+
+<b>NOTE</b>. After every change, remember to <b>promote</b> the <b>staging</b> configuration to production.
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/20.png" title="3Scale admin portal - auth-integration-api configuration promotion" width="25%" height="25%" />
+</p>
+
+You `auth-integration-api` is ready to be used!
+
+Repeat the same steps for `Supplier API`. This API will have only two mapping rules:
+
+| Verb    | Pattern                     | + | Metric or Method |
+| ------- | --------------------------- | --| ---------------- |
+| POST    | /api/v1/sync                | 1 | hits             |
+| GET     | /actuator/health            | 1 | hits             |
+
+### `SECURITY LAB: STEP 9 - 3SCALE MICROSERVICES APPLICATION PLANS`
+
+Let's the define the APIs `Application Plans`. These plans will be used upon client registration for creating a new `Application`.
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/21.png" title="3Scale admin portal - Application Plans" width="60%" height="60%" />
+</p>
+
+Click on <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/23.png" title="3Scale admin portal - New Application Plan" width="20%" height="20%" /> link under `Applications/Application Plans` menu.
+
+<p align="center">
+Set the following configuration:<br>
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/22.png" title="3Scale admin portal - New Application Plan" width="40%" height="40%" />
+</p>
+
+After this, click the `Publish` link to publish the application plan.
+
+Define the same steps for the `Supplier API`. Remember to publish the application plan also.
+
+After you have done all previous steps, you'll get something like this:
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/24.png" title="3Scale admin portal - Application Plans" width="70%" height="70%" />
+</p>
+
+### `SECURITY LAB: STEP 10 - 3SCALE MICROSERVICES APPLICATION`
+
+Navigate through the `Audience` menu and under `Accounts/Listing` <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/25.png" title="3Scale admin portal - New Account" width="7%" height="7%" /> a new account.
+
+Create a new account with your credentials for this demo:
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/26.png" title="3Scale admin portal - New Account" width="25%" height="25%" />
+</p>
+
+This action will create for you a new 3Scale `application` for some APIs. If the application couldn't be created, just hit the <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/27.png" title="3Scale admin portal - New Application" width="20%" height="20%" /> link.
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/28.png" title="3Scale - New Application" width="75%" height="75%" />
+</p>
+
+The `Application` will be created for use with the `auth-integration-api`. A client-ID and a Client-Secret will be generated automatically, and pushed into RHSSO on `3Scale-api` realm by the `zynnc-que` 3Scale application.
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/29.png" title="RHSSO - New Application" width="70%" height="70%" />
+</p>
+
+<b>Troublehsooting</b>: After creating the API definition on 3Scale, check if the generated client was pushed into 3scale-api realm on RHSSO. If you're using a <b>self-signed</b> certificate, you'll need to make additional configurations in order to enable the zync-que 3Scale application synchronization. Please refer to the [Documentation: Troubleshooting SSL issues](https://access.redhat.com/documentation/en-us/red_hat_3scale_api_management/2.6/html-single/operating_3scale/index#troubleshooting_ssl_issues) and [Configure Zync to use custom CA certificates](https://access.redhat.com/documentation/en-us/red_hat_3scale_api_management/2.4/html-single/api_authentication/index#zync-oidc-integration)
+
+To <b>fix</b> this, you can proceed with the self-signed certificate installation:
+```sh
+export THREESCALE_NAMESPACE=3scale26
+export THREESCALE_ZYNC_QUE_POD=$(oc get pods --selector deploymentconfig=zync-que -n 3scale26 | { read line1 ; read line2 ; echo "$line2" ; } | awk '{print $1;}')
+export RHSSO_URI=sso73.apps.<YOUR-DOMAIN>.com
+
+echo | openssl s_client -showcerts -servername ${RHSSO_URI} -connect ${RHSSO_URI}:443 2>/dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > self-signed-cert.pem
+# Validate the connection first! must return HTTP/1.1 200 OK
+curl -v https://${RHSSO_URI}/auth/realms/master --cacert self-signed-cert.pem
+
+oc exec ${THREESCALE_ZYNC_QUE_POD} cat /etc/pki/tls/cert.pem > zync-que.pem -n ${THREESCALE_NAMESPACE}
+
+cp zync-que.pem zync-que-original.pem
+
+echo '\n# Red Hat Single Sign-On CA '${RHSSO_URI} >> zync-que.pem
+cat self-signed-cert.pem >> zync-que.pem
+
+# oc delete configmap zync-que-ca-bundle
+oc create configmap zync-que-ca-bundle --from-file=./zync-que.pem -n ${THREESCALE_NAMESPACE}
+oc label configmap zync-que-ca-bundle app=3scale-api-management -n ${THREESCALE_NAMESPACE}
+
+oc set volume dc/zync-que --overwrite --add --name=zync-que-ca-bundle --mount-path /etc/pki/tls/zync-que/zync-que.pem --sub-path zync-que.pem --source='{"configMap":{"name":"zync-que-ca-bundle","items":[{"key":"zync-que.pem","path":"zync-que.pem"}]}}' -n ${THREESCALE_NAMESPACE}
+
+oc patch dc/zync-que --type=json -p '[{"op": "add", "path": "/spec/template/spec/containers/0/volumeMounts/0/subPath", "value":"zync-que.pem"}]' -n ${THREESCALE_NAMESPACE}
+
+oc exec ${THREESCALE_ZYNC_QUE_POD} cat /etc/pki/tls/zync-que/zync-que.pem -n ${THREESCALE_NAMESPACE}
+
+oc set env dc/zync-que SSL_CERT_FILE=/etc/pki/tls/zync-que/zync-que.pem -n ${THREESCALE_NAMESPACE}
+
+# wait for the container restart and check the logs for any issue.
+oc logs -f po/${THREESCALE_ZYNC_QUE_POD}
+
+# Voila! You have the 3Scale in sync with RHSSO using a self-signed certificate.
+```
+
+### `SECURITY LAB: STEP 11 - NODEJS WEB APPLICATION DEPLOYMENT`
+
+In this step, we will be testing all scenarios with a suited NodeJS webapp based on Angular and Bootstrap. This application was designed to easy the understanding process. It can be used to give some clarification regarding the authorization behavior using our `Jon Doe` user account.
+
+```sh
+# Deploy nodejs-web application
+# https://access.redhat.com/containers/#/registry.access.redhat.com/rhscl/nodejs-8-rhel7
+
+oc import-image rhscl/nodejs-8-rhel7 --from=registry.redhat.io/rhscl/nodejs-8-rhel7 -n openshift --confirm
+
+export APIS_NAMESPACE=microservices-security
+
+oc delete secret redhat.io -n $PROJECT_NAMESPACE
+oc create secret generic "redhat.io" --from-file=.dockerconfigjson=config.json --type=kubernetes.io/dockerconfigjson -n $PROJECT_NAMESPACE
+
+oc secrets link default redhat.io --for=pull -n $PROJECT_NAMESPACE
+oc secrets link builder redhat.io -n $PROJECT_NAMESPACE
+
+export THREESCALE_NAMESPACE=3scale26
+export RHSSO_NAMESPACE=sso73
+export RHSSO_URL=https://$(oc get route -n ${RHSSO_NAMESPACE} | grep secured | awk '{print $2;}')/auth
+export THREESCALE_APP_DOMAIN=arekkusu.io
+export THREESCALE_API_URL=https://$(oc get routes -n ${THREESCALE_NAMESPACE} | grep auth-integration | grep production | awk '{print $2;}')
+export INTEGRATION_HEALTH_URL=http://$(oc get routes -n ${APIS_NAMESPACE} | grep auth-integration | grep metrics | awk '{print $2;}')
+
+echo -e \
+" PORT=4200\n" \
+"AUTH_URL=${RHSSO_URL}\n" \
+"AUTH_REALM=3scale-api\n" \
+"AUTH_CLIENT_ID=nodejs-web\n" \
+"KEYCLOAK=true\n" \
+"INTEGRATION_URI=${THREESCALE_API_URL}\n" \
+"INTEGRATION_HEALTH_URI=${INTEGRATION_HEALTH_URL}\n" \
+"PRODUCT_PATH=/product\n" \
+"STOCK_PATH=/stock\n" \
+"SUPPLIER_PATH=/supplier\n" \
+> temp
+
+sed "s/^.//g" temp >> nodejs-config.properties
+rm -fr temp
+
+oc create configmap nodejs-web-config \
+ --from-literal=AUTH_URL= \
+ --from-literal=AUTH_REALM= \
+ --from-literal=AUTH_CLIENT_ID= \
+ --from-literal=KEYCLOAK= \
+ --from-literal=INTEGRATION_URI= \
+ --from-literal=INTEGRATION_HEALTH_URI= \
+ --from-literal=PRODUCT_PATH= \
+ --from-literal=STOCK_PATH= \
+ --from-literal=SUPPLIER_PATH= 
+
+# oc delete all -lapp=nodejs-web
+oc new-app nodejs-8-rhel7:latest~https://github.com/aelkz/microservices-security.git --name=nodejs-web --context-dir=/webapp -n ${APIS_NAMESPACE}
+
+# with the properties defined, set the environment variable on nodejs-web container.
+oc set env --from=configmap/nodejs-web-config dc/nodejs-web -n ${APIS_NAMESPACE}
+```
+
+<b>NOTE</b>. Set all environment variables on `nodejs-web` container in order to enable APIs calls properly.
+
+Expose the webapp route:
+
+```
+oc create route edge --service=nodejs-web --cert=webapp/server.cert --key=webapp/server.key -n ${APIS_NAMESPACE}
+```
+
+### `SECURITY LAB: STEP 12 - APPLICATION SETTINGS AND ROLES`
+
+Next step we will create our application `roles`.
+Theses roles will be assigned to the application users that will be used to login in our webapp.
+
+Access the client-id that represents the `auth-integration` client registered previsously by 3Scale `application` process.
+
+Go to the `Settings` tab on the client and apply additional configurations:
+
+<b>Valid Redirect URIs:</b>
+- http://*
+- https://*
+
+<b>Web Origins:</b> *
+
+Go to the `Roles` tab on `Clients` menu on RHSSO (Keycloak) and create the following roles:
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/32.png" title="RHSSO - auth-integration-api client roles" width="75%" height="75%" />
+</p>
+
+Repeat the same steps for the `Supplier API` client. This client will have only one role defined:
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/33.png" title="RHSSO - supplier-api client roles" width="75%" height="75%" />
+</p>
+
+<b>NOTE</b>. This client was also generated through 3Scale. (You must create 2 `applications`: one for auth-integration-api and another for supplier-api.
+
+### `SECURITY LAB: STEP 13 - USERS ROLES`
+
+In this step, we will be assigning all `client` roles to `john doe` user and the `service-account` user that will handle the `supplier-service` calls <b>inside</b> the `auth-integration-api`.
+
+Go to the `Role Mappings` tab on `John Doe` user-details page on `Users` menu.
+Assign all roles to the user, following the image bellow:
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/34.png" title="RHSSO - user roles assignment" width="75%" height="75%" />
+</p>
+
+On `Step 7` we've created the `John Doe` user. We will need to create <b>another user</b> that will be used as a service-account to call the `Supplier API` inside de `auth-integration-api` (<b>see</b>: line 123 on [application.yaml](https://raw.githubusercontent.com/aelkz/microservices-security/master/product/src/main/resources/application.yaml)). This user will have a password also, reset its credentials with `12345`. The name of this user can be the the `id` of the `Supplier API` client-id generated by 3Scale appended with `_svcacc` suffix (<b>see</b>: line 131 on [application.yaml](https://raw.githubusercontent.com/aelkz/microservices-security/master/product/src/main/resources/application.yaml)).
+
+We will also need to assign the `SUPPLIER_MAINTAINER` role to this user.
+
+### `SECURITY LAB: STEP 14 - MICROSERVICES DEPLOYMENT`
+
+Retrieve RHSSO realm public key:
+
+```sh
+export RHSSO_REALM=3scale-api
+export RHSSO_URI=sso73.apps.<YOUR-DOMAIN>.com
+export TOKEN_URL=https://${RHSSO_URI}/auth/realms/${RHSSO_REALM}/protocol/openid-connect/token
+export 3SCALE_REALM_USERNAME=<YOUR-RHSSO-ADMIN-USERNAME>
+export 3SCALE_REALM_PASSWORD=<YOUR-RHSSO-ADMIN-PASSWORD>
+
+TKN=$(curl -X POST "$TOKEN_URL" \
+ -H "Content-Type: application/x-www-form-urlencoded" \
+ -d "username=$3SCALE_REALM_USERNAME" \
+ -d "password=$3SCALE_REALM_PASSWORD" \
+ -d "grant_type=password" \
+ -d "client_id=admin-cli" \
+ | sed 's/.*access_token":"//g' | sed 's/".*//g')
+
+export REALM_KEYS_URL=https://${RHSSO_URI}/auth/admin/realms/${RHSSO_REALM}/keys
+
+RSA_PUB_KEY=$(curl -k -X GET "$REALM_KEYS_URL" \
+ -H "Authorization: Bearer $TKN" \
+ | jq -r '.keys[]  | select(.type=="RSA") | .publicKey' )
+
+# Create a valid .pem certificate
+
+REALM_CERT=/tmp/$RHSSO_REALM.pem
+
+echo "-----BEGIN CERTIFICATE-----" > $REALM_CERT; echo $RSA_PUB_KEY >> $RSA_CERT; echo "-----END CERTIFICATE-----" >> $REALM_CERT
+
+# Check the generated .pem certificate
+
+openssl x509 -in $REALM_CERT -text -noout
+```
+
+Deploy the parent project:
 
 ```sh
 # Deploy parent project on nexus
 mvn clean package deploy -DnexusReleaseRepoUrl=$MAVEN_URL_RELEASES -DnexusSnapshotRepoUrl=$MAVEN_URL_SNAPSHOTS -s ./maven-settings.xml -e -X -N
+```
 
-# Deploy stock-api
+Deploy stock-api
+```
 # oc delete all -lapp=stock-api
 oc new-app openjdk-8-rhel8:latest~https://github.com/aelkz/microservices-security.git --name=stock-api --context-dir=/stock --build-env='MAVEN_MIRROR_URL='${MAVEN_URL} -e MAVEN_MIRROR_URL=${MAVEN_URL}
 
 oc patch svc stock-api -p '{"spec":{"ports":[{"name":"http","port":8080,"protocol":"TCP","targetPort":8080}]}}'
 
 oc label svc stock-api monitor=springboot2-api
+```
 
-# Deploy supplier-api
+Deploy supplier-api
+<b>NOTE</b>. Please check all settings on `application.yaml` file before continuing. 
+The following attributes must be updated to reflect your actual environment:
+- `issuer-uri` on Line 61
+- `resource.id` on Line 71
+- `jwt.key-value` on Line 75
+
+```
 # oc delete all -lapp=supplier-api
 oc new-app openjdk-8-rhel8:latest~https://github.com/aelkz/microservices-security.git --name=supplier-api --context-dir=/supplier --build-env='MAVEN_MIRROR_URL='${MAVEN_URL} -e MAVEN_MIRROR_URL=${MAVEN_URL}
 
 oc patch svc supplier-api -p '{"spec":{"ports":[{"name":"http","port":8080,"protocol":"TCP","targetPort":8080}]}}'
 
 oc label svc supplier-api monitor=springboot2-api
+```
 
-# Deploy product-api
+Deploy product-api
+<b>NOTE</b>. Please check all settings on `application.yaml` file before continuing. 
+The following attributes must be updated to reflect your actual environment:
+- `issuer-uri` on Line 61
+- `jwt.key-value` on Line 75
+
+```
 # oc delete all -lapp=product-api
 oc new-app openjdk-8-rhel8:latest~https://github.com/aelkz/microservices-security.git --name=product-api --context-dir=/product --build-env='MAVEN_MIRROR_URL='${MAVEN_URL} -e MAVEN_MIRROR_URL=${MAVEN_URL}
 
@@ -188,7 +618,7 @@ oc patch svc product-api -p '{"spec":{"ports":[{"name":"http","port":8080,"proto
 oc label svc product-api monitor=springboot2-api
 ```
 
-### `SECURITY LAB: STEP 8 - ARCHIVE SSO-COMMON LIBRARY JAR ON NEXUS`
+### `SECURITY LAB: STEP 15 - ARCHIVE SSO-COMMON LIBRARY JAR ON NEXUS`
 
 ```sh
 # NOTE: To make sure the auth-integration-api (FUSE) works correctly, we need to archive a library that will be used to provide authentication and authorizations capabilities on top of Red Hat Single Sing-On (Keycloak).Then, this library will be used on auth-integration-api to enable such capabilities.
@@ -202,7 +632,7 @@ This will create the following artifact on Nexus:
 <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/06.png" title="auth-sso-common artifact on nexus" width="35%" height="35%" />
 </p>
 
-### `SECURITY LAB: STEP 9 - INTEGRATION DEPLOYMENT (FUSE)`
+### `SECURITY LAB: STEP 16 - INTEGRATION DEPLOYMENT (FUSE)`
 Now that the microservices APIs are deployed, let’s deploy the integration layer.
 
 ```sh
@@ -245,333 +675,6 @@ oc create configmap ${APP}-config --from-file=application.yaml -n ${PROJECT_NAME
 
 oc set volume dc/${APP} --add --overwrite --name=${APP}-config-volume -m /deployments/config -t configmap --configmap-name=${APP}-config -n ${PROJECT_NAMESPACE}
 ```
-
-### `SECURITY LAB: STEP 10 - RHSSO REALMS CONFIGURATION`
-Now that all APIs are alive and kicking, let's define some configurations on RHSSO to prepare some ground for 3Scale automatic app synchronization.
-
-```sh
-1. Login into RHSSO
-2. Create 3 realms with default settings:
-  - 3scale-api
-  - 3scale-admin
-  - 3scale-devportal
-```
-
-After creating the realms, you'll have this:
-<p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/07.png" title="RHSSO realms" width="45%" height="45%" />
-</p>
-
-On `3scale-api` realm, create a client `3scale` with the following definition:
-<p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/08.png" title="realm:3scale-api client:3scale" width="40%" height="40%" />
-</p>
-
-Leave blank the fields: `root URL` , `base URL` and `admin URL`.
-
-On `Service Account Roles` tab, assign the role `manage-clients` from `realm-management`.
-
-Copy the `client-secret` that was genereated for this client.
-It will be something like:
-`823b6ek5-1936-42e6-1135-d48rt3a1f632`
-
-Under the realm `3scale-api` create a new user with the following definition:
-<p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/09.png" title="realm:3scale-api user:john" width="60%" height="60%" />
-</p>
-
-Also, set a new password for this user on `Credentials` tab with `temporary=false` and set to `true` the `Email Verified` on `Details` tab.
-
-<p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/10.png" title="realm:3scale-api user:john" width="55%" height="55%" />
-</p>
-
-<b>Troublehsooting</b>: After creating the API definition on 3Scale, check if the generated client was created into 3scale-api realm on RHSSO. If you're using a <b>self-signed</b> certificate, you'll need to make additional configurations in order to enable the zync-que 3Scale application synchronizes correctly. Please refer to the [Documentation: Troubleshooting SSL issues](https://access.redhat.com/documentation/en-us/red_hat_3scale_api_management/2.6/html-single/operating_3scale/index#troubleshooting_ssl_issues) and [Configure Zync to use custom CA certificates](https://access.redhat.com/documentation/en-us/red_hat_3scale_api_management/2.4/html-single/api_authentication/index#zync-oidc-integration)
-
-To <b>fix</b> this, you can proceed with the self-signed certificate installation:
-```sh
-export THREESCALE_NAMESPACE=3scale26
-export THREESCALE_ZYNC_QUE_POD=$(oc get pods --selector deploymentconfig=zync-que -n 3scale26 | { read line1 ; read line2 ; echo "$line2" ; } | awk '{print $1;}')
-export RHSSO_URI=sso73.apps.<YOUR-DOMAIN>.com
-
-echo | openssl s_client -showcerts -servername ${RHSSO_URI} -connect ${RHSSO_URI}:443 2>/dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > self-signed-cert.pem
-# Validate the connection first! must return HTTP/1.1 200 OK
-curl -v https://${RHSSO_URI}/auth/realms/master --cacert self-signed-cert.pem
-
-oc exec ${THREESCALE_ZYNC_QUE_POD} cat /etc/pki/tls/cert.pem > zync-que.pem -n ${THREESCALE_NAMESPACE}
-
-cp zync-que.pem zync-que-original.pem
-
-echo '\n# Red Hat Single Sign-On CA '${RHSSO_URI} >> zync-que.pem
-cat self-signed-cert.pem >> zync-que.pem
-
-# oc delete configmap zync-que-ca-bundle
-oc create configmap zync-que-ca-bundle --from-file=./zync-que.pem -n ${THREESCALE_NAMESPACE}
-oc label configmap zync-que-ca-bundle app=3scale-api-management -n ${THREESCALE_NAMESPACE}
-
-oc set volume dc/zync-que --overwrite --add --name=zync-que-ca-bundle --mount-path /etc/pki/tls/zync-que/zync-que.pem --sub-path zync-que.pem --source='{"configMap":{"name":"zync-que-ca-bundle","items":[{"key":"zync-que.pem","path":"zync-que.pem"}]}}' -n ${THREESCALE_NAMESPACE}
-
-oc patch dc/zync-que --type=json -p '[{"op": "add", "path": "/spec/template/spec/containers/0/volumeMounts/0/subPath", "value":"zync-que.pem"}]' -n ${THREESCALE_NAMESPACE}
-
-oc exec ${THREESCALE_ZYNC_QUE_POD} cat /etc/pki/tls/zync-que/zync-que.pem -n ${THREESCALE_NAMESPACE}
-
-oc set env dc/zync-que SSL_CERT_FILE=/etc/pki/tls/zync-que/zync-que.pem -n ${THREESCALE_NAMESPACE}
-
-# wait for the container restart.
-# Voila! You have the 3Scale in sync with RHSSO using a self-signed certificate.
-```
-
-### `SECURITY LAB: STEP 11 - 3SCALE MICROSERVICES CONFIGURATION`
-In this step we will register the APIs and configure them to enable 3Scale automatic synchronization with RHSSO.
-Let's setup the `auth-integration-api` and the `supplier-api`.
-
-Create a new API on 3Scale admin portal. You can hit the `NEW API` link on the main dashboard.
-
-<p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/12.png" title="3Scale admin portal - New API" width="10%" height="10%" />
-</p>
-
-This new API will represent the `auth-integration-api`, previously deployed.
-
-<p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/11.png" title="3Scale admin portal - auth-integration-api" width="70%" height="70%" />
-</p>
-
-Then, navigate through the `Configuration` menu under `Integration`, to setup the API mappings and security.
-
-<p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/13.png" title="3Scale admin portal - auth-integration-api configuration" width="85%" height="85%" />
-</p>
-
-Choose `APICast` for the gateway and `OpenID Connect` in Integration Settings,
-
-<p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/14.png" title="APICast Gateway" width="30%" height="30%" />&nbsp;&nbsp;&nbsp;<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/15.png" title="OpenID Connect" width="30%" height="30%" />
-</p>
-
-<b>NOTE</b>. The OpenID Connection is used because we will protect our API with OAuth2 capabilities provided by RHSSO.
-
-Then click on <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/16.png" title="button: add the base URL of your API and save the configuration" width="35%" height="35%" />
-
-Next, define the `Private Base URL` that is, your auth-integration-api URL and the `staging` and `production` URLs:
-
-<p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/17.png" title="3Scale admin portal - auth-integration-api configuration" width="70%" height="70%" />
-</p>
-
-<b>NOTE</b>. Set your correct domain under each URL (that will be your public address for Openshift).
-
-Next, define all mapping rules for this API, accordingly to the following table:
-
-| Verb    | Pattern                     | + | Metric or Method |
-| ------- | --------------------------- | --| ---------------- |
-| POST    | /api/v1/product             | 1 | hits             |
-| DELETE  | /api/v1/product/*           | 1 | hits             |
-| PUT     | /api/v1/product/*           | 1 | hits             |
-| GET     | /api/v1/product$            | 1 | hits             |
-| GET     | /api/v1/product/*           | 1 | hits             |
-| GET     | /api/v1/status              | 1 | hits             |
-| GET     | /api/v1/product/status      | 1 | hits             |
-| GET     | /api/v1/supplier/status     | 1 | hits             |
-| GET     | /api/v1/stock/status        | 1 | hits             |
-| GET     | /api/v1/stock/maintenance   | 1 | hits             |
-| GET     | /api/v1/supplier/maintenance| 1 | hits             |
-
-Next, configuire the API policies that will be required to enable communication between resources inside the Openshift Container Platform:
-
-<p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/30.png" title="3Scale admin portal - auth-integration-api policies" width="70%" height="70%" />
-</p>
-
-Next, define the authentication mechanism for this API:
-
-<p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/19.png" title="3Scale admin portal - auth-integration-api configuration" width="85%" height="85%" />
-</p>
-
-Select `Authorization Code Flow` , `Service Accounts Flow` and `Direct Access Grant Flow` under `OIDC AUTHORIZATION FLOW` section.
-
-On `Credentials location` set <b>As HTTP Headers</b>
-
-Netx, on `Policies` section add in this order:
-- CORS
-- 3Scale APIcast
-
-Expand CORS configuration, and set:
-
-<b>Enabled</b>=checked
-
-<b>ALLOW_HEADERS</b> (add one by one per input array)<br>
-Content-Type, Authorization, Content-Length, X-Requested-With, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Accept-Encoding, Accept-Language, Connection, Host, Referer, User-Agent, Access-Control-Allow-Origin, X-Business-FooBar.
-
-The latest header is used only for testing purposes.
-
-<b>allow_credentials</b>=checked
-
-<b>ALLOW_METHODS</b> (add one by one per input array)<br>
-GET, HEAD, POST, PUT, DELETE, OPTIONS
-
-<b>allow_origin</b>
-Leave empty.
-
-Leave the rest as default, and save the CORS configuration.
-
-<p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/32.png" title="3Scale admin portal - CORS policy" width="65%" height="65%" />
-</p>
-
-<b>NOTE</b>. After every change, remember to promote the staging configuration to production.
-
-<p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/20.png" title="3Scale admin portal - auth-integration-api configuration promotion" width="25%" height="25%" />
-</p>
-
-You `auth-integration-api` is ready to be used!
-
-Repeat the same steps for the `Supplier API`. This API will have only two mapping rules:
-
-| Verb    | Pattern                     | + | Metric or Method |
-| ------- | --------------------------- | --| ---------------- |
-| POST    | /api/v1/sync                | 1 | hits             |
-| GET     | /actuator/health            | 1 | hits             |
-
-### `SECURITY LAB: STEP 12 - 3SCALE MICROSERVICES APPLICATION PLANS`
-
-Let's the define the APIs `Application Plans`. These plans will be used upon client registration for creating a new `Application`.
-
-<p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/21.png" title="3Scale admin portal - Application Plans" width="60%" height="60%" />
-</p>
-
-Click on <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/23.png" title="3Scale admin portal - New Application Plan" width="20%" height="20%" /> link under `Applications/Application Plans` menu.
-
-<p align="center">
-Set the following configuration:<br>
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/22.png" title="3Scale admin portal - New Application Plan" width="40%" height="40%" />
-</p>
-
-After this, click the `Publish` link to publish the application plan.
-
-Define the same steps for the `Supplier API`. Remember to publish the application plan also.
-
-After you have done all previous steps, you'll get something like this:
-
-<p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/24.png" title="3Scale admin portal - Application Plans" width="70%" height="70%" />
-</p>
-
-### `SECURITY LAB: STEP 13 - 3SCALE MICROSERVICES APPLICATION`
-
-Navigate through the `Audience` menu and under `Accounts/Listing` <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/25.png" title="3Scale admin portal - New Account" width="7%" height="7%" /> a new account.
-
-Create a new account with your credentials for this demo:
-
-<p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/26.png" title="3Scale admin portal - New Account" width="25%" height="25%" />
-</p>
-
-This action will create for you a new 3Scale `application` for some APIs. If the application couldn't be created, just hit the <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/27.png" title="3Scale admin portal - New Application" width="20%" height="20%" /> link.
-
-<p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/28.png" title="3Scale - New Application" width="75%" height="75%" />
-</p>
-
-The `Application` will be created for use with the `auth-integration-api`. A client-ID and a Secret was generated automatically, and pushed into RHSSO `3Scale-api` realm.
-
-<p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/29.png" title="RHSSO - New Application" width="70%" height="70%" />
-</p>
-
-### `SECURITY LAB: STEP 14 - NODEJS WEB APPLICATION DEPLOYMENT`
-
-In this step, we will be testing all scenarios with a suited NodeJS webapp based on Angular and Bootstrap. This application was designed to easy the understandind process showing the concepts for used in this tutorial.
-
-```sh
-# Deploy nodejs-web application
-# https://access.redhat.com/containers/#/registry.access.redhat.com/rhscl/nodejs-8-rhel7
-
-oc import-image rhscl/nodejs-8-rhel7 --from=registry.redhat.io/rhscl/nodejs-8-rhel7 -n openshift --confirm
-
-export APIS_NAMESPACE=microservices-security
-
-oc delete secret redhat.io -n $PROJECT_NAMESPACE
-oc create secret generic "redhat.io" --from-file=.dockerconfigjson=config.json --type=kubernetes.io/dockerconfigjson -n $PROJECT_NAMESPACE
-
-oc secrets link default redhat.io --for=pull -n $PROJECT_NAMESPACE
-oc secrets link builder redhat.io -n $PROJECT_NAMESPACE
-
-export THREESCALE_NAMESPACE=3scale26
-export RHSSO_NAMESPACE=sso73
-export RHSSO_URL=https://$(oc get route -n ${RHSSO_NAMESPACE} | grep secured | awk '{print $2;}')/auth
-export THREESCALE_APP_DOMAIN=arekkusu.io
-export THREESCALE_API_URL=https://$(oc get routes -n ${THREESCALE_NAMESPACE} | grep auth-integration | grep production | awk '{print $2;}')
-export INTEGRATION_HEALTH_URL=http://$(oc get routes -n ${APIS_NAMESPACE} | grep auth-integration | grep metrics | awk '{print $2;}')
-
-echo -e \
-" PORT=4200\n" \
-"AUTH_URL=${RHSSO_URL}\n" \
-"AUTH_REALM=3scale-api\n" \
-"AUTH_CLIENT_ID=nodejs-web\n" \
-"KEYCLOAK=true\n" \
-"INTEGRATION_URI=${THREESCALE_API_URL}\n" \
-"INTEGRATION_HEALTH_URI=${INTEGRATION_HEALTH_URL}\n" \
-"PRODUCT_PATH=/product\n" \
-"STOCK_PATH=/stock\n" \
-"SUPPLIER_PATH=/supplier\n" \
-> temp
-
-sed "s/^.//g" temp >> nodejs-config.properties
-rm -fr temp
-
-# oc delete all -lapp=nodejs-web
-oc new-app nodejs-8-rhel7:latest~https://github.com/aelkz/microservices-security.git --name=nodejs-web --context-dir=/webapp -n ${APIS_NAMESPACE}
-
-#oc create configmap nodejs-config --from-file=nodejs-config.properties -n ${APIS_NAMESPACE}
-#oc set env --from=configmap/nodejs-config dc/nodejs-web -n ${APIS_NAMESPACE}
-
-oc create route edge --service=nodejs-web --cert=webapp/server.cert --key=webapp/server.key -n ${APIS_NAMESPACE}
-```
-
-### `SECURITY LAB: STEP 15 - APPLICATION SETTINGS AND ROLES`
-
-Next step is to create our application roles.
-Theses roles will be assigned to the application users that will be used in our demonstration.
-
-Access the client-id that represents the `auth-integration` client registered previsously by 3Scale application.
-
-Go to the `Settings` tab on the client and apply additional configurations:
-
-<b>Valid Redirect URIs</b>
-- http://*
-- https://*
-
-<b>Web Origins</b>
-*
-
-Go to the `Roles` tab on `Clients` menu on RHSSO (Keycloak) and create the following roles:
-
-<p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/32.png" title="RHSSO - auth-integration-api client roles" width="75%" height="75%" />
-</p>
-
-Repeat the same steps for the `Supplier API` client. This client will have only one role defined:
-
-<p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/33.png" title="RHSSO - supplier-api client roles" width="75%" height="75%" />
-</p>
-
-Note that this client was also generated through 3Scale.
-
-### `SECURITY LAB: STEP 16 - USERS ROLES`
-
-In this step, we will be assigning all roles to `john doe` user and the `service-account` user that will handle the `supplier-service` calls <b>inside</b> the `auth-integration-api`.
-
-Go to the `Role Mappings` tab on `John Doe` user-details page on `Users` menu.
-Assign all roles to the user, following the image bellow:
-
-<p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/34.png" title="RHSSO - user roles assignment" width="75%" height="75%" />
-</p>
 
 ### `SECURITY LAB: FINAL STEP`
 
