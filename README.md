@@ -534,6 +534,15 @@ On `Step 7` we've created the `John Doe` user. We will need to create <b>another
 
 We will also need to assign the `SUPPLIER_MAINTAINER` role to this user.
 
+At last, create a realm-admin user. This user will serve to consume the RHSSO REST API.
+Assign the credentials `12345` and all `realm-management` roles.
+
+At the end, we will have 3 users on `3scale-api` realm:
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/35.png" title="RHSSO - user roles assignment" width="75%" height="75%" />
+</p>
+
 ### `SECURITY LAB: STEP 14 - ARCHIVE SSO-COMMON LIBRARY JAR ON NEXUS`
 
 ```sh
@@ -556,13 +565,13 @@ Retrieve RHSSO realm public key:
 export RHSSO_REALM=3scale-api
 export RHSSO_URI=sso73.apps.<YOUR-DOMAIN>.com
 export TOKEN_URL=https://${RHSSO_URI}/auth/realms/${RHSSO_REALM}/protocol/openid-connect/token
-export 3SCALE_REALM_USERNAME=<YOUR-RHSSO-ADMIN-USERNAME>
-export 3SCALE_REALM_PASSWORD=<YOUR-RHSSO-ADMIN-PASSWORD>
+export THREESCALE_REALM_USERNAME=admin
+export THREESCALE_REALM_PASSWORD=12345
 
-TKN=$(curl -X POST "$TOKEN_URL" \
+TKN=$(curl -k -X POST "$TOKEN_URL" \
  -H "Content-Type: application/x-www-form-urlencoded" \
- -d "username=$3SCALE_REALM_USERNAME" \
- -d "password=$3SCALE_REALM_PASSWORD" \
+ -d "username=$THREESCALE_REALM_USERNAME" \
+ -d "password=$THREESCALE_REALM_PASSWORD" \
  -d "grant_type=password" \
  -d "client_id=admin-cli" \
  | sed 's/.*access_token":"//g' | sed 's/".*//g')
@@ -575,13 +584,14 @@ RSA_PUB_KEY=$(curl -k -X GET "$REALM_KEYS_URL" \
 
 # Create a valid .pem certificate
 
-REALM_CERT=/tmp/$RHSSO_REALM.pem
+REALM_CERT=$RHSSO_REALM.pem
 
-echo "-----BEGIN CERTIFICATE-----" > $REALM_CERT; echo $RSA_PUB_KEY >> $RSA_CERT; echo "-----END CERTIFICATE-----" >> $REALM_CERT
+echo "-----BEGIN CERTIFICATE-----" > $REALM_CERT; echo $RSA_PUB_KEY >> $REALM_CERT; echo "-----END CERTIFICATE-----" >> $REALM_CERT
 
 # Check the generated .pem certificate
-
-openssl x509 -in $REALM_CERT -text -noout
+# fold -s -w 64 $REALM_CERT > $RHSSO_REALM.fixed.pem
+# openssl x509 -in $RHSSO_REALM.fixed.pem -text -noout
+# openssl x509 -in $RHSSO_REALM.fixed.pem -noout -issuer -fingerprint
 ```
 
 Deploy the `parent` project:
