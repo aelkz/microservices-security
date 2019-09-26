@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: auth-integration-api
+data:
+  OPENSHIFT_APP_NAME: fuse-auth-integration-api
+  OPENSHIFT_HOST_NAME: auth-integration-api-microservices-security.apps.arekkusu.io
+  OPENSHIFT_JAEGER_HOST: jaeger-agent.microservices.svc
+  OPENSHIFT_METRICS_HOST: "auth-integration-api-metrics.microservices-security.svc.cluster.local"
+  OPENSHIFT_PRODUCT_HOST: "product-api.microservices-security.svc.cluster.local"
+  OPENSHIFT_PRODUCT_CTX: /api/v1/product
+  OPENSHIFT_PRODUCT_STATUS_CTX: /actuator/health
+  OPENSHIFT_STOCK_HOST: "stock-api.microservices-security.svc.cluster.local"
+  OPENSHIFT_STOCK_CTX: /api/v1
+  OPENSHIFT_STOCK_STATUS_CTX: /actuator/health
+  OPENSHIFT_SUPPLIER_HOST: "supplier-api-production.apps.arekkusu.io"
+  OPENSHIFT_SUPPLIER_CTX: /api/v1
+  OPENSHIFT_SUPPLIER_STATUS_CTX: /actuator/health
+  OPENSHIFT_SVCACC_SSO_REALM: 3scale-api
+  OPENSHIFT_SVCACC_SSO_CLIENT_ID: 847d10c1
+  OPENSHIFT_SVCACC_SSO_CLIENT_SECRET: 4519d24a04b3d9093aa9129aa7711d9d
+  OPENSHIFT_SVCACC_SSO_GRANT_TYPE: password
+  OPENSHIFT_SVCACC_SSO_USERNAME: 8f314bfa_svcacc
+  OPENSHIFT_SVCACC_SSO_PASSWORD: 12345
+  OPENSHIFT_SVCACC_SSO_AUTH_HOST: "https://sso73.apps.arekkusu.io/auth"
+  OPENSHIFT_KEYCLOAK_SSL_REQUIRED: external
+  OPENSHIFT_KEYCLOAK_REALM: 3scale-api
+  OPENSHIFT_KEYCLOAK_RESOURCE: 8f314bfa
+  OPENSHIFT_KEYCLOAK_RESOURCE_SECRET: 2d1beebcf1c9d00dd51be7a344abd87f
+  OPENSHIFT_KEYCLOAK_AUTH_HOST: "https://sso73.apps.arekkusu.io/auth"

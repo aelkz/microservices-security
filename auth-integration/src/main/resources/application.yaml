@@ -3,7 +3,7 @@
 # ---------------------------------------------
 spring:
   application:
-    name: fuse-auth-integration-api
+    name: ${OPENSHIFT_APP_NAME:fuse-auth-integration-api}
   datasource:
     initialize: false
 
@@ -11,7 +11,7 @@ api:
   title: fuse-auth-integration-api
   description: secured fuse application with keycloak adapter
   version: 1
-  hostname: auth-integration-api-microservices-security.apps.arekkusu.io
+  hostname: ${OPENSHIFT_HOST_NAME:auth-integration-api-microservices-security.apps.arekkusu.io}
 
 logging:
   config: classpath:logback.xml
@@ -20,7 +20,7 @@ logging:
 # options from org.apache.camel.spring.boot.CamelConfigurationProperties can be configured here
 camel:
   springboot:
-    name: fuse-auth-integration-api
+    name: ${OPENSHIFT_APP_NAME:fuse-auth-integration-api}
     main-run-controller: true
   component:
     servlet:
@@ -73,14 +73,14 @@ opentracing:
       url: "http://jaeger-collector:14268/api/traces"
 
 jaeger.tracer:
-  host: jaeger-agent.microservices.svc
+  host: ${OPENSHIFT_JAEGER_HOST:jaeger-agent.microservices.svc}
   port: 6831
 
 # =============================================
 # auth-integration health parameters
 # ---------------------------------------------
 metrics:
-  host: "auth-integration-api-metrics.microservices-security.svc.cluster.local"
+  host: ${OPENSHIFT_METRICS_HOST:"auth-integration-api-metrics.microservices-security.svc.cluster.local"}
   port: 8081
   context-path: health
 
@@ -89,17 +89,17 @@ metrics:
 # ---------------------------------------------
 product:
   api-key-name: product
-  host: "product-api.microservices-security.svc.cluster.local"
+  host: ${OPENSHIFT_PRODUCT_HOST:"product-api.microservices-security.svc.cluster.local"}
   port: 8080
-  context-path: /api/v1/product
-  status-path: /actuator/health
+  context-path: ${OPENSHIFT_PRODUCT_CTX:/api/v1/product}
+  status-path: ${OPENSHIFT_PRODUCT_STATUS_CTX:/actuator/health}
 
 # =============================================
 # stock api parameters
 # ---------------------------------------------
 stock:
   api-key-name: stock
-  host: "stock-api.microservices-security.svc.cluster.local"
+  host: ${OPENSHIFT_STOCK_HOST:"stock-api.microservices-security.svc.cluster.local"}
   port: 8080
   context-path: /api/v1
   status-path: /actuator/health
@@ -125,18 +125,18 @@ supplier:
 # supplier-api
 # -------------------------------------------------------
 keycloak-service-account:
-  realm: 3scale-api
-  client-id: 847d10c1
-  secret: 4519d24a04b3d9093aa9129aa7711d9d
+  realm: ${OPENSHIFT_SVCACC_SSO_REALM:3scale-api}
+  client-id: ${OPENSHIFT_SVCACC_SSO_CLIENT_ID:847d10c1}
+  secret: ${OPENSHIFT_SVCACC_SSO_CLIENT_SECRET:4519d24a04b3d9093aa9129aa7711d9d}
   # only password and client_credentials are supported
   # client_credentials don't need username and password and can't be used to authenticate on 3scale managed clients
   # if your client is not managed by 3scale you're good to go with client_credentials, otherwise, use a user account.
-  grant-type: password
-  username: 8f314bfa_svcacc
-  password: 12345
+  grant-type: ${OPENSHIFT_SVCACC_SSO_GRANT_TYPE:password}
+  username: ${OPENSHIFT_SVCACC_SSO_USERNAME:8f314bfa_svcacc}
+  password: ${OPENSHIFT_SVCACC_SSO_PASSWORD:12345}
   # if using self-signed certificate you must use HTTP and set required-ssl=none on keycloak realm
   # https://lists.jboss.org/pipermail/keycloak-user/2017-April/010386.html
-  auth-server-uri: "https://sso73.apps.arekkusu.io/auth"
+  auth-server-uri: ${OPENSHIFT_SVCACC_SSO_AUTH_HOST:"https://sso73.apps.arekkusu.io/auth"}
 
 # =============================================
 # Authorization Settings (Keycloak)
@@ -160,12 +160,12 @@ keycloak-service-account:
 
 keycloak:
   cors: true
-  ssl-required: external
-  realm: 3scale-api
-  resource: 8f314bfa
-  auth-server-url: https://sso73.apps.arekkusu.io/auth
+  ssl-required: ${OPENSHIFT_KEYCLOAK_SSL_REQUIRED:external}
+  realm: ${OPENSHIFT_KEYCLOAK_REALM:3scale-api}
+  resource: ${OPENSHIFT_KEYCLOAK_RESOURCE:8f314bfa}
+  auth-server-url: ${OPENSHIFT_KEYCLOAK_AUTH_HOST:"https://sso73.apps.arekkusu.io/auth"}
   credentials:
-    secret: 2d1beebcf1c9d00dd51be7a344abd87f
+    secret: ${OPENSHIFT_KEYCLOAK_RESOURCE_SECRET:2d1beebcf1c9d00dd51be7a344abd87f}
   use-resource-role-mappings: true
   security-constraints:
     - authRoles:

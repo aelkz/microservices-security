@@ -1,0 +1,66 @@
+{% unless current_account.applications.size > 0 %}
+<script type="text/javascript">
+redirectUser();
+</script>
+{% else %}
+
+<section class="about section"> 
+  <div class="container">
+    <div class="row">
+      <div class="col-md-9">
+        <table class="table panel panel-default" id="applications">
+          <thead class="panel-heading">
+            <tr>
+              <th>Name</th>
+              {% if provider.multiple_services_allowed? %}
+                <th>Service</th>
+              {% endif %}
+              <th>Credentials</th>
+              <th>State</th>
+              <th>
+              </th>
+            </tr>
+          </thead>
+          <tbody class="panel-body">
+            {% for service in current_account.subscribed_services %}
+                {% for application in service.applications %}
+                  <tr class="{% cycle 'applications': 'odd', 'even' %}" id="application_{{ application.id }}">
+                    <td>
+                      {{ application.name | link_to: application.url }}
+                    </td>
+                    {% if provider.multiple_services_allowed? %}
+                      <td>{{ service.name }}</td>
+                    {% endif %}
+                    <td>{{ application.key }}</td>
+                    <td>{{ application.state }}</td>
+                    <td>
+                      {% if application.can.be_updated? %}
+                        <a href="{{ application.edit_url }}">
+                          <i class="icon-pencil"></i>
+                        </a>
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% endfor %}
+            {% endfor %}
+          </tbody>
+          <tfoot class="panel-footer">
+          <tr>
+            <td colspan="3">
+            </td>
+            <td>
+              {% if current_user.can.create_application? %}
+                <a href="{{ urls.new_application }}" title="Create new application" class="btn btn-default btn-xs">Create new application</a>
+              {% endif %}
+            </td>
+          </tr>
+          </tfoot>
+        </table>
+
+      </div>
+    </div>
+  </div>
+</section>
+{% endunless %}
+
+

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: stock-api
+data:
+  OPENSHIFT_APP_NAME: stock-api
+  OPENSHIFT_JAEGER_HOST: jaeger-agent.microservices.svc

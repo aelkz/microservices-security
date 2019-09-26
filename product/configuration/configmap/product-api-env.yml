@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: product-api
+data:
+  OPENSHIFT_APP_NAME: product-api
+  OPENSHIFT_REST_SECURITY_ISSUER_URI: https://sso73.apps.arekkusu.io/auth/realms/3scale-api
+  OPENSHIFT_SECURITY_OAUTH2_RESOURCE: product_api
+  OPENSHIFT_JAEGER_HOST: jaeger-agent.microservices.svc
