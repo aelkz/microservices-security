@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: product-api
+  name: product-api-config
 data:
   OPENSHIFT_APP_NAME: product-api
   OPENSHIFT_REST_SECURITY_ISSUER_URI: https://sso73.apps.arekkusu.io/auth/realms/3scale-api
