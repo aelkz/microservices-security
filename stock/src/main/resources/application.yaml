@@ -18,7 +18,7 @@ server:
 # ---------------------------------------------
 spring:
   application:
-    name: stock-api
+    name: ${OPENSHIFT_APP_NAME:stock-api}
   jpa:
     # log generated sql
     database-platform: org.hibernate.dialect.H2Dialect
@@ -80,18 +80,5 @@ opentracing:
       url: http://jaeger-collector:14268/api/traces
 
 jaeger.tracer:
-  host: jaeger-agent.microservices.svc
+  host: ${OPENSHIFT_JAEGER_HOST:jaeger-agent.microservices.svc}
   port: 6831
-
-# =============================================
-# google api parameters
-# ---------------------------------------------
-# http://localhost:8070/api/v1/event
-integration:
-  social:
-    app1:
-      host: social-integration-api.microservices.svc.cluster.local
-      port: 8080
-      path: /api/v1/social/strava
-      apiKey: Strava-API-User-Key
-

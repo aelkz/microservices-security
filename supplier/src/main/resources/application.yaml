@@ -18,7 +18,7 @@ server:
 # ---------------------------------------------
 spring:
   application:
-    name: supplier-api
+    name: ${OPENSHIFT_APP_NAME:supplier-api}
   jpa:
     # log generated sql
     database-platform: org.hibernate.dialect.H2Dialect
@@ -58,7 +58,7 @@ rest:
       allowed-headers: '*'
       allowed-methods: GET,POST,PUT,PATCH,DELETE,OPTIONS
       max-age: 3600
-    issuer-uri: https://sso73.apps.arekkusu.io/auth/realms/3scale-api
+    issuer-uri: ${OPENSHIFT_REST_SECURITY_ISSUER_URI:https://sso73.apps.arekkusu.io/auth/realms/3scale-api}
 
 security:
   oauth2:
@@ -68,11 +68,11 @@ security:
       # access-type: bear-only
       # (this is the API that will be registered on RHSSO)
       # ----------------------------------------------------------------------------------------------------
-      id: 847d10c1
+      id: ${OPENSHIFT_SECURITY_OAUTH2_RESOURCE:847d10c1}
       token-info-uri: ${rest.security.issuer-uri}/protocol/openid-connect/token/introspect
       user-info-uri: ${rest.security.issuer-uri}/protocol/openid-connect/userinfo
       jwt:
-        key-value: "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAv18ZNpCtYUBFLaK/Ak1HLok1w3I+a/zm9qDyu903IRBd9FYzmZCGEKWJnhUAN8+T9OWqDHSkoe9MChP1dyTQi9gVp7IEv2MnEQTNCmBzGBN86XR2G1NDjELK0O8myuUdjimULAy2zNPX8ikF5Zzat47OtHSs2GLPxtqRqpS3QAmPaeI2R7NKxM7co8UmYbylpxZVO/PL05s3oJL2euKePbcUIXHPiH7b2epF5Ywe1ln8QpG3KnOjxSCFpobPDdBl82Rbby+XfTwzE+ixojspQJbdjEQKWCdgxrP/SUSLC6swva+Dq9ewelwyiSQQ1Y/ZkC2g833vNzp5goKGXkD0ywIDAQAB\n-----END PUBLIC KEY-----"
+        key-value: ${OPENSHIFT_SECURITY_OAUTH2_PUBLIC_KEY:"-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAv18ZNpCtYUBFLaK/Ak1HLok1w3I+a/zm9qDyu903IRBd9FYzmZCGEKWJnhUAN8+T9OWqDHSkoe9MChP1dyTQi9gVp7IEv2MnEQTNCmBzGBN86XR2G1NDjELK0O8myuUdjimULAy2zNPX8ikF5Zzat47OtHSs2GLPxtqRqpS3QAmPaeI2R7NKxM7co8UmYbylpxZVO/PL05s3oJL2euKePbcUIXHPiH7b2epF5Ywe1ln8QpG3KnOjxSCFpobPDdBl82Rbby+XfTwzE+ixojspQJbdjEQKWCdgxrP/SUSLC6swva+Dq9ewelwyiSQQ1Y/ZkC2g833vNzp5goKGXkD0ywIDAQAB\n-----END PUBLIC KEY-----"}
 
       # ----------------------------------------------------------------------------------------------------
       # Uncomment the following configuration if this API will consume another APIs (as a service account)
@@ -124,5 +124,5 @@ opentracing:
       url: http://jaeger-collector:14268/api/traces
 
 jaeger.tracer:
-  host: jaeger-agent.microservices.svc
+  host: ${OPENSHIFT_JAEGER_HOST:jaeger-agent.microservices.svc}
   port: 6831

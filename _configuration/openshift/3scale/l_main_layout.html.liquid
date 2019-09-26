@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{provider.name}} API</title>
+  <link rel="stylesheet" href="/css/custom.css">
+
+  <!-- STYLESHEETS -->
+    {% csrf %}
+    {{ content_of.stylesheets | html_safe }}
+  
+    <!--<link rel="stylesheet" type="text/css" href="/css/custom.css">-->
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css">
+
+    <!-- fonts -->
+    {{ 'https://fonts.googleapis.com/css?family=Lato:300,400,300italic,400italic' | stylesheet_link_tag }}
+    {{ 'https://fonts.googleapis.com/css?family=Montserrat:400,700' | stylesheet_link_tag }}
+    {{ 'https://fonts.googleapis.com/css?family=Comfortaa:400,700' | stylesheet_link_tag }}
+
+    <!-- font-awesome css -->
+    {{ 'https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css' | stylesheet_link_tag }}
+
+    <!-- JS (PRELOADED) -->
+
+    <!-- jQuery -->
+    {{ 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js' | javascript_include_tag }}
+
+    <!-- 3scale application file -->
+    {{ '/javascripts/3scale.js' | javascript_include_tag }}
+    {{ '/javascripts/excanvas.compiled.js' | javascript_include_tag }}
+
+    <!-- devaid -->
+    {{ '/javascripts/devaid.js' | javascript_include_tag }}
+
+    {{ content_of.javascripts | html_safe }}
+
+</head>
+
+<body>
+
+  <!-- NAVBAR AND HEADER SECTION -->
+  
+  <header>
+    {% logo %}
+  </header>
+  <script type="text/javascript">
+
+      function redirectUser() {
+          // This redirect can be set to any page you wish. The default is the homepage.
+          window.location.href="/"
+      };
+
+	</script>
+
+  <header id="header" class="header">
+    <div class="container">
+      <h1 class="logo pull-left">
+        <a href="/">
+          <span class="logo-title">{{ provider.name }}</span>
+        </a>
+      </h1>
+      <nav class="main-nav navbar-right" role="navigation">
+        <div class="navbar-header">
+          <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        </div>
+
+        <!-- DYNAMIC NAVBAR ELEMENTS -->
+        {% include 'submenu1' %}
+      </nav>
+    </div>
+    
+  </header>
+
+  <main role="main">
+    {% content %}
+  </main>
+
+  <!-- STATIC FOOTER -->
+
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+        <p class="text-center">Copyright &copy; {{ today.year }} {{ provider.name }}<a href="http://3scale.net/" class="powered-by" target="_blank">Powered by 3scale</a></p>
+      </div>
+    </div>
+  </footer>
+  
+</body>
+</html>

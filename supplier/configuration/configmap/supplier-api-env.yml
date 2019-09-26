@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: supplier-api
+data:
+  OPENSHIFT_APP_NAME: supplier-api
+  OPENSHIFT_REST_SECURITY_ISSUER_URI: https://sso73.apps.arekkusu.io/auth/realms/3scale-api
+  OPENSHIFT_SECURITY_OAUTH2_RESOURCE: 847d10c1
+  OPENSHIFT_JAEGER_HOST: jaeger-agent.microservices.svc

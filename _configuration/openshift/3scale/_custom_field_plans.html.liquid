@@ -1,0 +1,87 @@
+<section class="plans" id="plans">
+    <div class="container">
+        <h1>Pick your plan</h1>
+        <br/>
+      {% for field in current_account.extra_fields %}
+      {% if field.label contains 'access' %}
+      {% assign access = field.value %}
+      {% endif %}
+      {% endfor %}
+          <h1>{{ access }}</h1>
+        <div class="row">
+          	{% for service in provider.services %} 
+          		 {% for feature in service.features %}
+          		
+          		 {% if feature.system_name contains access %} 
+          			{% for plan in service.application_plans %}
+
+            <div class="col-md-6">
+                <article class="panel panel-default">
+                    <div class="panel-heading">
+                        <strong>{{ plan.name }}</strong>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+
+                            {% if plan.features == present %}
+                            <div class="col-md-6">
+                                <h5>Features</h5>
+                                <ul class="features list-unstyled">
+                                    {% for feature in plan.features %}
+                                    <li>
+                                        <i class="fa fa-check"></i> {{ feature.name }}
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            {% endif %}
+
+                            <div class="col-md-6">
+                                <h5>Limits{{ plan.trial_period_days.size }}</h5>
+                                <ul class="limits list-unstyled">
+                                    {% if plan.usage_limits == present %} {% for limit in plan.usage_limits %}
+                                    <li>
+                                        <i class="fa fa-signal"></i> {{ limit.metric.name }} &ndash; {{ limit.value }} {{ limit.metric.unit }}s per {{ limit.period }}
+                                    </li>
+                                    {% endfor %} {% else %}
+                                    <li>
+                                        <i class="fa fa-signal"></i> No limits
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <div class="row">
+                            <div class="col-md-12">
+                              {% if service.subscription %}
+                              
+                              <a type="button" class="btn btn-success pull-right" href="{{urls.new_application}}?service_id={{service.system_name}}&amp;application[plan_id]={{plan.id}}">Signup to plan {{ plan.name }}</a>
+                            {% else %}
+                              <a href="{{urls.service_subscription}}?service_id={{service.id}}" class="btn btn-success pull-right">Subscribe to the {{ service.name }} service</a>
+                              {% endif %}           
+                          </div>
+                        </div>
+
+                    </div>
+                </article>
+            </div>
+
+            		{% endfor %} 
+ 
+          		{% else %}
+          
+          		{% comment %}
+          		request to be assigned some membership
+          		{% endcomment %}
+          
+          		{% endif %} 
+          		{% endfor %}
+          {% endfor %}
+
+
+        </div>
+    </div>
+  </section>
