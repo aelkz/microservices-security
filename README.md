@@ -546,7 +546,7 @@ Assign the credentials `12345` and all `realm-management` roles.
 At the end, we will have 3 users on `3scale-api` realm:
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/36.png" title="RHSSO - 3scale-api realm users" width="75%" height="75%" />
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/36.png" title="RHSSO - 3scale-api realm users" width="85%" height="85%" />
 </p>
 
 ### `SECURITY LAB: STEP 14 - ARCHIVE SSO-COMMON LIBRARY JAR ON NEXUS`
@@ -555,6 +555,11 @@ At the end, we will have 3 users on `3scale-api` realm:
 # NOTE: To make sure the auth-integration-api (FUSE) works correctly, we need to archive a library that will be used to provide authentication and authorizations capabilities on top of Red Hat Single Sing-On (Keycloak).Then, this library will be used on auth-integration-api to enable such capabilities.
 
 # Deploy auth-sso-common library on nexus
+export NEXUS_NAMESPACE=cicd-devtools
+export MAVEN_URL=http://$(oc get route nexus3 -n ${NEXUS_NAMESPACE} --template='{{ .spec.host }}')/repository/maven-group/
+export MAVEN_URL_RELEASES=http://$(oc get route nexus3 -n ${NEXUS_NAMESPACE} --template='{{ .spec.host }}')/repository/maven-releases/
+export MAVEN_URL_SNAPSHOTS=http://$(oc get route nexus3 -n ${NEXUS_NAMESPACE} --template='{{ .spec.host }}')/repository/maven-snapshots/
+
 mvn clean package deploy -DnexusReleaseRepoUrl=$MAVEN_URL_RELEASES -DnexusSnapshotRepoUrl=$MAVEN_URL_SNAPSHOTS -s ./maven-settings.xml -e -X -pl auth-sso-common
 ```
 
@@ -618,6 +623,16 @@ oc patch svc stock-api -p '{"spec":{"ports":[{"name":"http","port":8080,"protoco
 oc label svc stock-api monitor=springboot2-api
 ```
 
+You could use the provided `configmap` and `secret` the set the required variables.
+
+```
+oc create -f configuration/configmap/stock-api-env.yml -n ${PROJECT_NAMESPACE}
+oc create -f configuration/secret/stock-api.yml -n ${PROJECT_NAMESPACE}
+
+oc env dc/${APP} --from=secret/stock-api-secret
+oc env dc/${APP} --from=configmap/stock-api-config
+```
+
 <b>Deploy</b> `supplier-api`
 
 <b>NOTE</b>. Please check all settings on `application.yaml` file before continuing. 
@@ -635,6 +650,16 @@ oc patch svc supplier-api -p '{"spec":{"ports":[{"name":"http","port":8080,"prot
 oc label svc supplier-api monitor=springboot2-api
 ```
 
+You could use the provided `configmap` and `secret` the set the required variables.
+
+```
+oc create -f configuration/configmap/supplier-api-env.yml -n ${PROJECT_NAMESPACE}
+oc create -f configuration/secret/supplier-api.yml -n ${PROJECT_NAMESPACE}
+
+oc env dc/${APP} --from=secret/supplier-api-secret
+oc env dc/${APP} --from=configmap/supplier-api-config
+```
+
 Deploy `product-api`
 
 <b>NOTE</b>. Please check all settings on `application.yaml` file before continuing. 
@@ -649,6 +674,16 @@ oc new-app openjdk-8-rhel8:latest~https://github.com/aelkz/microservices-securit
 oc patch svc product-api -p '{"spec":{"ports":[{"name":"http","port":8080,"protocol":"TCP","targetPort":8080}]}}'
 
 oc label svc product-api monitor=springboot2-api
+```
+
+You could use the provided `configmap` and `secret` the set the required variables.
+
+```
+oc create -f configuration/configmap/product-api-env.yml -n ${PROJECT_NAMESPACE}
+oc create -f configuration/secret/product-api.yml -n ${PROJECT_NAMESPACE}
+
+oc env dc/${APP} --from=secret/product-api-secret
+oc env dc/${APP} --from=configmap/product-api-config
 ```
 
 ### `SECURITY LAB: STEP 16 - INTEGRATION DEPLOYMENT (FUSE)`
@@ -687,12 +722,13 @@ curl -o application.yaml -s https://raw.githubusercontent.com/aelkz/microservice
 # NOTE. If you have changed the service or application's name, you need to edit and change the downloaded application.yaml file with your definitions.
 
 # create a configmap and mount a volume for auth-integration-api
-
 oc delete configmap ${APP} -n ${PROJECT_NAMESPACE}
 
-oc create configmap ${APP}-config --from-file=application.yaml -n ${PROJECT_NAMESPACE}
+oc create -f configuration/configmap/auth-integration-api-env.yml -n ${PROJECT_NAMESPACE}
+oc create -f configuration/secret/auth-integration-api.yml -n ${PROJECT_NAMESPACE}
 
-oc set volume dc/${APP} --add --overwrite --name=${APP}-config-volume -m /deployments/config -t configmap --configmap-name=${APP}-config -n ${PROJECT_NAMESPACE}
+oc env dc/${APP} --from=secret/auth-integration-api-secret
+oc env dc/${APP} --from=configmap/auth-integration-api-config
 ```
 
 <b>NOTE:</b> All application roles are prefixed with <b>ROLE_</b> on source-code. This could be changed if you want at line 80 in `../configuration/security/JwtAccessTokenCustomizer.java` class. On RHSSO, these roles are registered without this prefix. [stack overflow](https://stackoverflow.com/questions/33205236/spring-security-added-prefix-role-to-all-roles-name)
