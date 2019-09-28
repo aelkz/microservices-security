@@ -14,13 +14,13 @@ import { BsModalService, BsModalRef } from 'ngx-bootstrap';
 })
 export class ProductComponent implements OnDestroy, OnInit, AfterViewInit {
 
-  @ViewChild(DataTableDirective)
+  @ViewChild(DataTableDirective, {static: false})
   dtElement: DataTableDirective;
 
-  @ViewChild('editTemplate')
+  @ViewChild('editTemplate', {static: false})
   editTemplate: TemplateRef<any>;
 
-  @ViewChild('deleteTemplate')
+  @ViewChild('deleteTemplate', {static: false})
   deleteTemplate: TemplateRef<any>;
 
   dtOptions: any = {};
