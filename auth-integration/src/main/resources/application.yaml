@@ -8,14 +8,14 @@ spring:
     initialize: false
 
 api:
-  title: fuse-auth-integration-api
+  title: ${OPENSHIFT_APP_NAME:fuse-auth-integration-api}
   description: secured fuse application with keycloak adapter
   version: 1
   hostname: ${OPENSHIFT_HOST_NAME:auth-integration-api-microservices-security.apps.arekkusu.io}
 
 logging:
   config: classpath:logback.xml
-  level: DEBUG
+  level: INFO
 
 # options from org.apache.camel.spring.boot.CamelConfigurationProperties can be configured here
 camel:
@@ -101,8 +101,8 @@ stock:
   api-key-name: stock
   host: ${OPENSHIFT_STOCK_HOST:"stock-api.microservices-security.svc.cluster.local"}
   port: 8080
-  context-path: /api/v1
-  status-path: /actuator/health
+  context-path: ${OPENSHIFT_STOCK_CTX:/api/v1}
+  status-path: ${OPENSHIFT_STOCK_STATUS_CTX:/actuator/health}
 
 # =============================================
 # supplier api parameters
@@ -110,10 +110,10 @@ stock:
 supplier:
   api-key-name: supplier
   # 3scale production route
-  host: "supplier-api-production.apps.arekkusu.io"
+  host: ${OPENSHIFT_SUPPLIER_HOST:"supplier-api-production.apps.arekkusu.io"}
   port: 443
-  context-path: /api/v1
-  status-path: /actuator/health
+  context-path: ${OPENSHIFT_SUPPLIER_CTX:/api/v1}
+  status-path: ${OPENSHIFT_SUPPLIER_STATUS_CTX:/actuator/health}
 
 # -------------------------------------------------------
 # It is possible to use:

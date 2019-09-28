@@ -9,10 +9,10 @@
         </encoder>
     </appender>
 
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="STDOUT" />
     </root>
 
-    <logger name="com.microservices.apigateway.security" level="DEBUG"/>
+    <logger name="com.microservices.apigateway.security" level="INFO"/>
 
 </configuration>
