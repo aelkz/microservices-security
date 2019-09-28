@@ -442,7 +442,7 @@ export THREESCALE_API_URL=https://$(oc get routes -n ${THREESCALE_NAMESPACE} | g
 export INTEGRATION_HEALTH_URL=http://$(oc get routes -n ${APIS_NAMESPACE} | grep auth-integration | grep metrics | awk '{print $2;}')
 
 echo -e \
-" AUTH_CLIENT_ID=nodejs-web\n" \
+" AUTH_CLIENT_ID=<AUTH_INTEGRATION_CLIENT_ID>\n" \
 "AUTH_URL=${RHSSO_URL}\n" \
 "AUTH_REALM=3scale-api\n" \
 "KEYCLOAK=true\n" \
