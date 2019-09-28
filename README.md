@@ -434,46 +434,42 @@ In this step, we will be testing all scenarios with a suited NodeJS webapp based
 oc import-image rhscl/nodejs-8-rhel7 --from=registry.redhat.io/rhscl/nodejs-8-rhel7 -n openshift --confirm
 
 export APIS_NAMESPACE=microservices-security
-
-oc delete secret redhat.io -n $PROJECT_NAMESPACE
-oc create secret generic "redhat.io" --from-file=.dockerconfigjson=config.json --type=kubernetes.io/dockerconfigjson -n $PROJECT_NAMESPACE
-
-oc secrets link default redhat.io --for=pull -n $PROJECT_NAMESPACE
-oc secrets link builder redhat.io -n $PROJECT_NAMESPACE
-
 export THREESCALE_NAMESPACE=3scale26
 export RHSSO_NAMESPACE=sso73
 export RHSSO_URL=https://$(oc get route -n ${RHSSO_NAMESPACE} | grep secured | awk '{print $2;}')/auth
-export THREESCALE_APP_DOMAIN=arekkusu.io
+export THREESCALE_APP_DOMAIN=<YOUR-DOMAIN>.com
 export THREESCALE_API_URL=https://$(oc get routes -n ${THREESCALE_NAMESPACE} | grep auth-integration | grep production | awk '{print $2;}')
 export INTEGRATION_HEALTH_URL=http://$(oc get routes -n ${APIS_NAMESPACE} | grep auth-integration | grep metrics | awk '{print $2;}')
 
 echo -e \
-" PORT=4200\n" \
+" AUTH_CLIENT_ID=nodejs-web\n" \
 "AUTH_URL=${RHSSO_URL}\n" \
 "AUTH_REALM=3scale-api\n" \
-"AUTH_CLIENT_ID=nodejs-web\n" \
 "KEYCLOAK=true\n" \
 "INTEGRATION_URI=${THREESCALE_API_URL}\n" \
-"INTEGRATION_HEALTH_URI=${INTEGRATION_HEALTH_URL}\n" \
 "PRODUCT_PATH=/product\n" \
 "STOCK_PATH=/stock\n" \
 "SUPPLIER_PATH=/supplier\n" \
+"AUTH_CLIENT_SECRET=2d1beebcf1c9d00dd51be7a344abd87f\n" \
+"NODE_TLS_REJECT_UNAUTHORIZED=0\n" \
 > temp
 
 sed "s/^.//g" temp >> nodejs-config.properties
+
 rm -fr temp
 
+# oc delete configmap nodejs-web-config
 oc create configmap nodejs-web-config \
+ --from-literal=AUTH_CLIENT_ID= \
  --from-literal=AUTH_URL= \
  --from-literal=AUTH_REALM= \
- --from-literal=AUTH_CLIENT_ID= \
  --from-literal=KEYCLOAK= \
  --from-literal=INTEGRATION_URI= \
- --from-literal=INTEGRATION_HEALTH_URI= \
  --from-literal=PRODUCT_PATH= \
+ --from-literal=SUPPLIER_PATH= \
  --from-literal=STOCK_PATH= \
- --from-literal=SUPPLIER_PATH= 
+ --from-literal=AUTH_CLIENT_SECRET= \
+ --from-literal=NODE_TLS_REJECT_UNAUTHORIZED= 
 
 # oc delete all -lapp=nodejs-web
 oc new-app nodejs-8-rhel7:latest~https://github.com/aelkz/microservices-security.git --name=nodejs-web --context-dir=/webapp -n ${APIS_NAMESPACE}
@@ -629,8 +625,9 @@ You could use the provided `configmap` and `secret` the set the required variabl
 oc create -f configuration/configmap/stock-api-env.yml -n ${PROJECT_NAMESPACE}
 oc create -f configuration/secret/stock-api.yml -n ${PROJECT_NAMESPACE}
 
-oc env dc/${APP} --from=secret/stock-api-secret
-oc env dc/${APP} --from=configmap/stock-api-config
+export APP=stock-api
+oc set env dc/${APP} --from=secret/stock-api-secret
+oc set env dc/${APP} --from=configmap/stock-api-config
 ```
 
 <b>Deploy</b> `supplier-api`
@@ -656,8 +653,8 @@ You could use the provided `configmap` and `secret` the set the required variabl
 oc create -f configuration/configmap/supplier-api-env.yml -n ${PROJECT_NAMESPACE}
 oc create -f configuration/secret/supplier-api.yml -n ${PROJECT_NAMESPACE}
 
-oc env dc/${APP} --from=secret/supplier-api-secret
-oc env dc/${APP} --from=configmap/supplier-api-config
+oc set env dc/${APP} --from=secret/supplier-api-secret
+oc set env dc/${APP} --from=configmap/supplier-api-config
 ```
 
 Deploy `product-api`
@@ -682,8 +679,8 @@ You could use the provided `configmap` and `secret` the set the required variabl
 oc create -f configuration/configmap/product-api-env.yml -n ${PROJECT_NAMESPACE}
 oc create -f configuration/secret/product-api.yml -n ${PROJECT_NAMESPACE}
 
-oc env dc/${APP} --from=secret/product-api-secret
-oc env dc/${APP} --from=configmap/product-api-config
+oc set env dc/${APP} --from=secret/product-api-secret
+oc set env dc/${APP} --from=configmap/product-api-config
 ```
 
 ### `SECURITY LAB: STEP 16 - INTEGRATION DEPLOYMENT (FUSE)`
@@ -727,11 +724,11 @@ oc delete configmap ${APP} -n ${PROJECT_NAMESPACE}
 oc create -f configuration/configmap/auth-integration-api-env.yml -n ${PROJECT_NAMESPACE}
 oc create -f configuration/secret/auth-integration-api.yml -n ${PROJECT_NAMESPACE}
 
-oc env dc/${APP} --from=secret/auth-integration-api-secret
-oc env dc/${APP} --from=configmap/auth-integration-api-config
+oc set env dc/${APP} --from=secret/auth-integration-api-secret
+oc set env dc/${APP} --from=configmap/auth-integration-api-config
 ```
 
-<b>NOTE:</b> All application roles are prefixed with <b>ROLE_</b> on source-code. This could be changed if you want at line 80 in `../configuration/security/JwtAccessTokenCustomizer.java` class. On RHSSO, these roles are registered without this prefix. [stack overflow](https://stackoverflow.com/questions/33205236/spring-security-added-prefix-role-to-all-roles-name)
+<b>NOTE:</b> All application roles are prefixed with <b>ROLE_</b> on source-code. This could be changed if you want at <b>line 80</b> in `../configuration/security/JwtAccessTokenCustomizer.java` class. On RHSSO, these roles are registered without this prefix. See this [stack overflow](https://stackoverflow.com/questions/33205236/spring-security-added-prefix-role-to-all-roles-name) reference.
 
 ### `SECURITY LAB: FINAL STEP`
 
