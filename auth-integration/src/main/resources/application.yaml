@@ -136,7 +136,7 @@ keycloak-service-account:
   password: ${OPENSHIFT_SVCACC_SSO_PASSWORD:12345}
   # if using self-signed certificate you must use HTTP and set required-ssl=none on keycloak realm
   # https://lists.jboss.org/pipermail/keycloak-user/2017-April/010386.html
-  auth-server-uri: ${OPENSHIFT_SVCACC_SSO_AUTH_HOST:"https://sso73.apps.arekkusu.io/auth"}
+  auth-server-uri: ${OPENSHIFT_SVCACC_SSO_AUTH_HOST:https://sso73.apps.arekkusu.io/auth}
 
 # =============================================
 # Authorization Settings (Keycloak)
@@ -163,7 +163,7 @@ keycloak:
   ssl-required: ${OPENSHIFT_KEYCLOAK_SSL_REQUIRED:external}
   realm: ${OPENSHIFT_KEYCLOAK_REALM:3scale-api}
   resource: ${OPENSHIFT_KEYCLOAK_RESOURCE:8f314bfa}
-  auth-server-url: ${OPENSHIFT_KEYCLOAK_AUTH_HOST:"https://sso73.apps.arekkusu.io/auth"}
+  auth-server-url: ${OPENSHIFT_KEYCLOAK_AUTH_HOST:https://sso73.apps.arekkusu.io/auth}
   credentials:
     secret: ${OPENSHIFT_KEYCLOAK_RESOURCE_SECRET:2d1beebcf1c9d00dd51be7a344abd87f}
   use-resource-role-mappings: true
