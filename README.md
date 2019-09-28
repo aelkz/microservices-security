@@ -429,9 +429,9 @@ In this step, we will be testing all scenarios with a suited NodeJS webapp based
 
 ```sh
 # Deploy nodejs-web application
-# https://access.redhat.com/containers/#/registry.access.redhat.com/rhscl/nodejs-8-rhel7
+# https://access.redhat.com/containers/?tab=images#/registry.access.redhat.com/rhscl/nodejs-10-rhel7
 
-oc import-image rhscl/nodejs-8-rhel7 --from=registry.redhat.io/rhscl/nodejs-8-rhel7 -n openshift --confirm
+oc import-image rhscl/nodejs-10-rhel7 --from=registry.redhat.io/rhscl/nodejs-10-rhel7 -n openshift --confirm
 
 export APIS_NAMESPACE=microservices-security
 export THREESCALE_NAMESPACE=3scale26
@@ -472,7 +472,7 @@ oc create configmap nodejs-web-config \
  --from-literal=NODE_TLS_REJECT_UNAUTHORIZED= 
 
 # oc delete all -lapp=nodejs-web
-oc new-app nodejs-8-rhel7:latest~https://github.com/aelkz/microservices-security.git --name=nodejs-web --context-dir=/webapp -n ${APIS_NAMESPACE}
+oc new-app nodejs-10-rhel7:latest~https://github.com/aelkz/microservices-security.git --name=nodejs-web --context-dir=/webapp -n ${APIS_NAMESPACE}
 
 # with the properties defined, set the environment variable on nodejs-web container.
 oc set env --from=configmap/nodejs-web-config dc/nodejs-web -n ${APIS_NAMESPACE}
@@ -653,6 +653,7 @@ You could use the provided `configmap` and `secret` the set the required variabl
 oc create -f configuration/configmap/supplier-api-env.yml -n ${PROJECT_NAMESPACE}
 oc create -f configuration/secret/supplier-api.yml -n ${PROJECT_NAMESPACE}
 
+export APP=supplier-api
 oc set env dc/${APP} --from=secret/supplier-api-secret
 oc set env dc/${APP} --from=configmap/supplier-api-config
 ```
@@ -679,6 +680,7 @@ You could use the provided `configmap` and `secret` the set the required variabl
 oc create -f configuration/configmap/product-api-env.yml -n ${PROJECT_NAMESPACE}
 oc create -f configuration/secret/product-api.yml -n ${PROJECT_NAMESPACE}
 
+export APP=product-api
 oc set env dc/${APP} --from=secret/product-api-secret
 oc set env dc/${APP} --from=configmap/product-api-config
 ```
@@ -708,6 +710,9 @@ export CUSTOM_TEMPLATE=s2i-microservices-fuse74-spring-boot-camel-selfsigned
 # the previous template have some modifications regarding services,route and group definitions.
 # oc delete all -lapp=${APP}
 oc new-app --template=${CUSTOM_TEMPLATE} --name=${APP} --build-env='MAVEN_MIRROR_URL='${MAVEN_URL} -e MAVEN_MIRROR_URL=${MAVEN_URL} --param GIT_REPO=${APP_GIT} --param APP_NAME=${APP} --param ARTIFACT_DIR=${APP_NAME}/target --param GIT_REF=${APP_GIT_BRANCH} --param MAVEN_ARGS_APPEND='-pl '${APP_NAME}' --also-make'
+
+# Use this param if using a different TAG (example)
+# --param BUILDER_VERSION=2.0
 
 # check the created services:
 # 1 for default app-context and 1 for /metrics endpoint.
