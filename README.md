@@ -20,7 +20,7 @@
 <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/04.png" title="Microservices Security" width="40%" height="40%" />
 </p>
 
-<b>WARNING</b>: This is a proof of concept. In production environments, there will be needed adittional configurations regarding scalability, security and using a proper CA trusted certificate.
+<b>WARNING</b>: This is a proof of concept. In production environments, there will be needed adittional configurations regarding scalability, security, and using a proper CA trusted certificate.
 
 <p align="left">
 <div>
@@ -82,13 +82,13 @@ All APIs catalog is exposed bellow:
 | PUT    |/api/v1/product/{id} | Update product by Id | true |
 | DELETE |/api/v1/product/{id} | Delete product by Id | true |
 
-Each endpoint has it's own specifity, so in order to drive our test scenarios, I've ended up with 3 simple questions:
+Each endpoint has it's own specificity, so in order to drive our test scenarios, I've ended up with 3 simple questions:
 
 1. This API will be protected by an Integration Layer (FUSE)?
-2. This API will be exposed as a unique service on 3Scale AMP? This will enable API self-service subscription for external clients.
+2. This API will be exposed as a unique service on 3Scale AMP? (This will enable API self-service subscription for external clients)
 3. This API will be managed by RHSSO (Keycloak) having it's own client-id, groups and roles?
 
-This lead me to draw this requirements matrix:
+So I came up with the following requirements matrix:
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/05.png" title="APIs Requirements" width="100%" height="100%" />
@@ -227,7 +227,7 @@ Choose `APICast` for the gateway and `OpenID Connect` in Integration Settings,
 <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/14.png" title="APICast Gateway" width="30%" height="30%" />&nbsp;&nbsp;&nbsp;<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/15.png" title="OpenID Connect" width="30%" height="30%" />
 </p>
 
-<b>NOTE</b>. The OpenID Connection is choosen because we are going to protect our APIs with OAuth2 capabilities provided by RHSSO.
+<b>NOTE</b>. The OpenID Connection is chosen because we are going to protect our APIs with OAuth2 capabilities provided by RHSSO.
 
 Then click on <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/16.png" title="button: add the base URL of your API and save the configuration" width="35%" height="35%" />
 
@@ -380,7 +380,7 @@ This action will create for you a new 3Scale `application` for some APIs. If the
 <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/28.png" title="3Scale - New Application" width="75%" height="75%" />
 </p>
 
-The `Application` will be created for use with the `auth-integration-api`. A client-ID and a Client-Secret will be generated automatically, and pushed into RHSSO on `3Scale-api` realm by the `zynnc-que` 3Scale application.
+The `Application` will be created for use with the `auth-integration-api`. A client-ID and a Client-Secret will be generated automatically and pushed into RHSSO on `3Scale-api` realm by the `zynnc-que` 3Scale application.
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/29.png" title="RHSSO - New Application" width="70%" height="70%" />
@@ -425,7 +425,7 @@ oc logs -f po/${THREESCALE_ZYNC_QUE_POD}
 
 ### `SECURITY LAB: STEP 11 - NODEJS WEB APPLICATION DEPLOYMENT`
 
-In this step, we will be testing all scenarios with a suited NodeJS webapp based on Angular and Bootstrap. This application was designed to easy the understanding process. It can be used to give some clarification regarding the authorization behavior using our `Jon Doe` user account.
+In this step, we will be testing all scenarios with a suited NodeJS webapp based on Angular and Bootstrap. This application was designed to ease the understanding process. It can be used to give some clarification regarding the authorization behavior using our `Jon Doe` user account.
 
 ```sh
 # Deploy nodejs-web application
@@ -500,6 +500,8 @@ Go to the `Settings` tab on the client and apply additional configurations:
 - https://*
 
 <b>Web Origins:</b> *
+
+<b>NOTE</b>. Valid Redirect URIs and Web Origins must be set properly on production environments.
 
 Go to the `Roles` tab on `Clients` menu on RHSSO (Keycloak) and create the following roles:
 
@@ -755,7 +757,7 @@ If you're using a `self-signed` certificate, the browser will request authorizat
 <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/37.png" title="Microservices Security Lab" width="85%" height="85%" />
 </p>
 
-I hope you enjoyed this tutorial. The troubleshooting was not easy because of all OAuth2 adapters and security mechanisms involved. Please, let me know if you want to improve something or add more context to this PoC. Thank you!
+I hope you enjoyed this tutorial. The troubleshooting was somewhat difficult because of all OAuth2 adapters and security mechanisms involved. Please, let me know if you want to improve something or add more context to this PoC. Thank you!
 
 ### `EXTERNAL REFERENCES`
 
