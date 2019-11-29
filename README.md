@@ -1,3 +1,5 @@
+https://developers.redhat.com/blog/2019/10/30/how-to-secure-microservices-with-red-hat-single-sign-on-fuse-and-3scale/
+
 # MICROSERVICES SECURITY
 ###### HOW TO SECURE APIs WITH RED HAT SINGLE SIGN-ON (KEYCLOAK), FUSE (CAMEL) AND 3SCALE.
 
