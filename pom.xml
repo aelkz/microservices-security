@@ -15,6 +15,7 @@
         <module>stock</module>
         <module>auth-integration</module>
         <module>auth-sso-common</module>
+        <module>extract</module>
     </modules>
 
     <distributionManagement>

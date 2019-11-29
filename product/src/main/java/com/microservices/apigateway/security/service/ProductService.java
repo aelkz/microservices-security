@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @Transactional
@@ -15,7 +14,7 @@ public class ProductService {
 
     private final ProductRepository repository;
 
-    public ProductService( ProductRepository repository
+    public ProductService(ProductRepository repository
     ) {
         this.repository = repository;
     }
