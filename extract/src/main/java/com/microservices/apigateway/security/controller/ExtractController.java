@@ -30,14 +30,69 @@ public class ExtractController extends BaseController {
     @Autowired
     ExtractService extractService;
 
-    @RequestMapping(path = "/v1/extract", method = RequestMethod.GET)
+    @RequestMapping(path = "/v1/extract/{id}", method = RequestMethod.GET)
     @ApiOperation(
             value = "Get all banking records",
             notes = "Returns first N banking records specified by the size parameter with page offset specified by page parameter.",
             response = Page.class)
     public Page<ExtractRecord> getAll(
             @ApiParam("The size of the page to be returned") @RequestParam(required = false) Integer size,
-            @ApiParam("Zero-based page index") @RequestParam(required = false) Integer page) {
+            @ApiParam("Zero-based page index") @RequestParam(required = false) Integer page,
+            @PathVariable("id") Long id) {
+
+        if (size == null) {
+            size = DEFAULT_PAGE_SIZE;
+        }
+
+        if (page == null) {
+            page = 0;
+        }
+
+        // This is only for demonstration. Will be improved in a later version.
+        id = 1L;
+
+        Pageable pageable = new PageRequest(page, size);
+        Page<ExtractRecord> products = extractService.findAllSorted(pageable);
+
+        return products;
+    }
+
+    @RequestMapping(path = "/v1/analytic-extract/{id}", method = RequestMethod.GET)
+    @ApiOperation(
+            value = "Analytic report of banking records",
+            notes = "Returns first N banking records specified by the size parameter with page offset specified by page parameter.",
+            response = Page.class)
+    public Page<ExtractRecord> getAnalytic(
+            @ApiParam("The size of the page to be returned") @RequestParam(required = false) Integer size,
+            @ApiParam("Zero-based page index") @RequestParam(required = false) Integer page,
+            @PathVariable("id") Long id) {
+
+        if (size == null) {
+            size = DEFAULT_PAGE_SIZE;
+        }
+
+        if (page == null) {
+            page = 0;
+        }
+
+        // TODO - This is only for demonstration. Will be improved in a later version.
+        id = 1L;
+
+        Pageable pageable = new PageRequest(page, size);
+        Page<ExtractRecord> products = extractService.findAllSorted(pageable);
+
+        return products;
+    }
+
+    @RequestMapping(path = "/v1/custom-extract", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+    @ApiOperation(
+            value = "Custom report of banking records",
+            notes = "Returns first N banking records specified by the size parameter with page offset specified by page parameter.",
+            response = Page.class)
+    public Page<ExtractRecord> getCustom(
+            @ApiParam("The size of the page to be returned") @RequestParam(required = false) Integer size,
+            @ApiParam("Zero-based page index") @RequestParam(required = false) Integer page,
+            @Valid @RequestBody ExtractRecord record) {
 
         if (size == null) {
             size = DEFAULT_PAGE_SIZE;
@@ -48,6 +103,7 @@ public class ExtractController extends BaseController {
         }
 
         Pageable pageable = new PageRequest(page, size);
+        // TODO - filter based on record bean
         Page<ExtractRecord> products = extractService.findAllSorted(pageable);
 
         return products;
@@ -59,10 +115,10 @@ public class ExtractController extends BaseController {
             notes = "Creates new banking record of Withdrawal or Deposit type. Returns created record with id.",
             response = ExtractCustomRespository.class)
     public ResponseEntity<ExtractRecord> add(
-            @Valid @RequestBody ExtractRecord product) {
+            @Valid @RequestBody ExtractRecord record) {
 
-        product = extractService.save(product);
-        return ResponseEntity.ok().body(product);
+        record = extractService.save(record);
+        return ResponseEntity.ok().body(record);
     }
 
     @InitBinder("event")
