@@ -1,4 +1,6 @@
 ```bash
+NEXUS_NAMESPACE=cicd-devtools
+
 oc new-app --docker-image docker.io/sonatype/nexus3:latest
 
 oc rollout pause dc/nexus3
@@ -21,7 +23,8 @@ oc get pods | grep Running
 #[root@ocp-bastion lab04]# oc get pods | grep Running
 #nexus3-xyz    1/1     Running     0          2m36s
 
-oc exec nexus3-xyz cat /nexus-data/admin.password
+export NEXUS_POD=$(oc get pods --selector app=nexus3 -n ${NEXUS_NAMESPACE} | { read line1 ; read line2 ; echo "$line2" ; } | awk '{print $1;}')
+oc exec ${NEXUS_POD} cat /nexus-data/admin.password
 # 33456b65-7e85-4dfc-a063-78b413cf4a47
 
 oc get routes | grep nexus3
