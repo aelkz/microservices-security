@@ -12,6 +12,9 @@
     <artifactId>extract</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
+
+    <name>extract-api</name>
+    <description>banking statement api</description>
          
     <properties>
         <springboot.version>2.1.8.RELEASE</springboot.version>
