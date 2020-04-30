@@ -51,7 +51,7 @@
     "envsub": "^3.0.9",
     "express": "^4.17.1",
     "http-proxy-middleware": "^0.20.0",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "keycloak-angular": "~6.1.0",
     "morgan": "~1.9.1",
     "ng2-charts": "^1.6.0",
