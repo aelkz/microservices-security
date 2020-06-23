@@ -25,7 +25,7 @@ In order to avoid any trouble to import them into the container image, I had spl
 So, in my case, I've ended up with 3 files?
 - cert1.crt (first certificate in .pem)
 - cert2.crt (second certificate in .pem)
-- sso73.crf (the third certificate extracted in step2) 
+- sso73.crt (the third certificate extracted in step2)
 
 <b>The `Dockerfile` explains better how I had to customize the image in order to allow the keycloak-admin-client to poke with the sso73 self-signed server.</b>
 
