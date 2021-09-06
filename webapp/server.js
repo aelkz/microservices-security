@@ -23,7 +23,7 @@ let allowCrossDomain = function(req, res, next) {
 app.use(allowCrossDomain);
 
 app.set('port', process.env.PORT || 8080);
-app.set('integration-service', process.env.INTEGRATION_URI || 'http://auth-integration-api/v1/:8080');
+app.set('integration-com.microservices.apigateway.security.service', process.env.INTEGRATION_URI || 'http://auth-integration-api/v1/:8080');
 
 app.use(compression());
 app.use(logger('combined'));
@@ -34,12 +34,12 @@ app.use(express.static(path.join(__dirname, 'dist')));
 app.use(
   '/api/*',
   proxy({
-    target: app.get('integration-service'),
+    target: app.get('integration-com.microservices.apigateway.security.service'),
     secure: false,
     changeOrigin: true,
     logLevel: 'debug',
     pathRewrite: {
-      '^/integration-service': ''
+      '^/integration-com.microservices.apigateway.security.service': ''
     }
   })
 );

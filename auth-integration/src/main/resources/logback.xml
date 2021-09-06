@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE xml>
-<configuration>
+<com.microservices.apigateway.security.configuration>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <!-- encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
@@ -15,4 +15,4 @@
 
     <logger name="com.microservices.apigateway.security" level="INFO"/>
 
-</configuration>
+</com.microservices.apigateway.security.configuration>

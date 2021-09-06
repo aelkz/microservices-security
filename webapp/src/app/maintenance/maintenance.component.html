@@ -7,7 +7,7 @@
         <p>ROLE: <b>STOCK_MAINTAINER</b></p>
         <p>
           Secured by Auth Integration API? <b>true</b><br>
-          Has it's own 3scale service? (needs additional 3scale authentication) <b>false</b><br>
+          Has it's own 3scale com.microservices.apigateway.security.service? (needs additional 3scale authentication) <b>false</b><br>
           Is managed by Keycloak? <b>false</b><br>
         </p>
         <button class="btn btn-lg btn-danger" (click)="getStockMaintenance()" *ngIf="loadingStockMaintenanceAPI" [@fadeInOut]>
@@ -28,7 +28,7 @@
         <p>ROLE: <b>SUPPLIER_MAINTAINER</b></p>
         <p>
           Secured by Auth Integration API? <b>true</b><br>
-          Has it's own 3scale service? (needs additional 3scale authentication) <b>true</b><br>
+          Has it's own 3scale com.microservices.apigateway.security.service? (needs additional 3scale authentication) <b>true</b><br>
           Is managed by Keycloak? <b>true</b><br>
         </p>
         <button class="btn btn-lg btn-danger" (click)="getSupplierMaintenance()" *ngIf="loadingSupplierMaintenanceAPI" [@fadeInOut]>

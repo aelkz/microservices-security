@@ -46,7 +46,7 @@ export class MessageService {
   private emitMessage(icon: IconDefinition, text: string): void {
     const message = new MessageItem(icon, text);
 
-    // message history service will pick up the change
+    // message history com.microservices.apigateway.security.service will pick up the change
     this.newMessage$.next(message);
   }
 }

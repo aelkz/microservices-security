@@ -4,7 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix="keycloak-service-account")
+@ConfigurationProperties(prefix="keycloak-com.microservices.apigateway.security.service-account")
 public class KeycloakServiceAccountConfiguration {
 
     private String authServerUri;

@@ -18,10 +18,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 /**
  * SecurityConfigurer is to configure ResourceServer and HTTP Security.
  * <p>
- *   Please make sure you check HTTP Security configuration and change is as per your needs.
+ *   Please make sure you check HTTP Security com.microservices.apigateway.security.configuration and change is as per your needs.
  * </p>
  *
- * Note: Use {@link SecurityConfiguration} to configure required CORs configuration and enable or disable security of application.
+ * Note: Use {@link SecurityConfiguration} to configure required CORs com.microservices.apigateway.security.configuration and enable or disable security of application.
  */
 @Configuration
 @EnableWebSecurity

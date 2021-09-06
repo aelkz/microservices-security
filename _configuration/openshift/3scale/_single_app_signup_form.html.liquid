@@ -3,10 +3,10 @@
         <br/>
         
        
-            {% for service in provider.services %} 
-      		<h2> {{ service.name }} </h2>
+            {% for com.microservices.apigateway.security.service in provider.services %}
+      		<h2> {{ com.microservices.apigateway.security.service.name }} </h2>
       		<div class="row">
-            {% for plan in service.application_plans%}
+            {% for plan in com.microservices.apigateway.security.service.application_plans%}
       		
             <div class="col-md-4">
                 <article class="panel panel-default">
@@ -48,7 +48,7 @@
                             <div class="col-md-12">
                               	
       
-                   <a class="btn btn-cta-secondary pull-right" href="{{ urls.signup }}?{{ plan | to_param }}&{{ service.service_plans.first | to_param }}">Signup to plan {{ plan.name }}</a>
+                   <a class="btn btn-cta-secondary pull-right" href="{{ urls.signup }}?{{ plan | to_param }}&{{ com.microservices.apigateway.security.service.service_plans.first | to_param }}">Signup to plan {{ plan.name }}</a>
                           		
                                                                                          
                           </div>

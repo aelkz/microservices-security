@@ -17,16 +17,16 @@ redirectUser();
                 </tr>
               </thead>
               <tbody>
-                {% for service in provider.services %}
-                  <tr class="service">
-                    {% if service.subscribable? %}
-                      {% assign subscription = service.subscription %}
+                {% for com.microservices.apigateway.security.service in provider.services %}
+                  <tr class="com.microservices.apigateway.security.service">
+                    {% if com.microservices.apigateway.security.service.subscribable? %}
+                      {% assign subscription = com.microservices.apigateway.security.service.subscription %}
                       <td>
-                        {{ service.name }}
+                        {{ com.microservices.apigateway.security.service.name }}
                       </td>
                       <td>
                         <p>
-                          {{ service.description }}
+                          {{ com.microservices.apigateway.security.service.description }}
                         </p>
                       </td>
 
@@ -68,7 +68,7 @@ redirectUser();
 
                             {% endif %}
                        {% else %}
-                         {{ "Subscribe to " | append: service.name | link_to: service.subscribe_url }}
+                         {{ "Subscribe to " | append: com.microservices.apigateway.security.service.name | link_to: com.microservices.apigateway.security.service.subscribe_url }}
                        {% endif %}
                       </td>
                       {% endif %}

@@ -16,13 +16,14 @@
         <module>auth-integration</module>
         <module>auth-sso-common</module>
         <module>extract</module>
+        <module>product-insecure</module>
     </modules>
 
     <distributionManagement>
-        <repository>
+        <com.microservices.apigateway.security.repository>
             <id>nexus-releases</id>
             <url>${nexusReleaseRepoUrl}</url>
-        </repository>
+        </com.microservices.apigateway.security.repository>
         <snapshotRepository>
             <id>nexus-snapshots</id>
             <url>${nexusSnapshotRepoUrl}</url>
@@ -88,18 +89,18 @@
     </properties>
 
     <repositories>
-        <!-- maven central repository -->
-        <!-- do not use this in production, use your own maven repository -->
-        <repository>
+        <!-- maven central com.microservices.apigateway.security.repository -->
+        <!-- do not use this in production, use your own maven com.microservices.apigateway.security.repository -->
+        <com.microservices.apigateway.security.repository>
             <id>central</id>
             <name>Maven Central Repository</name>
             <url>https://repo.maven.apache.org/maven2</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
-        </repository>
+        </com.microservices.apigateway.security.repository>
         <!-- redhat official maven repositories -->
-        <repository>
+        <com.microservices.apigateway.security.repository>
             <releases>
                 <enabled>true</enabled>
                 <updatePolicy>never</updatePolicy>
@@ -107,11 +108,11 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
-            <id>red-hat-ga-repository</id>
+            <id>red-hat-ga-com.microservices.apigateway.security.repository</id>
             <name>Red Hat GA Repository</name>
-            <url>https://maven.repository.redhat.com/ga</url>
-        </repository>
-        <repository>
+            <url>https://maven.com.microservices.apigateway.security.repository.redhat.com/ga</url>
+        </com.microservices.apigateway.security.repository>
+        <com.microservices.apigateway.security.repository>
             <releases>
                 <enabled>true</enabled>
                 <updatePolicy>never</updatePolicy>
@@ -119,15 +120,15 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
-            <id>red-hat-ea-repository</id>
+            <id>red-hat-ea-com.microservices.apigateway.security.repository</id>
             <name>Red Hat EA Repository</name>
-            <url>https://maven.repository.redhat.com/earlyaccess/all/</url>
-        </repository>
+            <url>https://maven.com.microservices.apigateway.security.repository.redhat.com/earlyaccess/all/</url>
+        </com.microservices.apigateway.security.repository>
     </repositories>
 
     <pluginRepositories>
         <pluginRepository>
-            <id>maven-ga-repository</id>
+            <id>maven-ga-com.microservices.apigateway.security.repository</id>
             <url>https://repo.maven.apache.org/maven2/</url>
             <snapshots>
                 <enabled>false</enabled>
@@ -141,9 +142,9 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
-            <id>red-hat-ga-repository</id>
+            <id>red-hat-ga-com.microservices.apigateway.security.repository</id>
             <name>Red Hat GA Repository</name>
-            <url>https://maven.repository.redhat.com/ga</url>
+            <url>https://maven.com.microservices.apigateway.security.repository.redhat.com/ga</url>
         </pluginRepository>
         <pluginRepository>
             <releases>
@@ -153,9 +154,9 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
-            <id>red-hat-ea-repository</id>
+            <id>red-hat-ea-com.microservices.apigateway.security.repository</id>
             <name>Red Hat EA Repository</name>
-            <url>https://maven.repository.redhat.com/earlyaccess/all/</url>
+            <url>https://maven.com.microservices.apigateway.security.repository.redhat.com/earlyaccess/all/</url>
         </pluginRepository>
     </pluginRepositories>
 
@@ -164,10 +165,10 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven.compiler.plugin.version}</version>
-                <configuration>
+                <com.microservices.apigateway.security.configuration>
                     <source>1.8</source>
                     <target>1.8</target>
-                </configuration>
+                </com.microservices.apigateway.security.configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

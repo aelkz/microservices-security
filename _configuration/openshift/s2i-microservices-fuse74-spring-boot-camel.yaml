@@ -158,7 +158,7 @@ objects:
           kind: ImageStreamTag
           name: ${APP_NAME}:latest
       type: ImageChange
-# --------------- service
+# --------------- com.microservices.apigateway.security.service
 - apiVersion: v1
   kind: Service
   metadata:
@@ -209,7 +209,7 @@ objects:
       group: ${APP_GROUP}
     type: ClusterIP
     sessionAffinity: "None"
-# --------------- route configuration block (only 8080 will be exposed)
+# --------------- route com.microservices.apigateway.security.configuration block (only 8080 will be exposed)
 - apiVersion: route.openshift.io/v1
   kind: Route
   metadata:
@@ -232,12 +232,12 @@ parameters:
   name: APP_NAME
   required: true
   value: s2i-fuse74-spring-boot-camel
-- description: The URL of the repository with your application source code.
+- description: The URL of the com.microservices.apigateway.security.repository with your application source code.
   displayName: Git Repository URL
   name: GIT_REPO
   required: true
   value: https://github.com/fabric8-quickstarts/spring-boot-camel.git
-- description: Set this to a branch name, tag or other ref of your repository if you
+- description: Set this to a branch name, tag or other ref of your com.microservices.apigateway.security.repository if you
     are not using the default branch.
   displayName: Git Reference
   name: GIT_REF

@@ -39,5 +39,5 @@ chmod +x setup_nexus3.sh
 
 oc expose dc nexus3 --port=5000 --name=nexus-registry
 
-oc create route edge nexus-registry --service=nexus-registry --port=5000
+oc create route edge nexus-registry --com.microservices.apigateway.security.service=nexus-registry --port=5000
 ```

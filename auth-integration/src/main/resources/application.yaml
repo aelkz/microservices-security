@@ -21,7 +21,7 @@ logging:
 camel:
   springboot:
     name: ${OPENSHIFT_APP_NAME:fuse-auth-integration-api}
-    main-run-controller: true
+    main-run-com.microservices.apigateway.security.controller: true
   component:
     servlet:
       mapping:
@@ -118,13 +118,13 @@ supplier:
 # -------------------------------------------------------
 # It is possible to use:
 # grant-type: password (for a normal user)
-# grant-type: client-credentials (for a service account)
+# grant-type: client-credentials (for a com.microservices.apigateway.security.service account)
 # -------------------------------------------------------
 # Description: used as mechanism to exchange the original
 # token to another one that can be used to consumer
 # supplier-api
 # -------------------------------------------------------
-keycloak-service-account:
+keycloak-com.microservices.apigateway.security.service-account:
   realm: ${OPENSHIFT_SVCACC_SSO_REALM:3scale-api}
   client-id: ${OPENSHIFT_SVCACC_SSO_CLIENT_ID:847d10c1}
   secret: ${OPENSHIFT_SVCACC_SSO_CLIENT_SECRET:4519d24a04b3d9093aa9129aa7711d9d}

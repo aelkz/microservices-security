@@ -40,8 +40,8 @@ public class OAuth2RestTemplateConfigurer {
 
     /**
      * Condition class to configure OAuth2RestTemplate when both security is enabled and
-     * client credentials property is set for secured micro-service
-     * to micro-service call.
+     * client credentials property is set for secured micro-com.microservices.apigateway.security.service
+     * to micro-com.microservices.apigateway.security.service call.
      */
     static class ServiceAccountEnabled extends AllNestedConditions {
 

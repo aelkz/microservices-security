@@ -9,11 +9,11 @@
       {% endfor %}
           <h1>{{ access }}</h1>
         <div class="row">
-          	{% for service in provider.services %} 
-          		 {% for feature in service.features %}
+          	{% for com.microservices.apigateway.security.service in provider.services %}
+          		 {% for feature in com.microservices.apigateway.security.service.features %}
           		
           		 {% if feature.system_name contains access %} 
-          			{% for plan in service.application_plans %}
+          			{% for plan in com.microservices.apigateway.security.service.application_plans %}
 
             <div class="col-md-6">
                 <article class="panel panel-default">
@@ -56,11 +56,11 @@
                     <div class="panel-footer">
                         <div class="row">
                             <div class="col-md-12">
-                              {% if service.subscription %}
+                              {% if com.microservices.apigateway.security.service.subscription %}
                               
-                              <a type="button" class="btn btn-success pull-right" href="{{urls.new_application}}?service_id={{service.system_name}}&amp;application[plan_id]={{plan.id}}">Signup to plan {{ plan.name }}</a>
+                              <a type="button" class="btn btn-success pull-right" href="{{urls.new_application}}?service_id={{com.microservices.apigateway.security.service.system_name}}&amp;application[plan_id]={{plan.id}}">Signup to plan {{ plan.name }}</a>
                             {% else %}
-                              <a href="{{urls.service_subscription}}?service_id={{service.id}}" class="btn btn-success pull-right">Subscribe to the {{ service.name }} service</a>
+                              <a href="{{urls.service_subscription}}?service_id={{com.microservices.apigateway.security.service.id}}" class="btn btn-success pull-right">Subscribe to the {{ com.microservices.apigateway.security.service.name }} com.microservices.apigateway.security.service</a>
                               {% endif %}           
                           </div>
                         </div>

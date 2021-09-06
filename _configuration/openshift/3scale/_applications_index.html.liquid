@@ -22,14 +22,14 @@ redirectUser();
             </tr>
           </thead>
           <tbody class="panel-body">
-            {% for service in current_account.subscribed_services %}
-                {% for application in service.applications %}
+            {% for com.microservices.apigateway.security.service in current_account.subscribed_services %}
+                {% for application in com.microservices.apigateway.security.service.applications %}
                   <tr class="{% cycle 'applications': 'odd', 'even' %}" id="application_{{ application.id }}">
                     <td>
                       {{ application.name | link_to: application.url }}
                     </td>
                     {% if provider.multiple_services_allowed? %}
-                      <td>{{ service.name }}</td>
+                      <td>{{ com.microservices.apigateway.security.service.name }}</td>
                     {% endif %}
                     <td>{{ application.key }}</td>
                     <td>{{ application.state }}</td>

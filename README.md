@@ -87,7 +87,7 @@ All APIs catalog is exposed bellow:
 Each endpoint has it's own specificity, so in order to drive our test scenarios, I've ended up with 3 simple questions:
 
 1. This API will be protected by an Integration Layer (FUSE)?
-2. This API will be exposed as a unique service on 3Scale AMP? (This will enable API self-service subscription for external clients)
+2. This API will be exposed as a unique com.microservices.apigateway.security.service on 3Scale AMP? (This will enable API self-com.microservices.apigateway.security.service subscription for external clients)
 3. This API will be managed by RHSSO (Keycloak) having it's own client-id, groups and roles?
 
 So I came up with the following requirements matrix:
@@ -133,9 +133,9 @@ curl -o maven-settings-template.xml -s https://raw.githubusercontent.com/aelkz/m
 
 # change mirror url using your nexus openshift route
 export NEXUS_NAMESPACE=cicd-devtools
-export MAVEN_URL=http://$(oc get route nexus3 -n ${NEXUS_NAMESPACE} --template='{{ .spec.host }}')/repository/maven-group/
-export MAVEN_URL_RELEASES=http://$(oc get route nexus3 -n ${NEXUS_NAMESPACE} --template='{{ .spec.host }}')/repository/maven-releases/
-export MAVEN_URL_SNAPSHOTS=http://$(oc get route nexus3 -n ${NEXUS_NAMESPACE} --template='{{ .spec.host }}')/repository/maven-snapshots/
+export MAVEN_URL=http://$(oc get route nexus3 -n ${NEXUS_NAMESPACE} --template='{{ .spec.host }}')/com.microservices.apigateway.security.repository/maven-group/
+export MAVEN_URL_RELEASES=http://$(oc get route nexus3 -n ${NEXUS_NAMESPACE} --template='{{ .spec.host }}')/com.microservices.apigateway.security.repository/maven-releases/
+export MAVEN_URL_SNAPSHOTS=http://$(oc get route nexus3 -n ${NEXUS_NAMESPACE} --template='{{ .spec.host }}')/com.microservices.apigateway.security.repository/maven-snapshots/
 
 awk -v path="$MAVEN_URL" '/<url>/{sub(/>.*</,">"path"<")}1' maven-settings-template.xml > maven-settings.xml
 
@@ -185,7 +185,7 @@ Leave blank the fields: `root URL` , `base URL` and `admin URL`.
 
 On `Service Account Roles` <b>tab</b>, assign the role `manage-clients` from `realm-management`.
 
-Copy and save the `client-secret` that was genereated for this client. <b>This will be used later to configure OAuth service authentication on 3Scale.</b>
+Copy and save the `client-secret` that was genereated for this client. <b>This will be used later to configure OAuth com.microservices.apigateway.security.service authentication on 3Scale.</b>
 
 The client-secret will be something like this:
 `823b6ek5-1936-42e6-1135-d48rt3a1f632`
@@ -220,7 +220,7 @@ This new API will represent the `auth-integration-api`, previously deployed.
 Then, navigate through the `Configuration` menu under `Integration`, to setup the API mappings and security.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/13.png" title="3Scale admin portal - auth-integration-api configuration" width="85%" height="85%" />
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/13.png" title="3Scale admin portal - auth-integration-api com.microservices.apigateway.security.configuration" width="85%" height="85%" />
 </p>
 
 Choose `APICast` for the gateway and `OpenID Connect` in Integration Settings,
@@ -231,12 +231,12 @@ Choose `APICast` for the gateway and `OpenID Connect` in Integration Settings,
 
 <b>NOTE</b>. The OpenID Connection is chosen because we are going to protect our APIs with OAuth2 capabilities provided by RHSSO.
 
-Then click on <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/16.png" title="button: add the base URL of your API and save the configuration" width="35%" height="35%" />
+Then click on <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/16.png" title="button: add the base URL of your API and save the com.microservices.apigateway.security.configuration" width="35%" height="35%" />
 
 Next, define the `Private Base URL` that is, your auth-integration-api URL and the `staging` and `production` URLs:
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/17.png" title="3Scale admin portal - auth-integration-api configuration" width="70%" height="70%" />
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/17.png" title="3Scale admin portal - auth-integration-api com.microservices.apigateway.security.configuration" width="70%" height="70%" />
 </p>
 
 <b>NOTE</b>. Set your correct domain under each URL (that will be your API route on Openshift).
@@ -260,7 +260,7 @@ Next, define all <b>mapping rules</b> for this API, accordingly to the following
 Next, define the authentication mechanism for this API:
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/19.png" title="3Scale admin portal - auth-integration-api configuration" width="85%" height="85%" />
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/19.png" title="3Scale admin portal - auth-integration-api com.microservices.apigateway.security.configuration" width="85%" height="85%" />
 </p>
 
 Next, configure API policies that will be required to enable proper communication between resources inside the Openshift Container Platform:
@@ -279,7 +279,7 @@ Netx, on `Policies` section add in this order:
 - CORS
 - 3Scale APIcast
 
-Expand CORS configuration, and set:
+Expand CORS com.microservices.apigateway.security.configuration, and set:
 
 <b>Enabled</b>=checked
 
@@ -324,12 +324,12 @@ Expand CORS configuration, and set:
 <b>allow_origin</b>
 Leave empty.
 
-Leave the rest as default, and save the CORS configuration.
+Leave the rest as default, and save the CORS com.microservices.apigateway.security.configuration.
 
-<b>NOTE</b>. After every change, remember to <b>promote</b> the <b>staging</b> configuration to production.
+<b>NOTE</b>. After every change, remember to <b>promote</b> the <b>staging</b> com.microservices.apigateway.security.configuration to production.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/20.png" title="3Scale admin portal - auth-integration-api configuration promotion" width="25%" height="25%" />
+<img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/20.png" title="3Scale admin portal - auth-integration-api com.microservices.apigateway.security.configuration promotion" width="25%" height="25%" />
 </p>
 
 You `auth-integration-api` is ready to be used!
@@ -352,7 +352,7 @@ Let's the define the APIs `Application Plans`. These plans will be used upon cli
 Click on <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/23.png" title="3Scale admin portal - New Application Plan" width="20%" height="20%" /> link under `Applications/Application Plans` menu.
 
 <p align="center">
-Set the following configuration:<br>
+Set the following com.microservices.apigateway.security.configuration:<br>
 <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/22.png" title="3Scale admin portal - New Application Plan" width="40%" height="40%" />
 </p>
 
@@ -485,7 +485,7 @@ oc set env --from=configmap/nodejs-web-config dc/nodejs-web -n ${APIS_NAMESPACE}
 Expose the webapp route:
 
 ```
-oc create route edge --service=nodejs-web --cert=webapp/server.cert --key=webapp/server.key -n ${APIS_NAMESPACE}
+oc create route edge --com.microservices.apigateway.security.service=nodejs-web --cert=webapp/server.cert --key=webapp/server.key -n ${APIS_NAMESPACE}
 ```
 
 ### `SECURITY LAB: STEP 12 - APPLICATION SETTINGS AND ROLES`
@@ -521,7 +521,7 @@ Repeat the same steps for the `Supplier API` client. This client will have only 
 
 ### `SECURITY LAB: STEP 13 - USERS ROLES`
 
-In this step, we will be assigning all `client` roles to `john doe` user and the `service-account` user that will handle the `supplier-service` calls <b>inside</b> the `auth-integration-api`.
+In this step, we will be assigning all `client` roles to `john doe` user and the `com.microservices.apigateway.security.service-account` user that will handle the `supplier-com.microservices.apigateway.security.service` calls <b>inside</b> the `auth-integration-api`.
 
 Go to the `Role Mappings` tab on `John Doe` user-details page on `Users` menu.
 Assign all roles to the user, following the image bellow:
@@ -530,7 +530,7 @@ Assign all roles to the user, following the image bellow:
 <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_images/34.png" title="RHSSO - user roles assignment" width="75%" height="75%" />
 </p>
 
-On `Step 7` we've created the `John Doe` user. We will need to create <b>another user</b> that will be used as a service-account to call the `Supplier API` inside de `auth-integration-api` (<b>see</b>: line 123 on [application.yaml](https://raw.githubusercontent.com/aelkz/microservices-security/master/product/src/main/resources/application.yaml)). This user will have a password also, reset its credentials with `12345`. The name of this user can be the the `id` of the `Supplier API` client-id generated by 3Scale appended with `_svcacc` suffix (<b>see</b>: line 131 on [application.yaml](https://raw.githubusercontent.com/aelkz/microservices-security/master/product/src/main/resources/application.yaml)).
+On `Step 7` we've created the `John Doe` user. We will need to create <b>another user</b> that will be used as a com.microservices.apigateway.security.service-account to call the `Supplier API` inside de `auth-integration-api` (<b>see</b>: line 123 on [application.yaml](https://raw.githubusercontent.com/aelkz/microservices-security/master/product/src/main/resources/application.yaml)). This user will have a password also, reset its credentials with `12345`. The name of this user can be the the `id` of the `Supplier API` client-id generated by 3Scale appended with `_svcacc` suffix (<b>see</b>: line 131 on [application.yaml](https://raw.githubusercontent.com/aelkz/microservices-security/master/product/src/main/resources/application.yaml)).
 
 We will also need to assign the `SUPPLIER_MAINTAINER` role to this user.
 
@@ -556,9 +556,9 @@ At the end, we will have 3 users on `3scale-api` realm:
 
 # Deploy auth-sso-common library on nexus
 export NEXUS_NAMESPACE=cicd-devtools
-export MAVEN_URL=http://$(oc get route nexus3 -n ${NEXUS_NAMESPACE} --template='{{ .spec.host }}')/repository/maven-group/
-export MAVEN_URL_RELEASES=http://$(oc get route nexus3 -n ${NEXUS_NAMESPACE} --template='{{ .spec.host }}')/repository/maven-releases/
-export MAVEN_URL_SNAPSHOTS=http://$(oc get route nexus3 -n ${NEXUS_NAMESPACE} --template='{{ .spec.host }}')/repository/maven-snapshots/
+export MAVEN_URL=http://$(oc get route nexus3 -n ${NEXUS_NAMESPACE} --template='{{ .spec.host }}')/com.microservices.apigateway.security.repository/maven-group/
+export MAVEN_URL_RELEASES=http://$(oc get route nexus3 -n ${NEXUS_NAMESPACE} --template='{{ .spec.host }}')/com.microservices.apigateway.security.repository/maven-releases/
+export MAVEN_URL_SNAPSHOTS=http://$(oc get route nexus3 -n ${NEXUS_NAMESPACE} --template='{{ .spec.host }}')/com.microservices.apigateway.security.repository/maven-snapshots/
 
 mvn clean package deploy -DnexusReleaseRepoUrl=$MAVEN_URL_RELEASES -DnexusSnapshotRepoUrl=$MAVEN_URL_SNAPSHOTS -s ./maven-settings.xml -e -X -pl auth-sso-common
 ```
@@ -626,8 +626,8 @@ oc label svc stock-api monitor=springboot2-api
 You could use the provided `configmap` and `secret` the set the required variables.
 
 ```
-oc create -f configuration/configmap/stock-api-env.yml -n ${PROJECT_NAMESPACE}
-oc create -f configuration/secret/stock-api.yml -n ${PROJECT_NAMESPACE}
+oc create -f com.microservices.apigateway.security.configuration/configmap/stock-api-env.yml -n ${PROJECT_NAMESPACE}
+oc create -f com.microservices.apigateway.security.configuration/secret/stock-api.yml -n ${PROJECT_NAMESPACE}
 
 export APP=stock-api
 oc set env dc/${APP} --from=secret/stock-api-secret
@@ -654,8 +654,8 @@ oc label svc supplier-api monitor=springboot2-api
 You could use the provided `configmap` and `secret` the set the required variables.
 
 ```
-oc create -f configuration/configmap/supplier-api-env.yml -n ${PROJECT_NAMESPACE}
-oc create -f configuration/secret/supplier-api.yml -n ${PROJECT_NAMESPACE}
+oc create -f com.microservices.apigateway.security.configuration/configmap/supplier-api-env.yml -n ${PROJECT_NAMESPACE}
+oc create -f com.microservices.apigateway.security.configuration/secret/supplier-api.yml -n ${PROJECT_NAMESPACE}
 
 export APP=supplier-api
 oc set env dc/${APP} --from=secret/supplier-api-secret
@@ -681,8 +681,8 @@ oc label svc product-api monitor=springboot2-api
 You could use the provided `configmap` and `secret` the set the required variables.
 
 ```
-oc create -f configuration/configmap/product-api-env.yml -n ${PROJECT_NAMESPACE}
-oc create -f configuration/secret/product-api.yml -n ${PROJECT_NAMESPACE}
+oc create -f com.microservices.apigateway.security.configuration/configmap/product-api-env.yml -n ${PROJECT_NAMESPACE}
+oc create -f com.microservices.apigateway.security.configuration/secret/product-api.yml -n ${PROJECT_NAMESPACE}
 
 export APP=product-api
 oc set env dc/${APP} --from=secret/product-api-secret
@@ -708,7 +708,7 @@ export APP_NAME=auth-integration
 export APP_GROUP=com.redhat.microservices
 export APP_GIT=https://github.com/aelkz/microservices-security.git
 export APP_GIT_BRANCH=master
-export MAVEN_URL=http://$(oc get route nexus3 -n ${NEXUS_NAMESPACE} --template='{{ .spec.host }}')/repository/maven-group/
+export MAVEN_URL=http://$(oc get route nexus3 -n ${NEXUS_NAMESPACE} --template='{{ .spec.host }}')/com.microservices.apigateway.security.repository/maven-group/
 export CUSTOM_TEMPLATE=s2i-microservices-fuse74-spring-boot-camel-selfsigned
 
 # the previous template have some modifications regarding services,route and group definitions.
@@ -722,22 +722,22 @@ oc new-app --template=${CUSTOM_TEMPLATE} --name=${APP} --build-env='MAVEN_MIRROR
 # 1 for default app-context and 1 for /metrics endpoint.
 oc get svc -n ${PROJECT_NAMESPACE} | grep ${APP_NAME}
 
-# in order to auth-integration-api call the others APIs, we need to change it's configuration:
+# in order to auth-integration-api call the others APIs, we need to change it's com.microservices.apigateway.security.configuration:
 curl -o application.yaml -s https://raw.githubusercontent.com/aelkz/microservices-security/master/_configuration/openshift/auth-integration/application.yaml
 
-# NOTE. If you have changed the service or application's name, you need to edit and change the downloaded application.yaml file with your definitions.
+# NOTE. If you have changed the com.microservices.apigateway.security.service or application's name, you need to edit and change the downloaded application.yaml file with your definitions.
 
 # create a configmap and mount a volume for auth-integration-api
 oc delete configmap ${APP} -n ${PROJECT_NAMESPACE}
 
-oc create -f configuration/configmap/auth-integration-api-env.yml -n ${PROJECT_NAMESPACE}
-oc create -f configuration/secret/auth-integration-api.yml -n ${PROJECT_NAMESPACE}
+oc create -f com.microservices.apigateway.security.configuration/configmap/auth-integration-api-env.yml -n ${PROJECT_NAMESPACE}
+oc create -f com.microservices.apigateway.security.configuration/secret/auth-integration-api.yml -n ${PROJECT_NAMESPACE}
 
 oc set env dc/${APP} --from=secret/auth-integration-api-secret
 oc set env dc/${APP} --from=configmap/auth-integration-api-config
 ```
 
-<b>NOTE:</b> All application roles are prefixed with <b>ROLE_</b> on source-code. This could be changed if you want at <b>line 80</b> in `../configuration/security/JwtAccessTokenCustomizer.java` class. On RHSSO, these roles are registered without this prefix. See this [stack overflow](https://stackoverflow.com/questions/33205236/spring-security-added-prefix-role-to-all-roles-name) reference.
+<b>NOTE:</b> All application roles are prefixed with <b>ROLE_</b> on source-code. This could be changed if you want at <b>line 80</b> in `../com.microservices.apigateway.security.configuration/security/JwtAccessTokenCustomizer.java` class. On RHSSO, these roles are registered without this prefix. See this [stack overflow](https://stackoverflow.com/questions/33205236/spring-security-added-prefix-role-to-all-roles-name) reference.
 
 ### `SECURITY LAB: FINAL STEP`
 
@@ -748,7 +748,7 @@ export MICROSERVICES_NAMESPACE=microservices-security
 echo http://$(oc get route nodejs-web -n ${MICROSERVICES_NAMESPACE} --template='{{ .spec.host }}')
 ```
 
-If you're using a `self-signed` certificate, the browser will request authorization to open an insecure URL. Navigate through the menus and test all actions clicking on every button to see the final result. If some action returns <b>401</b> or <b>403</b> it is probabilly some pending configuration on 3Scale or missing/invalid credentials on some application. If you get http error <b>500</b>, maybe the application is unavailable. Try changing `Jon Doe` roles and check every situation after refreshing the access token.
+If you're using a `self-signed` certificate, the browser will request authorization to open an insecure URL. Navigate through the menus and test all actions clicking on every button to see the final result. If some action returns <b>401</b> or <b>403</b> it is probabilly some pending com.microservices.apigateway.security.configuration on 3Scale or missing/invalid credentials on some application. If you get http error <b>500</b>, maybe the application is unavailable. Try changing `Jon Doe` roles and check every situation after refreshing the access token.
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/aelkz/microservices-security/master/_videos/screen01.gif" title="Microservices Security Lab" width="85%" height="85%" />

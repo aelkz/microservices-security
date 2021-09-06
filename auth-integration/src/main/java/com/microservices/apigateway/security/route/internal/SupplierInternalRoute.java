@@ -99,7 +99,7 @@ public class SupplierInternalRoute extends RouteBuilder {
                 .setHeader(Exchange.HTTP_METHOD, constant("POST"))
                 .setHeader(Exchange.CONTENT_TYPE, constant(MediaType.APPLICATION_JSON))
                 .removeHeader("breadcrumbId")
-                .removeHeader("Authorization") // previous authorization is removed to acquire a new one for service account
+                .removeHeader("Authorization") // previous authorization is removed to acquire a new one for com.microservices.apigateway.security.service account
                 .to(String.format("auth:api?serverUrl=%s&" +
                                 "realm=%s&" +
                                 "clientID=%s&" +

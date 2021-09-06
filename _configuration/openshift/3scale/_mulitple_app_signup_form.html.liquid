@@ -4,10 +4,10 @@
         <br/>
         
        
-            {% for service in provider.services %} 
-      		<h2> {{ service.name }} </h2>
+            {% for com.microservices.apigateway.security.service in provider.services %}
+      		<h2> {{ com.microservices.apigateway.security.service.name }} </h2>
       		<div class="row">
-            {% for plan in service.application_plans%}
+            {% for plan in com.microservices.apigateway.security.service.application_plans%}
       		
             <div class="col-md-4">
                 <article class="panel panel-default">
@@ -51,7 +51,7 @@
                               	<div class="row">
                     		  		<div class="col-md-12">
                       					<input type="checkbox" name="plan_ids[]" value="{{ plan.id }}">Signup to {{ plan.name }}</input>
-                                <input type="hidden" name="plan_ids[]" value="{{ service.service_plans.first.id }}"></input>
+                                <input type="hidden" name="plan_ids[]" value="{{ com.microservices.apigateway.security.service.service_plans.first.id }}"></input>
                     				</div>
                   				</div>
                           		

@@ -9,9 +9,9 @@ There are 4 custom signup flows included in the [parent homepage](https://github
 How does the 3scale signup work?
 --------------------------------
 ### The Basics
-A developer can sign up to subscribe to an API service in various ways and how they do that is determined by the configuration of all the settings on the 3scale Admin Portal. Although this is flexible and varying in terms of the process and mechanics working in the background, the end user will not see a great deal of difference from their persepctive and this is key to delivering a good user experience.
+A developer can sign up to subscribe to an API com.microservices.apigateway.security.service in various ways and how they do that is determined by the com.microservices.apigateway.security.configuration of all the settings on the 3scale Admin Portal. Although this is flexible and varying in terms of the process and mechanics working in the background, the end user will not see a great deal of difference from their persepctive and this is key to delivering a good user experience.
 
-Typically the developer would be able to discover any API service and the differing plans (contracts) as a public user on the homepage of any Developer Portal, when choosing the service and plan to subscribe to, the necessary parameters to create the contract between the Account and the API service will be passed to the signup form. There will be an Application created in the background as part of the signup process as this is the object that contains the API keys for consuming the contracted services.
+Typically the developer would be able to discover any API com.microservices.apigateway.security.service and the differing plans (contracts) as a public user on the homepage of any Developer Portal, when choosing the com.microservices.apigateway.security.service and plan to subscribe to, the necessary parameters to create the contract between the Account and the API com.microservices.apigateway.security.service will be passed to the signup form. There will be an Application created in the background as part of the signup process as this is the object that contains the API keys for consuming the contracted services.
 
 ### Objects created during signup
 - Account
@@ -19,7 +19,7 @@ Typically the developer would be able to discover any API service and the differ
 - Application
 - Key(s)
 
-The Account can have many Users but will only have 1 upon initial creation. If the Account has subscribed to multiple Services in the signup then it will be associated to those Services via what's known as a Service subscription and for each Service subscribed an Application will be created along with a set of Keys. Although it is important to understand the 3scale data object model and the relationship each object has with one another we won't go into too much detail on that here.
+The Account can have many Users but will only have 1 upon initial creation. If the Account has subscribed to multiple Services in the signup then it will be associated to those Services via what's known as a Service subscription and for each Service subscribed an Application will be created along with a set of Keys. Although it is important to understand the 3scale data object com.microservices.apigateway.security.model and the relationship each object has with one another we won't go into too much detail on that here.
 
 ### Subscriptions
 There are 2 different subscriptions made when the signup is completed. The user commonly only really sees and cares about one of these though. The most important subscription is the Application Subscription and the less important of the two is the Service Subscription.

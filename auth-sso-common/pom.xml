@@ -16,10 +16,10 @@
     <packaging>jar</packaging>
 
     <distributionManagement>
-        <repository>
+        <com.microservices.apigateway.security.repository>
             <id>nexus-releases</id>
             <url>${nexusReleaseRepoUrl}</url>
-        </repository>
+        </com.microservices.apigateway.security.repository>
         <snapshotRepository>
             <id>nexus-snapshots</id>
             <url>${nexusSnapshotRepoUrl}</url>
