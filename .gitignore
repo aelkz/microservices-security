@@ -17,3 +17,4 @@ jspm_packages/
 *.iml
 .idea/*.iml
 .idea/*
+!/maven-settings.xml
